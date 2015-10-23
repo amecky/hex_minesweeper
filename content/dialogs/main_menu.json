@@ -1,0 +1,23 @@
+"dialog" { 
+	"name" : "MainMenu" 
+}
+"image" {
+	"id" : "10" , "pos" : "140,660" , "rect" : "770,0,914,100" 
+}
+"button" { 
+	"id" : "1" , "pos" : "400,500" , "text" : "Easy" , "rect" : "610,0,404,64" 
+}
+"button" { 
+	"id" : "2" , "pos" : "400,400" , "text" : "Medium" , "rect" : "610,0,404,64" 
+}
+"button" { 
+	"id" : "3" , "pos" : "400,300" , "text" : "Hard" , "rect" : "610,0,404,64" 
+}
+"button" { 
+	"id" : "4" , "pos" : "400,100" , "text" : "Exit" , "rect" : "542,0,404,64" 
+}
+"button" { 
+	"id" : "5" , "pos" : "400,200" , "text" : "Highscores" , "rect" : "610,0,404,64" 
+}
+
+
