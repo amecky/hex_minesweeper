@@ -2,11 +2,11 @@
 #include "..\GameContext.h"
 #include <base\GameState.h>
 
-class MainMenuState : public ds::GameState {
+class HighscoreState : public ds::GameState {
 
 public:
-	MainMenuState(ds::DialogManager* gui, GameContext* context);
-	~MainMenuState();
+	HighscoreState(ds::DialogManager* gui, GameContext* context);
+	~HighscoreState();
 	int update(float dt);
 	void render();
 	int onGUIButton(ds::DialogID dlgID, int button);

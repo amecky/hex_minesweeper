@@ -224,9 +224,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\gamestates\GameOverState.cpp" />
+    <ClCompile Include="src\gamestates\HighscoreState.cpp" />
     <ClCompile Include="src\gamestates\MainGameState.cpp" />
     <ClCompile Include="src\gamestates\MainMenuState.cpp" />
     <ClCompile Include="src\HexGrid.cpp" />
+    <ClCompile Include="src\Highscores.cpp" />
     <ClCompile Include="src\Minesweeper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -234,16 +236,23 @@
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\gamestates\GameOverState.h" />
+    <ClInclude Include="src\gamestates\HighscoreState.h" />
     <ClInclude Include="src\gamestates\MainGameState.h" />
     <ClInclude Include="src\gamestates\MainMenuState.h" />
     <ClInclude Include="src\HexGrid.h" />
+    <ClInclude Include="src\Highscores.h" />
     <ClInclude Include="src\Minesweeper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="content\dialogs\game_over.json" />
     <None Include="content\dialogs\highscores.json" />
     <None Include="content\dialogs\main_menu.json" />
+    <None Include="content\resources\gui.json" />
+    <None Include="content\resources\hud.json" />
+    <None Include="content\resources\xscale.json" />
     <None Include="Minesweeper.manifest" />
+    <None Include="README.md" />
+    <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Minesweeper.rc" />

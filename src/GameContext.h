@@ -1,5 +1,7 @@
 #pragma once
 #include <utils\GameTimer.h>
+#include <Vector.h>
+#include "Highscores.h"
 
 enum GameModeType {
 	GM_EASY,
@@ -19,9 +21,9 @@ struct GameMode {
 };
 
 const GameMode GAME_MODES[] = {
-	GameMode(GM_EASY, 12, 8, 8, v2(300, 330)),
-	GameMode(GM_MEDIUM, 32, 14, 12, v2(200, 230)),
-	GameMode(GM_HARD, 60, 20, 15, v2(100,130)),
+	GameMode(GM_EASY, 12, 8, 8, v2(357, 259)),
+	GameMode(GM_MEDIUM, 32, 14, 12, v2(237, 189)),
+	GameMode(GM_HARD, 60, 20, 15, v2(107,134)),
 };
 
 struct GameContext {
@@ -31,6 +33,7 @@ struct GameContext {
 	int markedCorrectly;
 	int playedSeconds;
 	int playedMinutes;
+	Highscore highscore;
 
 	void reset() {
 		marked = 0;

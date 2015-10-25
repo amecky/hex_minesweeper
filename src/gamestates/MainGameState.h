@@ -30,5 +30,6 @@ private:
 	ds::HUD _hud;
 	int _width;
 	int _height;
+	v2 _dialogPos;
 };
 

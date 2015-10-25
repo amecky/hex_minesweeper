@@ -1,11 +1,11 @@
 #include "MainGameState.h"
 #include <sprites\SpriteBatch.h>
-#include "..\Constants.h"
 #include <Vector.h>
 
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
 	_selected = -1;
 	_maxBombs = 60;
+	_dialogPos = v2(10, 400);
 }
 
 
@@ -63,6 +63,7 @@ void MainGameState::fillBombs() {
 	}
 	delete[] temp;
 }
+
 // -------------------------------------------------------
 // activate
 // -------------------------------------------------------
@@ -80,6 +81,9 @@ void MainGameState::activate() {
 	_hud.setTimer(0, 0, 0);
 }
 
+// -------------------------------------------------------
+// deactivate
+// -------------------------------------------------------
 void MainGameState::deactivate() {
 	ds::GameTimer *timer = _hud.getTimer(0);
 	_context->playedSeconds = timer->getSeconds();
@@ -164,6 +168,7 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
+	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
 		// marked
@@ -181,6 +186,7 @@ void MainGameState::render() {
 		}
 	}
 	_hud.render();
+	_hud.showDialog(&_dialogPos);
 }
 
 // -------------------------------------------------------

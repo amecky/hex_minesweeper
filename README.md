@@ -1,4 +1,4 @@
-# energy_rush
+# hex minesweeper
 
 This is a simple minesweeper clone using a hex grid instead. But the actual
 gameplay is the same. The games includes 3 different modes just like the original.
