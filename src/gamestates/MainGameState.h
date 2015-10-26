@@ -27,9 +27,9 @@ private:
 	GameContext* _context;
 	HexGrid _grid;
 	int _selected;
-	ds::HUD _hud;
+	//ds::HUD _hud;
 	int _width;
 	int _height;
-	v2 _dialogPos;
+	
 };
 

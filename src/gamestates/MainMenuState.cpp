@@ -16,21 +16,6 @@ MainMenuState::~MainMenuState() {
 // --------------------------------------------
 void MainMenuState::activate() {
 	_gui->activate("MainMenu");	
-	/*
-	ds::GUIDialog* dlg = _gui->get("GameOver");
-	std::string str;
-	ds::string::formatInt(_context->score.goals, str);
-	dlg->updateText(12, str);
-	ds::string::formatInt(_context->score.wrongGoals, str);
-	dlg->updateText(8, str);
-	ds::string::formatTime(_context->timer.getMinutes(), _context->timer.getSeconds(), str);
-	int seconds = _context->timer.getSeconds() + _context->timer.getMinutes() * 60;
-	int diff = seconds - 100;
-	dlg->updateText(14, str);
-	_context->score.points = _context->score.goals * 1000 + diff * 500;
-	ds::string::formatInt(_context->score.points, str);
-	dlg->updateText(16, str);
-	*/
 }
 
 // --------------------------------------------
@@ -71,7 +56,7 @@ int MainMenuState::onGUIButton(ds::DialogID dlgID, int button) {
 // render
 // --------------------------------------------
 void MainMenuState::render() {
-	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
+	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 1.0f, 1.0f);
 }
 
 

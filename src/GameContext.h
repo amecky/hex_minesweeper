@@ -2,6 +2,7 @@
 #include <utils\GameTimer.h>
 #include <Vector.h>
 #include "Highscores.h"
+#include <objects\Hud.h>
 
 enum GameModeType {
 	GM_EASY,
@@ -31,9 +32,8 @@ struct GameContext {
 	int mode;
 	int marked;
 	int markedCorrectly;
-	int playedSeconds;
-	int playedMinutes;
 	Highscore highscore;
+	ds::HUD* hud;
 
 	void reset() {
 		marked = 0;

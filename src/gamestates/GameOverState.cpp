@@ -22,12 +22,13 @@ void GameOverState::activate() {
 	sprintf_s(buffer, 32, "%d / %d", _context->markedCorrectly, GAME_MODES[_context->mode].maxBombs);
 	dlg->updateText(12, buffer);
 	std::string str;
-	ds::string::formatTime(_context->playedMinutes, _context->playedSeconds, str);
+	ds::GameTimer* timer = _context->hud->getTimer(0);
+	ds::string::formatTime(timer->getMinutes(), timer->getSeconds(), str);
 	dlg->updateText(14, str);
 
 	if (_context->markedCorrectly == GAME_MODES[_context->mode].maxBombs) {
 		dlg->updateImage(11, 140, 660, ds::Rect(450, 0, 470, 84));
-		if (scoring::hasScored(_context->playedSeconds, _context->playedMinutes, _context->mode, _context->highscore)) {
+		if (scoring::hasScored(timer->getSeconds(), timer->getMinutes(), _context->mode, _context->highscore)) {
 			LOG << "NEW HIGHSCORE!!!";
 		}
 	}

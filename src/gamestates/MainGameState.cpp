@@ -5,7 +5,7 @@
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
 	_selected = -1;
 	_maxBombs = 60;
-	_dialogPos = v2(10, 400);
+	
 }
 
 
@@ -17,8 +17,8 @@ MainGameState::~MainGameState() {
 // init
 // -------------------------------------------------------
 void MainGameState::init() {
-	_hud.init(0, "xscale");
-	ds::assets::load("hud", &_hud, ds::CVT_HUD);
+	
+	ds::assets::load("hud", _context->hud, ds::CVT_HUD);
 }
 
 // -------------------------------------------------------
@@ -78,16 +78,13 @@ void MainGameState::activate() {
 	fillBombs();
 	_context->marked = 0;
 	_context->markedCorrectly = 0;
-	_hud.setTimer(0, 0, 0);
+	_context->hud->setTimer(0, 0, 0);
 }
 
 // -------------------------------------------------------
 // deactivate
 // -------------------------------------------------------
 void MainGameState::deactivate() {
-	ds::GameTimer *timer = _hud.getTimer(0);
-	_context->playedSeconds = timer->getSeconds();
-	_context->playedMinutes = timer->getMinutes();
 }
 // -------------------------------------------------------
 // open empty tiles
@@ -138,7 +135,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			_hud.setCounterValue(0, left);
+			_context->hud->setCounterValue(0, left);
 		}
 		// left button
 		else {
@@ -160,7 +157,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 // Update
 // -------------------------------------------------------
 int MainGameState::update(float dt) {
-	_hud.update(dt);
+	_context->hud->update(dt);
 	return 0;
 }
 
@@ -185,8 +182,8 @@ void MainGameState::render() {
 			ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 40, 40, 44)));
 		}
 	}
-	_hud.render();
-	_hud.showDialog(&_dialogPos);
+	_context->hud->render();
+	
 }
 
 // -------------------------------------------------------

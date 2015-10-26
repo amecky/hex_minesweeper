@@ -13,7 +13,10 @@ Minesweeper::Minesweeper() : ds::BaseApp() {
 	_settings.screenWidth = 1024;
 	_settings.screenHeight = 768;
 	_settings.clearColor = ds::Color(0,0,0,255);	
+	_settings.showEditor = true;
 	_context = new GameContext;
+	_context->hud = &hud;
+	_context->mode = 0;
 }
 
 Minesweeper::~Minesweeper() {
@@ -29,6 +32,7 @@ bool Minesweeper::loadContent() {
 	ds::sprites::initializeTextSystem(texture, "xscale");
 	gui::initialize();
 	initializeGUI();
+	initializeHUD(0, "xscale");
 	stateMachine->add(new MainGameState(_context));
 	stateMachine->add(new GameOverState(&gui,_context));
 	stateMachine->add(new MainMenuState(&gui, _context));
