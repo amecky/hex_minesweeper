@@ -22,7 +22,7 @@ void SpriteGroup::render() {
 void SpriteGroup::load() {
 	IdString str = ds::string::murmur_hash(_name);
 	char buffer[128];
-	sprintf_s(buffer, 128, "data\\%d", str);
+	sprintf_s(buffer, 128, "data\\%u", str);
 	LOG << "loading binary file: " << buffer;
 	FILE* f = fopen(buffer, "rb");
 	if (f) {
@@ -43,9 +43,9 @@ void SpriteGroup::load() {
 void SpriteGroup::save() {
 	IdString str = ds::string::murmur_hash(_name);
 	char buffer[128];
-	sprintf_s(buffer, 128, "data\\%d", str);
+	sprintf_s(buffer, 128, "data\\%u", str);
 	LOG << "saving binary file: " << buffer;
-	FILE* f = fopen(buffer, "rb");
+	FILE* f = fopen(buffer, "wb");
 	if (f) {
 		int nr = _sprites.size();
 		fwrite(&nr, sizeof(int), 1, f);
