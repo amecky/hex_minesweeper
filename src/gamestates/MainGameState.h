@@ -6,6 +6,7 @@
 #include "..\HexGrid.h"
 #include <vector>
 #include <objects\HUD.h>
+#include "..\SpriteGroup.h"
 
 class MainGameState : public ds::GameState {
 
@@ -30,6 +31,7 @@ private:
 	//ds::HUD _hud;
 	int _width;
 	int _height;
+	SpriteGroup _spriteGroup;
 	
 };
 

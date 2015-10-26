@@ -2,7 +2,7 @@
 #include <sprites\SpriteBatch.h>
 #include <Vector.h>
 
-MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
+MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) , _spriteGroup("smallBox") {
 	_selected = -1;
 	_maxBombs = 60;
 	
@@ -19,6 +19,7 @@ MainGameState::~MainGameState() {
 void MainGameState::init() {
 	
 	ds::assets::load("hud", _context->hud, ds::CVT_HUD);
+	_spriteGroup.load();
 }
 
 // -------------------------------------------------------
@@ -166,6 +167,7 @@ int MainGameState::update(float dt) {
 // -------------------------------------------------------
 void MainGameState::render() {
 	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
+	_spriteGroup.render();
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
 		// marked
@@ -183,7 +185,7 @@ void MainGameState::render() {
 		}
 	}
 	_context->hud->render();
-	
+	_spriteGroup.showDialog();
 }
 
 // -------------------------------------------------------

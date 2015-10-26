@@ -230,6 +230,7 @@
     <ClCompile Include="src\HexGrid.cpp" />
     <ClCompile Include="src\Highscores.cpp" />
     <ClCompile Include="src\Minesweeper.cpp" />
+    <ClCompile Include="src\SpriteGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="src\HexGrid.h" />
     <ClInclude Include="src\Highscores.h" />
     <ClInclude Include="src\Minesweeper.h" />
+    <ClInclude Include="src\SpriteGroup.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="content\dialogs\game_over.json" />
