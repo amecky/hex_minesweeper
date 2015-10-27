@@ -17,8 +17,8 @@
 	"id" : "14" , "pos" : "520,310" , "text" : "01:30" , "scale" : "2"
 }
 "button" { 
-	"id" : "1" , "pos" : "100,220" , "text" : "Restart" , "rect" : "368,0,404,64" 
+	"id" : "1" , "pos" : "100,220" , "text" : "Restart" , "rect" : "368,0,302,52" 
 }
 "button" { 
-	"id" : "2" , "pos" : "100,120" , "text" : "Main Menu" , "rect" : "300,0,404,64" 
+	"id" : "2" , "pos" : "100,120" , "text" : "Main Menu" , "rect" : "300,0,302,52" 
 }

@@ -2,7 +2,7 @@
 #include <sprites\SpriteBatch.h>
 #include <Vector.h>
 
-MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) , _spriteGroup("smallBox") {
+MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
 	_selected = -1;
 	_maxBombs = 60;
 	
@@ -19,7 +19,9 @@ MainGameState::~MainGameState() {
 void MainGameState::init() {
 	
 	ds::assets::load("hud", _context->hud, ds::CVT_HUD);
-	_spriteGroup.load();
+	_easyGroup = ds::renderer::getSpriteGroup("easy_Group");
+	_mediumGroup = ds::renderer::getSpriteGroup("medium_Group");
+	_hardGroup = ds::renderer::getSpriteGroup("hard_Group");
 }
 
 // -------------------------------------------------------
@@ -166,8 +168,17 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
-	_spriteGroup.render();
+	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
+	if (_context->mode == 0) {
+		_easyGroup->render();
+	}
+	else if (_context->mode == 1) {
+		_mediumGroup->render();
+	}
+	if (_context->mode == 2) {
+		_hardGroup->render();
+	}
+
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
 		// marked
@@ -185,7 +196,17 @@ void MainGameState::render() {
 		}
 	}
 	_context->hud->render();
-	_spriteGroup.showDialog();
+	/*
+	if (_context->mode == 0) {
+		_easyGroup->showDialog();
+	}
+	else if (_context->mode == 1) {
+		_mediumGroup->showDialog();
+	}
+	if (_context->mode == 2) {
+		_hardGroup->showDialog();
+	}
+	*/
 }
 
 // -------------------------------------------------------
