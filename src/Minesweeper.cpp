@@ -73,3 +73,10 @@ void Minesweeper::onGUIButton(ds::DialogID dlgID, int button) {
 		shutdown();
 	}
 }
+
+
+void Minesweeper::OnChar(char ascii, unsigned int keyState) {
+	if (ascii == 'd') {
+		gui::debugWindow();
+	}
+}

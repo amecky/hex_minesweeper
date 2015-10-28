@@ -168,7 +168,6 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
 	if (_context->mode == 0) {
 		_easyGroup->render();
 	}
@@ -196,17 +195,6 @@ void MainGameState::render() {
 		}
 	}
 	_context->hud->render();
-	/*
-	if (_context->mode == 0) {
-		_easyGroup->showDialog();
-	}
-	else if (_context->mode == 1) {
-		_mediumGroup->showDialog();
-	}
-	if (_context->mode == 2) {
-		_hardGroup->showDialog();
-	}
-	*/
 }
 
 // -------------------------------------------------------

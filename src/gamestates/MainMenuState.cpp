@@ -15,14 +15,14 @@ MainMenuState::~MainMenuState() {
 // activate
 // --------------------------------------------
 void MainMenuState::activate() {
-	_gui->activate("MainMenu");	
+	_gui->activate("Test");	
 }
 
 // --------------------------------------------
 // activate
 // --------------------------------------------
 void MainMenuState::deactivate() {
-	_gui->deactivate("MainMenu");
+	_gui->deactivate("Test");
 }
 
 // --------------------------------------------

@@ -10,9 +10,9 @@
 	"id" : "1" ,
 	"file" : "main_menu" 
 }
-"Credits" {
+"Test" {
 	"id" : "2" ,
-	"file" : "credits" 
+	"file" : "test_dialog" 
 }
 "Highscores" {
 	"id" : "3" ,

@@ -23,6 +23,7 @@ public:
 	void update(float dt);
 	void draw();
 	void onGUIButton(ds::DialogID dlgID, int button);
+	void OnChar(char ascii, unsigned int keyState);
 private:
 	GameContext* _context;
 };

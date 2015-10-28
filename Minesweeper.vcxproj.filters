@@ -73,6 +73,9 @@
     </None>
     <None Include="README.md" />
     <None Include="TODO.md" />
+    <None Include="content\dialogs\test_dialog.json">
+      <Filter>content\dialogs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Minesweeper.rc" />
