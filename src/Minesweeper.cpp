@@ -76,7 +76,7 @@ void Minesweeper::onGUIButton(ds::DialogID dlgID, int button) {
 
 
 void Minesweeper::OnChar(char ascii, unsigned int keyState) {
-	if (ascii == 'd') {
-		gui::debugWindow();
-	}
+	//if (ascii == 'd') {
+		//gui::debugWindow();
+	//}
 }
