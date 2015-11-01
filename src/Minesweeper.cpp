@@ -6,6 +6,7 @@
 #include "gamestates\GameOverState.h"
 #include "gamestates\MainMenuState.h"
 #include "gamestates\HighscoreState.h"
+#include "gamestates\TestGameState.h"
 
 ds::BaseApp *app = new Minesweeper(); 
 
@@ -37,6 +38,7 @@ bool Minesweeper::loadContent() {
 	stateMachine->add(new GameOverState(&gui,_context));
 	stateMachine->add(new MainMenuState(&gui, _context));
 	stateMachine->add(new HighscoreState(&gui, _context));
+	stateMachine->add(new TestGameState(&gui, _context));
 	stateMachine->connect("GameOver", 1, "MainGame");
 	stateMachine->connect("GameOver", 2, "MainMenu");
 	stateMachine->connect("MainGame", 1, "GameOver");
@@ -51,7 +53,7 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	stateMachine->activate("MainMenu");
+	stateMachine->activate("TestState");
 }
 
 

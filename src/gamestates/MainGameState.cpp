@@ -5,7 +5,8 @@
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
 	_selected = -1;
 	_maxBombs = 60;
-	
+	_showBombs = false;
+	_endTimer = 0.0f;
 }
 
 
@@ -82,6 +83,8 @@ void MainGameState::activate() {
 	_context->marked = 0;
 	_context->markedCorrectly = 0;
 	_context->hud->setTimer(0, 0, 0);
+	_showBombs = false;
+	_endTimer = 0.0f;
 }
 
 // -------------------------------------------------------
@@ -145,7 +148,9 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 			GridItem& item = _grid.get(h);
 			if (item.state == 0) {
 				if (item.bomb) {
-					return 1;
+					//return 1;
+					_endTimer = 0.0f;
+					_showBombs = true;
 				}
 				item.state = 1;
 				if (item.adjacentBombs == 0) {
@@ -161,6 +166,12 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 // -------------------------------------------------------
 int MainGameState::update(float dt) {
 	_context->hud->update(dt);
+	if (_showBombs) {
+		_endTimer += dt;
+		if (_endTimer > 2.0f) {
+			return 1;
+		}
+	}
 	return 0;
 }
 
@@ -180,19 +191,25 @@ void MainGameState::render() {
 
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
-		// marked
-		if (item.state == 2) {
+		if (_showBombs && item.bomb) {
 			ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 120, 40, 44)));
 		}
-		// opened
-		else if (item.state == 1) {
-			int offset = item.adjacentBombs * 40;
-			ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(50, offset, 40, 44)));
-		}
-		// closed
 		else {
-			ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 40, 40, 44)));
+			// marked
+			if (item.state == 2) {
+				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 120, 40, 44)));
+			}
+			// opened
+			else if (item.state == 1) {
+				int offset = item.adjacentBombs * 40;
+				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(50, offset, 40, 44)));
+			}
+			// closed
+			else {
+				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 40, 40, 44)));
+			}
 		}
+		
 	}
 	_context->hud->render();
 }

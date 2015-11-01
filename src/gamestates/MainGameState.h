@@ -33,6 +33,8 @@ private:
 	ds::SpriteGroup* _easyGroup;
 	ds::SpriteGroup* _mediumGroup;
 	ds::SpriteGroup* _hardGroup;
+	bool _showBombs;
+	float _endTimer;
 	
 };
 

@@ -1,7 +1,8 @@
 # TODO
 
-- [ ] find correct origin for easy and medium
-- [ ] Highscores
+## 31.10.2015
+- [x] find correct origin for easy and medium
+- [x] Highscores
 
 ## 23.10.2015
 
