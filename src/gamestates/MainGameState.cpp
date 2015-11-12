@@ -83,6 +83,7 @@ void MainGameState::activate() {
 	_context->markedCorrectly = 0;
 	_context->hud->activate();
 	_context->hud->resetTimer(3);
+	_context->hud->setNumber(2, _maxBombs);
 	_showBombs = false;
 	_endTimer = 0.0f;
 }
@@ -181,6 +182,9 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
+
+	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
+
 	if (_context->mode == 0) {
 		_easyGroup->render();
 	}
@@ -213,7 +217,7 @@ void MainGameState::render() {
 		}
 		
 	}
-	_context->hud->render();
+	//_context->hud->render();
 }
 
 // -------------------------------------------------------

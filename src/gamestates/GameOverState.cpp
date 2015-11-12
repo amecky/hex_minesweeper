@@ -25,17 +25,26 @@ void GameOverState::activate() {
 	ds::GameTimer* timer = _context->hud->getTimer(3);
 	ds::string::formatTime(timer->getMinutes(), timer->getSeconds(), str);
 	dlg->updateText(14, str);
-
+	int state = 1;
 	if (_context->markedCorrectly == GAME_MODES[_context->mode].maxBombs) {
+		state = 2;
 		dlg->updateImage(11, 140, 660, ds::Rect(450, 0, 470, 84));
 		if (scoring::hasScored(timer->getSeconds(), timer->getMinutes(), _context->mode, _context->highscore)) {
-			LOG << "NEW HIGHSCORE!!!";
+			state = 3;
 		}
 	}
 	else {
 		dlg->updateImage(11, 140, 660, ds::Rect(450, 470, 450, 84));
 	}
-
+	if (state == 3) {
+		dlg->updateText(19, "Congratulations - New highscore");
+	}
+	else if ( state == 2) {
+		dlg->updateText(19, "Try to be faster next time");
+	}
+	else {
+		dlg->updateText(19, "You have unveiled a bomb");
+	}
 	
 }
 
