@@ -19,7 +19,6 @@ MainGameState::~MainGameState() {
 // -------------------------------------------------------
 void MainGameState::init() {
 	
-	ds::assets::load("hud", _context->hud, ds::CVT_HUD);
 	_easyGroup = ds::renderer::getSpriteGroup("easy_Group");
 	_mediumGroup = ds::renderer::getSpriteGroup("medium_Group");
 	_hardGroup = ds::renderer::getSpriteGroup("hard_Group");
@@ -82,7 +81,8 @@ void MainGameState::activate() {
 	fillBombs();
 	_context->marked = 0;
 	_context->markedCorrectly = 0;
-	_context->hud->setTimer(0, 0, 0);
+	_context->hud->activate();
+	_context->hud->resetTimer(3);
 	_showBombs = false;
 	_endTimer = 0.0f;
 }
@@ -91,6 +91,7 @@ void MainGameState::activate() {
 // deactivate
 // -------------------------------------------------------
 void MainGameState::deactivate() {
+	_context->hud->deactivate();
 }
 // -------------------------------------------------------
 // open empty tiles
@@ -141,7 +142,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			_context->hud->setCounterValue(0, left);
+			_context->hud->setNumber(2, left);
 		}
 		// left button
 		else {
@@ -151,6 +152,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					//return 1;
 					_endTimer = 0.0f;
 					_showBombs = true;
+					_context->hud->deactivate();
 				}
 				item.state = 1;
 				if (item.adjacentBombs == 0) {
@@ -165,7 +167,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 // Update
 // -------------------------------------------------------
 int MainGameState::update(float dt) {
-	_context->hud->update(dt);
+	//_context->hud->update(dt);
 	if (_showBombs) {
 		_endTimer += dt;
 		if (_endTimer > 2.0f) {

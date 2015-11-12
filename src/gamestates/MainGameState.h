@@ -5,7 +5,6 @@
 #include "..\GameContext.h"
 #include "..\HexGrid.h"
 #include <vector>
-#include <objects\HUD.h>
 #include <sprites\SpriteGroup.h>
 
 class MainGameState : public ds::GameState {
