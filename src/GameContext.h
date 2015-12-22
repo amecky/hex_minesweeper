@@ -33,6 +33,7 @@ struct GameContext {
 	int marked;
 	int markedCorrectly;
 	Highscore highscore;
+	HighscoreService<PlayedTime, 3> highscore_service;
 	ds::GUIDialog* hud;
 
 	void reset() {

@@ -18,10 +18,13 @@ void HighscoreState::activate() {
 	_gui->activate("Highscores");	
 	
 	ds::GUIDialog* dlg = _gui->get("Highscores");
-	for (int i = 0; i < 3; ++i) {
-		PlayedTime t1 = _context->highscore.times[i];
+	PlayedTime entries[3];
+	int cnt = _context->highscore_service.get(entries, 3);
+	for (int i = 0; i < cnt; ++i ) {
+	//for (int i = 0; i < 3; ++i) {
+		//PlayedTime t1 = _context->highscore.times[i];
 		std::string str;
-		ds::string::formatTime(t1.minutes, t1.seconds, str);
+		ds::string::formatTime(entries[i].minutes, entries[i].seconds, str);
 		dlg->updateText(20 + i, str);
 	}
 }
