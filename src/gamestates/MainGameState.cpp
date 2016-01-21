@@ -83,6 +83,7 @@ void MainGameState::activate() {
 	_context->markedCorrectly = 0;
 	_context->hud->activate();
 	_context->hud->resetTimer(3);
+	_context->hud->startTimer(3);
 	_context->hud->setNumber(2, _maxBombs);
 	_showBombs = false;
 	_endTimer = 0.0f;
@@ -168,7 +169,9 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 // Update
 // -------------------------------------------------------
 int MainGameState::update(float dt) {
-	//_context->hud->update(dt);
+	Hex h = _grid.convertFromMousePos();
+	_grid.update(dt);
+	//_context->hud->tick(dt);
 	if (_showBombs) {
 		_endTimer += dt;
 		if (_endTimer > 2.0f) {
@@ -183,7 +186,7 @@ int MainGameState::update(float dt) {
 // -------------------------------------------------------
 void MainGameState::render() {
 
-	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
+	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
 
 	if (_context->mode == 0) {
 		_easyGroup->render();
@@ -212,7 +215,7 @@ void MainGameState::render() {
 			}
 			// closed
 			else {
-				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 40, 40, 44)));
+				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 40, 40, 44)),0.0f,item.scale.x,item.scale.y);
 			}
 		}
 		

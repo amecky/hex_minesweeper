@@ -1,24 +1,81 @@
-"image" {
-	"id" : "0" , "pos" : "200,660" , "rect" : "650,0,560,104" 
+"image" { 
+    "id" : "0" , 
+    "pos" : "200,660" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "300,340,640,72"    
 }
-"text" {
-	"id" : "2" , "pos" : "374,480" , "text" : "Easy:" , "centered" : "false"
+"image" { 
+    "id" : "23" , 
+    "pos" : "450,410" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "rect" : "760,160,320,240"    
 }
-"text" {
-	"id" : "3" , "pos" : "334,410" , "text" : "Medium:" , "centered" : "false"
+"image" { 
+    "id" : "26" , 
+    "pos" : "660,410" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "rect" : "760,160,100,240"    
 }
-"text" {
-	"id" : "4" , "pos" : "374,340" , "text" : "Hard:" , "centered" : "false"
+"text" { 
+    "id" : "2" , 
+    "pos" : "440,480" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "text" : "Easy:"    
 }
-"text" {
-	"id" : "20" , "pos" : "540,480" , "text" : "00:52" , "centered" : "false"
+"text" { 
+    "id" : "3" , 
+    "pos" : "420,410" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "text" : "Medium:"    
 }
-"text" {
-	"id" : "21" , "pos" : "540,410" , "text" : "01:32" , "centered" : "false"
+"text" { 
+    "id" : "4" , 
+    "pos" : "440,340" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "text" : "Hard:"    
 }
-"text" {
-	"id" : "22" , "pos" : "540,340" , "text" : "03:42" , "centered" : "false"
+"text" { 
+    "id" : "20" , 
+    "pos" : "580,480" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "text" : "00:46"    
+}
+"text" { 
+    "id" : "21" , 
+    "pos" : "580,410" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "text" : "99:99"    
+}
+"text" { 
+    "id" : "22" , 
+    "pos" : "580,340" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "false" , 
+    "scale" : "1.00" , 
+    "text" : "99:99"    
 }
 "button" { 
-	"id" : "1" , "pos" : "100,120" , "text" : "Main Menu" , "rect" : "300,0,302,52" 
+    "id" : "1" , 
+    "pos" : "100,120" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "300,0,302,52" , 
+    "text" : "Main Menu"    
 }

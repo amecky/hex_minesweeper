@@ -1,23 +1,53 @@
-"dialog" { 
-	"name" : "MainMenu" 
-}
-"image" {
-	"id" : "10" , "pos" : "140,660" , "rect" : "540,0,914,100" 
-}
-"button" { 
-	"id" : "1" , "pos" : "400,500" , "text" : "Easy" , "rect" : "368,0,302,52" 
-}
-"button" { 
-	"id" : "2" , "pos" : "400,400" , "text" : "Medium" , "rect" : "368,0,302,52" 
+"image" { 
+    "id" : "10" , 
+    "pos" : "140,660" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "430,0,1004,74"    
 }
 "button" { 
-	"id" : "3" , "pos" : "400,300" , "text" : "Hard" , "rect" : "368,0,302,52" 
+    "id" : "1" , 
+    "pos" : "400,500" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "368,0,302,52" , 
+    "text" : "Easy"    
 }
 "button" { 
-	"id" : "4" , "pos" : "400,100" , "text" : "Exit" , "rect" : "300,0,302,52" 
+    "id" : "2" , 
+    "pos" : "400,400" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "368,0,302,52" , 
+    "text" : "Medium"    
 }
 "button" { 
-	"id" : "5" , "pos" : "400,200" , "text" : "Highscores" , "rect" : "368,0,302,52" 
+    "id" : "3" , 
+    "pos" : "400,300" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "368,0,302,52" , 
+    "text" : "Hard"    
 }
-
-
+"button" { 
+    "id" : "4" , 
+    "pos" : "400,100" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "300,0,302,52" , 
+    "text" : "Exit"    
+}
+"button" { 
+    "id" : "5" , 
+    "pos" : "400,200" , 
+    "color" : "255,255,255,255" , 
+    "centered" : "true" , 
+    "scale" : "1.00" , 
+    "rect" : "368,0,302,52" , 
+    "text" : "Highscores"    
+}

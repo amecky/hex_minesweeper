@@ -73,7 +73,7 @@ int GameOverState::onGUIButton(ds::DialogID dlgID, int button) {
 // render
 // --------------------------------------------
 void GameOverState::render() {
-	ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
+	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
 }
 
 

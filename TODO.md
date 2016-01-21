@@ -1,6 +1,10 @@
 # TODO
+- [ ] fix new highscore service
 - [ ] use fade to grey shader here
 - [ ] add some star animations when new highscores
+
+## 24.12.2015
+- [x] mouse over highlight
 
 ## 12.11.2015
 - [x] game over -> check if it is new highscore and then show it

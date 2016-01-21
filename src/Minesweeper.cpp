@@ -54,7 +54,7 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	stateMachine->activate("Intro");
+	stateMachine->activate("MainMenu");
 }
 
 

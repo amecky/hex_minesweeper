@@ -34,6 +34,6 @@ private:
 	ds::SpriteGroup* _hardGroup;
 	bool _showBombs;
 	float _endTimer;
-	
+	Hex _current;
 };
 

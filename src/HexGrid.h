@@ -9,6 +9,9 @@ struct GridItem {
 	bool bomb;
 	int adjacentBombs;
 	int state; // 0 = closed / 1 = open / 2 = marked
+	bool wiggle;
+	float timer;
+	v2 scale;
 };
 
 class HexGrid {
@@ -19,6 +22,7 @@ public:
 	void resize(int qMax, int rMax);
 	void fill();
 	const GridItem& get(int index) const;
+	GridItem& get(int index);
 	const GridItem& get(const Hex& hex) const;
 	GridItem& get(const Hex& hex);
 	const int size() const;
@@ -29,9 +33,12 @@ public:
 	int neighbors(const Hex& hex,Hex* ret);
 	Hex convertFromMousePos();
 	void setOrigin(const v2& origin);
+	void update(float dt);
+	int getIndex(const Hex& h)const;
 private:
 	int _qMax;
 	int _rMax;
 	GridItem* _items;
 	Layout _layout;
+	int _hover;
 };

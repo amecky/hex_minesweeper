@@ -38,10 +38,14 @@ void HexGrid::fill() {
 			item.state = 0;
 			item.bomb = false;
 			item.adjacentBombs = 0;
+			item.wiggle = false;
+			item.timer = 0.0f;
+			item.scale = v2(1, 1);
 			int idx = (q + q_offset) + r * _qMax;
 			_items[idx] = item;
 		}
 	}
+	_hover = -1;
 }
 
 const GridItem& HexGrid::get(const Hex& hex) const {
@@ -78,6 +82,12 @@ const GridItem& HexGrid::get(int index) const {
 	return _items[index];
 }
 
+// -------------------------------------------------------
+// get
+// -------------------------------------------------------
+GridItem& HexGrid::get(int index) {
+	return _items[index];
+}
 // -------------------------------------------------------
 // size
 // -------------------------------------------------------
@@ -135,4 +145,46 @@ void HexGrid::markAsBomb(const Hex& hex) {
 
 void HexGrid::setOrigin(const v2& origin) {
 	_layout.origin = origin;
+}
+
+// -------------------------------------------------------
+// get index
+// -------------------------------------------------------
+int HexGrid::getIndex(const Hex& hex) const {
+	int q_offset = hex.r >> 1;
+	return (hex.q + q_offset) + hex.r * _qMax;
+}
+
+// -------------------------------------------------------
+// update
+// -------------------------------------------------------
+void HexGrid::update(float dt) {
+	// scaling based on item state
+	for (int i = 0; i < size(); ++i) {
+		GridItem& item = get(i);
+		if (item.wiggle) {
+			item.timer += dt;
+			float norm = item.timer / 0.4f;
+			item.scale.x = 0.8f + sin(item.timer * 5.0f) * 0.2f;
+			item.scale.y = 0.8f + sin(item.timer * 5.0f) * 0.2f;
+			if (norm >= 1.0f) {
+				item.wiggle = false;
+				item.scale = v2(1, 1);
+			}
+		}
+	}
+
+	// hover
+	Hex h = convertFromMousePos();
+	if (isValid(h)) {
+		int current = getIndex(h);
+		if (current != _hover) {
+			_hover = current;
+			GridItem& item = get(h);
+			if (!item.wiggle) {
+				item.wiggle = true;
+				item.timer = 0.0f;
+			}
+		}
+	}
 }

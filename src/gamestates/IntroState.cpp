@@ -13,14 +13,15 @@ IntroState::IntroState(GameContext* context) : ds::GameState("Intro"), _context(
 	settings.startScale = 1.0f;
 	settings.endScale = 0.2f;
 	settings.ttl = 3.0f;
-	settings.velocity = 100.0f;
-	settings.velocityVariance = 30.0f;
+	settings.velocity = 60.0f;
+	settings.velocityVariance = 20.0f;
 	settings.warmupTimer = 2.0f;
 	_effect = new ds::IntroEffect(settings);
 }
 
 
 IntroState::~IntroState() {
+	delete _effect;
 }
 
 // --------------------------------------------
@@ -28,13 +29,15 @@ IntroState::~IntroState() {
 // --------------------------------------------
 void IntroState::activate() {
 	_timer = 0.0f;
-	_effect->start(512, 384, ds::Rect(870, 160, 330, 140), 33, 14, 1.0f);
+	_effect->start(512, 384, ds::Rect(0, 0, 512, 210), 64, 42, 1.0f, 512.0f);
+	ds::sprites::setTexture(1);
 }
 
 // --------------------------------------------
 // activate
 // --------------------------------------------
 void IntroState::deactivate() {
+	ds::sprites::setTexture(0);
 }
 
 // --------------------------------------------
@@ -43,7 +46,7 @@ void IntroState::deactivate() {
 int IntroState::update(float dt) {
 	_effect->update(dt);
 	_timer += dt;
-	if (_timer > 5.0f) {
+	if (_timer > 6.0f) {
 		return 1;
 	}
 	// nothing to do
@@ -61,7 +64,7 @@ int IntroState::onGUIButton(ds::DialogID dlgID, int button) {
 // render
 // --------------------------------------------
 void IntroState::render() {
-	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(870, 160, 330, 140)),0.0f,2.0f,2.0f);
+	
 	_effect->render();
 }
 
