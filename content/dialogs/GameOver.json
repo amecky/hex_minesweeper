@@ -4,7 +4,7 @@ image {
     color : 255,255,255,255
     centered : true
     scale : 1
-    rect : 410,0,660,90
+    rect : 0,500,485,80
 }
 image { 
     id : 20
@@ -52,7 +52,7 @@ text {
     color : 255,255,255,255
     centered : true
     scale : 2
-    text : "15 / 32"
+    text : "0 / 32"
 }
 text { 
     id : 13
@@ -68,19 +68,19 @@ text {
     color : 255,255,255,255
     centered : true
     scale : 2
-    text : "01:30"
+    text : "00:00"
 }
 text { 
     id : 19
-    pos : 520,210
-    color : 255,255,255,255
+    pos : 520,590
+    color : 0,0,0,255
     centered : true
     scale : 1
-    text : "01:30"
+    text : "You have unveiled a bomb"
 }
 button { 
     id : 1
-    pos : 100,220
+    pos : 100,200
     color : 255,255,255,255
     centered : true
     scale : 1
