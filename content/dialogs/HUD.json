@@ -1,27 +1,32 @@
-numbers {
-	id : 2
-	length : 2
-	position : 120,700
-	color : 255,255,255,255
+image { 
+    id : 0
+    pos : 100,700
+    color : 255,255,255,255
+    centered : false
+    scale : 1
+    rect : 510,0,140,50
 }
-timer {
-	id : 3
-	position : 750,700
-	color : 255,255,255,255
-	scale : 1,1 
+image { 
+    id : 1
+    pos : 900,700
+    color : 255,255,255,255
+    centered : false
+    scale : 1
+    rect : 510,0,140,50
 }
-image {
-	id : 0
-	position : 800,705
-	color : 255,255,255,255
-	scale : 1,1
-	rect : 760,0,140,50
+numbers { 
+    id : 2
+    pos : 900,700
+    color : 255,255,255,255
+    centered : false
+    scale : 1
+    value : 0
+    length : 2
 }
-image {
-	id : 1
-	position : 140,705
-	color : 255,255,255,255
-	scale : 1,1
-	rect : 760,0,140,50
+timer { 
+    id : 3
+    pos : 100,700
+    color : 255,255,255,255
+    centered : true
+    scale : 1
 }
-
