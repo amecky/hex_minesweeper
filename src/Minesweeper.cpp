@@ -23,19 +23,19 @@ Minesweeper::~Minesweeper() {
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
-	_context->hud = gui.get("HUD");
-	stateMachine->add(new MainGameState(_context));
-	stateMachine->add(new GameOverState(&gui,_context));
-	stateMachine->add(new MainMenuState(&gui, _context));
-	stateMachine->add(new HighscoreState(&gui, _context));
-	stateMachine->add(new IntroState(_context));
-	stateMachine->connect("Intro", 1, "MainMenu");
-	stateMachine->connect("GameOver", 1, "MainGame");
-	stateMachine->connect("GameOver", 2, "MainMenu");
-	stateMachine->connect("MainGame", 1, "GameOver");
-	stateMachine->connect("MainMenu", 1, "MainGame");
-	stateMachine->connect("MainMenu", 5, "Highscores");
-	stateMachine->connect("Highscores", 1, "MainMenu");
+	_context->hud = gui->get("HUD");
+	addGameState(new MainGameState(_context));
+	addGameState(new GameOverState(gui, _context));
+	addGameState(new MainMenuState(gui, _context));
+	addGameState(new HighscoreState(gui, _context));
+	addGameState(new IntroState(_context));
+	connectGameStates("Intro", 1, "MainMenu");
+	connectGameStates("GameOver", 1, "MainGame");
+	connectGameStates("GameOver", 2, "MainMenu");
+	connectGameStates("MainGame", 1, "GameOver");
+	connectGameStates("MainMenu", 1, "MainGame");
+	connectGameStates("MainMenu", 5, "Highscores");
+	connectGameStates("Highscores", 1, "MainMenu");
 	if (!_context->highscore_service.load()) {
 		// add default scores
 		for (int i = 0; i < 3; ++i) {
@@ -54,7 +54,7 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	stateMachine->activate("MainMenu");
+	activate("MainMenu");
 }
 
 

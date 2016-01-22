@@ -1,30 +1,30 @@
 basic_settings {
-	name = "Stuff"
-	screen_width = 1024
-	screen_height = 768
-	clear_color = 220,220,220,255
-	full_screen = false
-	synched = true 
+	name : "Stuff"
+	screen_width : 1024
+	screen_height : 768
+	clear_color : 220,220,220,255
+	full_screen : false
+	synched : true 
 }		
 
 init_actions {
-	textures = "TextureArray,Logo" 
+	textures : "TextureArray,Logo" 
 	fonts {
 		xscale {
-			file = "xscale"
-			texture = "TextureArray"
+			file : "xscale"
+			texture : "TextureArray"
 		}
 	}
 	use_text_system {
-		font = "xscale"
-		texture = "TextureArray"
+		font : "xscale"
+		texture : "TextureArray"
 	}
-	load_dialogs = true 
+	load_dialogs : true 
 	initialize_imgui {
-		font = "xscale"
-		texture = "TextureArray"
+		font : "xscale"
+		texture : "TextureArray"
 	}
-	load_particles = false
-	load_sprite_templates = false
-	initialize_editor = true
+	load_particles : false
+	load_sprite_templates : false
+	initialize_editor : true
 }

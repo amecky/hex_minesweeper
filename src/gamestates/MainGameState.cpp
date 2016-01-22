@@ -71,7 +71,6 @@ void MainGameState::fillBombs() {
 // activate
 // -------------------------------------------------------
 void MainGameState::activate() {
-	LOG << "game mode: " << _context->mode;
 	const GameMode& mode = GAME_MODES[_context->mode];
 	_grid.resize(mode.width, mode.height);
 	_grid.setOrigin(mode.origin);
