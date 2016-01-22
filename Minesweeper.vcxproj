@@ -83,9 +83,9 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EmbedManifest>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\math;..\Diesel2D;C:\devtools\DirectX_SDK\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Diesel2D\Debug;C:\devtools\DirectX_SDK\Lib\x86;$(LibraryPath)</LibraryPath>
-    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\devtools\DirectX_SDK\Lib\x86;$(ReferencePath)</ReferencePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\math;..\Diesel2D;C:\devtools\DirectX\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Diesel2D\Debug;C:\devtools\DirectX\Lib\x86;$(LibraryPath)</LibraryPath>
+    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\devtools\DirectX\Lib\x86;$(ReferencePath)</ReferencePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\math;..\Diesel2D;C:\devtools\DirectX_SDK\Include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\Diesel2D\Release;C:\devtools\DirectX_SDK\Lib\x86;$(LibraryPath)</LibraryPath>
     <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\devtools\DirectX_SDK\Lib\x86;$(ReferencePath)</ReferencePath>
@@ -225,12 +225,12 @@
   <ItemGroup>
     <ClCompile Include="src\gamestates\GameOverState.cpp" />
     <ClCompile Include="src\gamestates\HighscoreState.cpp" />
+    <ClCompile Include="src\gamestates\IntroState.cpp" />
     <ClCompile Include="src\gamestates\MainGameState.cpp" />
     <ClCompile Include="src\gamestates\MainMenuState.cpp" />
     <ClCompile Include="src\HexGrid.cpp" />
     <ClCompile Include="src\Highscores.cpp" />
     <ClCompile Include="src\Minesweeper.cpp" />
-    <ClCompile Include="src\SpriteGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -238,19 +238,21 @@
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\gamestates\GameOverState.h" />
     <ClInclude Include="src\gamestates\HighscoreState.h" />
+    <ClInclude Include="src\gamestates\IntroState.h" />
     <ClInclude Include="src\gamestates\MainGameState.h" />
     <ClInclude Include="src\gamestates\MainMenuState.h" />
     <ClInclude Include="src\HexGrid.h" />
     <ClInclude Include="src\Highscores.h" />
     <ClInclude Include="src\Minesweeper.h" />
-    <ClInclude Include="src\SpriteGroup.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="content\dialogs\game_over.json" />
-    <None Include="content\dialogs\highscores.json" />
-    <None Include="content\dialogs\main_menu.json" />
+    <None Include="content\dialogs\GameOver.json" />
+    <None Include="content\dialogs\Highscores.json" />
+    <None Include="content\dialogs\HUD.json" />
+    <None Include="content\dialogs\MainMenu.json" />
+    <None Include="content\dialogs\test_dialog.json" />
+    <None Include="content\engine_settings.json" />
     <None Include="content\resources\gui.json" />
-    <None Include="content\resources\hud.json" />
     <None Include="content\resources\xscale.json" />
     <None Include="Minesweeper.manifest" />
     <None Include="README.md" />

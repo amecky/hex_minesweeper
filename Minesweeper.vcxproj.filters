@@ -30,6 +30,9 @@
       <Filter>states</Filter>
     </ClCompile>
     <ClCompile Include="src\Highscores.cpp" />
+    <ClCompile Include="src\gamestates\IntroState.cpp">
+      <Filter>states</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -50,22 +53,13 @@
       <Filter>states</Filter>
     </ClInclude>
     <ClInclude Include="src\Highscores.h" />
+    <ClInclude Include="src\gamestates\IntroState.h">
+      <Filter>states</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />
-    <None Include="content\dialogs\game_over.json">
-      <Filter>content\dialogs</Filter>
-    </None>
-    <None Include="content\dialogs\highscores.json">
-      <Filter>content\dialogs</Filter>
-    </None>
-    <None Include="content\dialogs\main_menu.json">
-      <Filter>content\dialogs</Filter>
-    </None>
     <None Include="content\resources\gui.json">
-      <Filter>content\resources</Filter>
-    </None>
-    <None Include="content\resources\hud.json">
       <Filter>content\resources</Filter>
     </None>
     <None Include="content\resources\xscale.json">
@@ -74,6 +68,21 @@
     <None Include="README.md" />
     <None Include="TODO.md" />
     <None Include="content\dialogs\test_dialog.json">
+      <Filter>content\dialogs</Filter>
+    </None>
+    <None Include="content\engine_settings.json">
+      <Filter>content</Filter>
+    </None>
+    <None Include="content\dialogs\GameOver.json">
+      <Filter>content\dialogs</Filter>
+    </None>
+    <None Include="content\dialogs\Highscores.json">
+      <Filter>content\dialogs</Filter>
+    </None>
+    <None Include="content\dialogs\MainMenu.json">
+      <Filter>content\dialogs</Filter>
+    </None>
+    <None Include="content\dialogs\HUD.json">
       <Filter>content\dialogs</Filter>
     </None>
   </ItemGroup>
