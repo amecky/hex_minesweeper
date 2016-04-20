@@ -3,10 +3,12 @@
 #include <resources\ResourceContainer.h>
 
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
+	_sprites = ds::res::getSpriteBuffer(8);
 	_selected = -1;
 	_maxBombs = 60;
 	_showBombs = false;
 	_endTimer = 0.0f;
+	_context->mode = 1;
 }
 
 
@@ -18,7 +20,7 @@ MainGameState::~MainGameState() {
 // init
 // -------------------------------------------------------
 void MainGameState::init() {
-	_sprites = ds::res::getSpriteBuffer(8);
+	
 	//_easyGroup = ds::renderer::getSpriteGroup("easy_Group");
 	//_mediumGroup = ds::renderer::getSpriteGroup("medium_Group");
 	//_hardGroup = ds::renderer::getSpriteGroup("hard_Group");

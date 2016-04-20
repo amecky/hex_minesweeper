@@ -85,6 +85,9 @@
     <None Include="content\dialogs\HUD.json">
       <Filter>content\dialogs</Filter>
     </None>
+    <None Include="content\resources.json">
+      <Filter>content</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Minesweeper.rc" />

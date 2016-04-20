@@ -7,24 +7,3 @@ basic_settings {
 	synched : true 
 }		
 
-init_actions {
-	textures : "TextureArray,Logo" 
-	fonts {
-		xscale {
-			file : "xscale"
-			texture : "TextureArray"
-		}
-	}
-	use_text_system {
-		font : "xscale"
-		texture : "TextureArray"
-	}
-	load_dialogs : true 
-	initialize_imgui {
-		font : "xscale"
-		texture : "TextureArray"
-	}
-	load_particles : false
-	load_sprite_templates : false
-	initialize_editor : true
-}
