@@ -1,7 +1,7 @@
 #include "Minesweeper.h"
 #include "utils\Log.h"
-#include <sprites\SpriteBatch.h>
-#include <base\GameStateMachine.h>
+//#include <sprites\SpriteBatch.h>
+#include <gamestates\GameStateMachine.h>
 #include "gamestates\MainGameState.h"
 #include "gamestates\GameOverState.h"
 #include "gamestates\MainMenuState.h"
@@ -23,19 +23,19 @@ Minesweeper::~Minesweeper() {
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
-	_context->hud = gui->get("HUD");
+	//_context->hud = gui->get("HUD");
 	addGameState(new MainGameState(_context));
-	addGameState(new GameOverState(gui, _context));
-	addGameState(new MainMenuState(gui, _context));
-	addGameState(new HighscoreState(gui, _context));
-	addGameState(new IntroState(_context));
-	connectGameStates("Intro", 1, "MainMenu");
-	connectGameStates("GameOver", 1, "MainGame");
-	connectGameStates("GameOver", 2, "MainMenu");
-	connectGameStates("MainGame", 1, "GameOver");
-	connectGameStates("MainMenu", 1, "MainGame");
-	connectGameStates("MainMenu", 5, "Highscores");
-	connectGameStates("Highscores", 1, "MainMenu");
+	//addGameState(new GameOverState(gui, _context));
+	//addGameState(new MainMenuState(gui, _context));
+	//addGameState(new HighscoreState(gui, _context));
+	//addGameState(new IntroState(_context));
+	//connectGameStates("Intro", 1, "MainMenu");
+	//connectGameStates("GameOver", 1, "MainGame");
+	//connectGameStates("GameOver", 2, "MainMenu");
+	//connectGameStates("MainGame", 1, "GameOver");
+	//connectGameStates("MainMenu", 1, "MainGame");
+	//connectGameStates("MainMenu", 5, "Highscores");
+	//connectGameStates("Highscores", 1, "MainMenu");
 	if (!_context->highscore_service.load()) {
 		// add default scores
 		for (int i = 0; i < 3; ++i) {
@@ -54,7 +54,7 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	activate("Intro");
+	activate("MainGameState");
 }
 
 
@@ -67,19 +67,20 @@ void Minesweeper::update(float dt) {
 // -------------------------------------------------------
 // Draw
 // -------------------------------------------------------
-void Minesweeper::draw() {
+void Minesweeper::render() {
 	
 }
 
 // -------------------------------------------------------
 // on GUI button
 // -------------------------------------------------------
+/*
 void Minesweeper::onGUIButton(ds::DialogID dlgID, int button) {
 	if (dlgID == 2 && button == 4) {
 		shutdown();
 	}
 }
-
+*/
 // -------------------------------------------------------
 // on char
 // -------------------------------------------------------

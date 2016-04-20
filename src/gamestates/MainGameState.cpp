@@ -1,6 +1,6 @@
 #include "MainGameState.h"
-#include <sprites\SpriteBatch.h>
 #include <Vector.h>
+#include <resources\ResourceContainer.h>
 
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
 	_selected = -1;
@@ -18,10 +18,10 @@ MainGameState::~MainGameState() {
 // init
 // -------------------------------------------------------
 void MainGameState::init() {
-	
-	_easyGroup = ds::renderer::getSpriteGroup("easy_Group");
-	_mediumGroup = ds::renderer::getSpriteGroup("medium_Group");
-	_hardGroup = ds::renderer::getSpriteGroup("hard_Group");
+	_sprites = ds::res::getSpriteBuffer(8);
+	//_easyGroup = ds::renderer::getSpriteGroup("easy_Group");
+	//_mediumGroup = ds::renderer::getSpriteGroup("medium_Group");
+	//_hardGroup = ds::renderer::getSpriteGroup("hard_Group");
 }
 
 // -------------------------------------------------------
@@ -39,7 +39,7 @@ void MainGameState::fillBombs() {
 		}
 	}
 	for (int i = 0; i < total; ++i) {
-		int idx = ds::math::random(0, total - 1);
+		int idx = math::random(0, total - 1);
 		Hex t = temp[i];
 		temp[i] = temp[idx];
 		temp[idx] = t;
@@ -80,10 +80,10 @@ void MainGameState::activate() {
 	fillBombs();
 	_context->marked = 0;
 	_context->markedCorrectly = 0;
-	_context->hud->activate();
-	_context->hud->resetTimer(3);
-	_context->hud->startTimer(3);
-	_context->hud->setNumber(2, _maxBombs);
+	//_context->hud->activate();
+	//_context->hud->resetTimer(3);
+	//_context->hud->startTimer(3);
+	//_context->hud->setNumber(2, _maxBombs);
 	_showBombs = false;
 	_endTimer = 0.0f;
 }
@@ -92,7 +92,7 @@ void MainGameState::activate() {
 // deactivate
 // -------------------------------------------------------
 void MainGameState::deactivate() {
-	_context->hud->deactivate();
+	//_context->hud->deactivate();
 }
 // -------------------------------------------------------
 // open empty tiles
@@ -143,7 +143,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			_context->hud->setNumber(2, left);
+			//_context->hud->setNumber(2, left);
 		}
 		// left button
 		else {
@@ -153,7 +153,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					//return 1;
 					_endTimer = 0.0f;
 					_showBombs = true;
-					_context->hud->deactivate();
+					//_context->hud->deactivate();
 				}
 				item.state = 1;
 				if (item.adjacentBombs == 0) {
@@ -184,42 +184,43 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-
+	_sprites->begin();
 	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
 
 	if (_context->mode == 0) {
-		_easyGroup->render();
+		//_easyGroup->render();
 	}
 	else if (_context->mode == 1) {
-		_mediumGroup->render();
+		//_mediumGroup->render();
 	}
 	if (_context->mode == 2) {
-		_hardGroup->render();
+		//_hardGroup->render();
 	}
 
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
 		if (_showBombs && item.bomb) {
-			ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 120, 40, 44)));
+			_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
 		}
 		else {
 			// marked
 			if (item.state == 2) {
-				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 120, 40, 44)));
+				_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
 			}
 			// opened
 			else if (item.state == 1) {
 				int offset = item.adjacentBombs * 40;
-				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(50, offset, 40, 44)));
+				_sprites->draw(item.position, math::buildTexture(ds::Rect(50, offset, 40, 44)));
 			}
 			// closed
 			else {
-				ds::sprites::draw(item.position, ds::math::buildTexture(ds::Rect(0, 40, 40, 44)),0.0f,item.scale.x,item.scale.y);
+				_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 40, 40, 44)),0.0f,item.scale);
 			}
 		}
 		
 	}
 	//_context->hud->render();
+	_sprites->end();
 }
 
 // -------------------------------------------------------

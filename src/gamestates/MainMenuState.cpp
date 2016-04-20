@@ -1,5 +1,6 @@
 #include "MainMenuState.h"
 #include <utils\Log.h>
+/*
 #include <sprites\SpriteBatch.h>
 #include <renderer\graphics.h>
 #include <base\GameStateMachine.h>
@@ -60,3 +61,4 @@ void MainMenuState::render() {
 }
 
 
+*/

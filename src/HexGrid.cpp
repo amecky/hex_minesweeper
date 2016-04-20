@@ -1,6 +1,6 @@
 #include "HexGrid.h"
 #include <assert.h>
-#include <renderer\graphics.h>
+#include <graphics.h>
 
 HexGrid::HexGrid() : _qMax(0), _rMax(0), _items(0), _layout(layout_pointy, v2(24.0f, 24.0f), v2(100, 130)) {
 }
@@ -72,7 +72,8 @@ int HexGrid::neighbors(const Hex& hex, Hex* ret) {
 }
 
 Hex HexGrid::convertFromMousePos() {
-	v2 mp = ds::renderer::getMousePosition();
+	v2 mp;
+	graphics::getMousePosition(&mp);
 	return hex_math::hex_round(hex_math::pixel_to_hex(_layout, mp));
 }
 // -------------------------------------------------------
@@ -99,7 +100,8 @@ const int HexGrid::size() const {
 // select
 // -------------------------------------------------------
 int HexGrid::select(int x, int y) {
-	v2 mp = ds::renderer::getMousePosition();
+	v2 mp;
+	graphics::getMousePosition(&mp);
 	Hex h = hex_math::hex_round(hex_math::pixel_to_hex(_layout, mp));
 	int q_offset = h.r >> 1;
 	int selected = -1;

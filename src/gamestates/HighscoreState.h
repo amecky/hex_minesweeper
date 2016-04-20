@@ -1,5 +1,6 @@
 #pragma once
 #include "..\GameContext.h"
+/*
 #include <base\GameState.h>
 
 class HighscoreState : public ds::GameState {
@@ -17,3 +18,4 @@ private:
 	ds::DialogManager* _gui;
 };
 
+*/

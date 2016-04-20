@@ -1,11 +1,11 @@
 #pragma once
-#include <base\GameState.h>
+#include <gamestates\GameState.h>
 #include <renderer\render_types.h>
-#include <ui\IMGUI.h>
+#include <imgui\IMGUI.h>
 #include "..\GameContext.h"
 #include "..\HexGrid.h"
 #include <vector>
-#include <sprites\SpriteGroup.h>
+#include <renderer\sprites.h>
 
 class MainGameState : public ds::GameState {
 
@@ -29,9 +29,10 @@ private:
 	int _selected;
 	int _width;
 	int _height;
-	ds::SpriteGroup* _easyGroup;
-	ds::SpriteGroup* _mediumGroup;
-	ds::SpriteGroup* _hardGroup;
+	//ds::SpriteGroup* _easyGroup;
+	//ds::SpriteGroup* _mediumGroup;
+	//ds::SpriteGroup* _hardGroup;
+	ds::SpriteBuffer* _sprites;
 	bool _showBombs;
 	float _endTimer;
 	Hex _current;

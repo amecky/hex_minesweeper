@@ -1,7 +1,7 @@
 #pragma once
 #include "..\GameContext.h"
-#include <base\GameState.h>
-
+#include <gamestates\GameState.h>
+/*
 class MainMenuState : public ds::GameState {
 
 public:
@@ -17,3 +17,4 @@ private:
 	ds::DialogManager* _gui;
 };
 
+*/

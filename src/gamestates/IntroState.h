@@ -1,5 +1,6 @@
 #pragma once
 #include "..\GameContext.h"
+/*
 #include <base\GameState.h>
 #include <utils\SparkleEffect.h>
 
@@ -20,3 +21,4 @@ private:
 	float _timer;
 };
 
+*/

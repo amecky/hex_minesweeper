@@ -1,4 +1,5 @@
 #include "IntroState.h"
+/*
 #include <utils\Log.h>
 #include <sprites\SpriteBatch.h>
 #include <renderer\graphics.h>
@@ -69,3 +70,4 @@ void IntroState::render() {
 }
 
 
+*/
