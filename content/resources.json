@@ -5,6 +5,7 @@ quad_index_buffer {
 }
 sampler_state {
 	id : 10
+	name : "ClampSamplerState"
 	addressU : "CLAMP"
 	addressV : "CLAMP"
 	addressW : "CLAMP"
@@ -20,11 +21,13 @@ shader {
 }
 input_layout {
 	id : 6
+	name : "PTC_Layout"
 	attributes : "POSITION,TEXCOORD,COLOR"
 	shader : 3
 }
 shader_resource_view {
 	id : 0
+	name : "PS_Texture"
 	texture : "TextureArray.png"
 }
 vertex_buffer {
@@ -55,10 +58,12 @@ texture {
 }
 font {
 	id : 7
+	name : "xscale"
 	file : "xscale.json"
 }
 sprite_buffer {
 	id : 8
+	name : "BasicSpriteBuffer"
 	size : 1024
 	index_buffer : 0
 	constant_buffer : 1
@@ -71,6 +76,7 @@ sprite_buffer {
 }
 font {
 	id : 14
+	name : "gui_font"
 	file : "gui_font.json"
 }
 sprite_buffer {
@@ -88,11 +94,14 @@ sprite_buffer {
 }
 imgui {
 	id : 13
+	name : "IMGUI"
 	font : 14
 	sprite_buffer : 12
 }
-dialogs {
-    id : 14
+dialog {
+    id : 15
+	name : "MainMenu"
     sprite_buffer : 8
     font : 7
+	file : "MainMenu"
 }

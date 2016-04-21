@@ -26,14 +26,14 @@ bool Minesweeper::loadContent() {
 	//_context->hud = gui->get("HUD");
 	addGameState(new MainGameState(_context));
 	//addGameState(new GameOverState(gui, _context));
-	//addGameState(new MainMenuState(gui, _context));
+	addGameState(new ds::BasicMenuGameState("MainMenu", 15));
 	//addGameState(new HighscoreState(gui, _context));
 	//addGameState(new IntroState(_context));
 	//connectGameStates("Intro", 1, "MainMenu");
 	//connectGameStates("GameOver", 1, "MainGame");
 	//connectGameStates("GameOver", 2, "MainMenu");
 	//connectGameStates("MainGame", 1, "GameOver");
-	//connectGameStates("MainMenu", 1, "MainGame");
+	connectGameStates("MainMenu", 1, "MainGame");
 	//connectGameStates("MainMenu", 5, "Highscores");
 	//connectGameStates("Highscores", 1, "MainMenu");
 	if (!_context->highscore_service.load()) {
@@ -54,7 +54,7 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	activate("MainGame");
+	activate("MainMenu");
 }
 
 
