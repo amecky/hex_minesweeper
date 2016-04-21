@@ -23,19 +23,17 @@ Minesweeper::~Minesweeper() {
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
-	//_context->hud = gui->get("HUD");
+	_context->hud = ds::res::getGUIDialog(18);
 	addGameState(new MainGameState(_context));
-	//addGameState(new GameOverState(gui, _context));
+	addGameState(new GameOverState(_context));
 	addGameState(new ds::BasicMenuGameState("MainMenu", 15));
-	//addGameState(new HighscoreState(gui, _context));
-	//addGameState(new IntroState(_context));
-	//connectGameStates("Intro", 1, "MainMenu");
-	//connectGameStates("GameOver", 1, "MainGame");
-	//connectGameStates("GameOver", 2, "MainMenu");
-	//connectGameStates("MainGame", 1, "GameOver");
+	addGameState(new HighscoreState(_context));
+	connectGameStates("GameOver", 1, "MainGame");
+	connectGameStates("GameOver", 2, "MainMenu");
+	connectGameStates("MainGame", 1, "GameOver");
 	connectGameStates("MainMenu", 1, "MainGame");
-	//connectGameStates("MainMenu", 5, "Highscores");
-	//connectGameStates("Highscores", 1, "MainMenu");
+	connectGameStates("MainMenu", 5, "Highscores");
+	connectGameStates("Highscores", 1, "MainMenu");
 	if (!_context->highscore_service.load()) {
 		// add default scores
 		for (int i = 0; i < 3; ++i) {

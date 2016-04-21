@@ -105,3 +105,24 @@ dialog {
     font : 7
 	file : "MainMenu"
 }
+dialog {
+	id : 16 
+	name : "GameOver"
+	file : "GameOver" 
+	sprite_buffer : 8
+    font : 7
+}
+dialog {
+	id : 17
+	name : "Highscores"
+	file : "Highscores"
+	sprite_buffer : 8
+    font : 7
+}
+dialog {
+	id : 18
+	name : "HUD"
+	file : "HUD"
+	sprite_buffer : 8
+    font : 7
+}

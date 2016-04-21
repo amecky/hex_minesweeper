@@ -2,7 +2,7 @@
 #include <utils\GameTimer.h>
 #include <Vector.h>
 #include "Highscores.h"
-//#include <dialogs\GUIDialog.h>
+#include <dialogs\GUIDialog.h>
 
 enum GameModeType {
 	GM_EASY,
@@ -34,7 +34,7 @@ struct GameContext {
 	int markedCorrectly;
 	Highscore highscore;
 	HighscoreService<PlayedTime, 3> highscore_service;
-	//ds::GUIDialog* hud;
+	ds::GUIDialog* hud;
 
 	void reset() {
 		marked = 0;

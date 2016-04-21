@@ -81,11 +81,10 @@ void MainGameState::activate() {
 	_maxBombs = mode.maxBombs;
 	fillBombs();
 	_context->marked = 0;
-	_context->markedCorrectly = 0;
-	//_context->hud->activate();
-	//_context->hud->resetTimer(3);
-	//_context->hud->startTimer(3);
-	//_context->hud->setNumber(2, _maxBombs);
+	_context->markedCorrectly = 0;	
+	_context->hud->resetTimer(3);
+	_context->hud->startTimer(3);
+	_context->hud->setNumber(2, _maxBombs);
 	_showBombs = false;
 	_endTimer = 0.0f;
 }
@@ -145,7 +144,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			//_context->hud->setNumber(2, left);
+			_context->hud->setNumber(2, left);
 		}
 		// left button
 		else {
@@ -156,6 +155,9 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					_endTimer = 0.0f;
 					_showBombs = true;
 					//_context->hud->deactivate();
+
+					// FIXME: game over!!!!
+
 				}
 				item.state = 1;
 				if (item.adjacentBombs == 0) {
@@ -172,7 +174,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 int MainGameState::update(float dt) {
 	Hex h = _grid.convertFromMousePos();
 	_grid.update(dt);
-	//_context->hud->tick(dt);
+	_context->hud->tick(dt);
 	if (_showBombs) {
 		_endTimer += dt;
 		if (_endTimer > 2.0f) {
@@ -221,8 +223,8 @@ void MainGameState::render() {
 		}
 		
 	}
-	//_context->hud->render();
 	_sprites->end();
+	_context->hud->render();
 }
 
 // -------------------------------------------------------
