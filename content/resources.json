@@ -87,7 +87,12 @@ sprite_buffer {
 	font : 14
 }
 imgui {
-	id : 12
+	id : 13
 	font : 14
 	sprite_buffer : 12
+}
+dialogs {
+    id : 14
+    sprite_buffer : 8
+    font : 7
 }
