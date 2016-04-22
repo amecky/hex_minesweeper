@@ -1,6 +1,6 @@
 #include "HexGrid.h"
 #include <assert.h>
-#include <graphics.h>
+#include <renderer\graphics.h>
 
 HexGrid::HexGrid() : _qMax(0), _rMax(0), _items(0), _layout(layout_pointy, v2(24.0f, 24.0f), v2(100, 130)) {
 }

@@ -59,9 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />
-    <None Include="content\resources\gui.json">
-      <Filter>content\resources</Filter>
-    </None>
     <None Include="content\resources\xscale.json">
       <Filter>content\resources</Filter>
     </None>
@@ -87,6 +84,9 @@
     </None>
     <None Include="content\resources.json">
       <Filter>content</Filter>
+    </None>
+    <None Include="content\resources\gui_font.json">
+      <Filter>content\resources</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
