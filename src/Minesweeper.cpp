@@ -26,7 +26,7 @@ bool Minesweeper::loadContent() {
 	_context->hud = ds::res::getGUIDialog(18);
 	addGameState(new MainGameState(_context));
 	addGameState(new GameOverState(_context));
-	addGameState(new ds::BasicMenuGameState("MainMenu", 15));
+	addGameState(new MainMenuState(_context));
 	addGameState(new HighscoreState(_context));
 	connectGameStates("GameOver", 1, "MainGame");
 	connectGameStates("GameOver", 2, "MainMenu");

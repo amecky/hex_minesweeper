@@ -1,20 +1,14 @@
 #pragma once
 #include "..\GameContext.h"
 #include <gamestates\GameState.h>
-/*
-class MainMenuState : public ds::GameState {
+
+class MainMenuState : public ds::BasicMenuGameState {
 
 public:
-	MainMenuState(ds::DialogManager* gui, GameContext* context);
+	MainMenuState(GameContext* context);
 	~MainMenuState();
-	int update(float dt);
-	void render();
-	int onGUIButton(ds::DialogID dlgID, int button);
-	void activate();
-	void deactivate();
+	int onGUIButton(int button);
 private:
 	GameContext* _context;
-	ds::DialogManager* _gui;
 };
 
-*/
