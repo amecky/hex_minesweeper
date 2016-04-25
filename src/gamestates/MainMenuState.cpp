@@ -12,6 +12,7 @@ MainMenuState::~MainMenuState() {
 // click
 // --------------------------------------------
 int MainMenuState::onGUIButton(int button) {
+	LOG << "button: " << button;
 	if (button == 1) {
 		_context->mode = 0;
 		return 1;

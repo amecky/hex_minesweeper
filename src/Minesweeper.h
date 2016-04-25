@@ -6,7 +6,6 @@
 
 #pragma once
 #include "base\BaseApp.h"
-//#include "dxstdafx.h"
 #include <renderer\render_types.h>
 #include "GameContext.h"
 
@@ -23,10 +22,8 @@ public:
 		return "HexMinesweeper";
 	}
 	void init();
-	void update(float dt);
-	void render();
-	//void onGUIButton(ds::DialogID dlgID, int button);
-	void OnChar(char ascii, unsigned int keyState);
+	void update(float dt) {}
+	void render() {}
 private:
 	GameContext* _context;
 };
