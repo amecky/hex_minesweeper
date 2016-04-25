@@ -23,7 +23,8 @@ public:
 	}
 	void init();
 	void update(float dt) {}
-	void render() {}
+	void render();
 private:
 	GameContext* _context;
+	ds::SpriteBuffer* _sprites;
 };

@@ -29,9 +29,6 @@ private:
 	int _selected;
 	int _width;
 	int _height;
-	//ds::SpriteGroup* _easyGroup;
-	//ds::SpriteGroup* _mediumGroup;
-	//ds::SpriteGroup* _hardGroup;
 	ds::SpriteBuffer* _sprites;
 	bool _showBombs;
 	float _endTimer;

@@ -11,19 +11,14 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 	_context->mode = 1;
 }
 
-
 MainGameState::~MainGameState() {
-	
+
 }
 
 // -------------------------------------------------------
 // init
 // -------------------------------------------------------
 void MainGameState::init() {
-	
-	//_easyGroup = ds::renderer::getSpriteGroup("easy_Group");
-	//_mediumGroup = ds::renderer::getSpriteGroup("medium_Group");
-	//_hardGroup = ds::renderer::getSpriteGroup("hard_Group");
 }
 
 // -------------------------------------------------------
@@ -84,7 +79,10 @@ void MainGameState::activate() {
 	_context->markedCorrectly = 0;	
 	_context->hud->resetTimer(3);
 	_context->hud->startTimer(3);
-	_context->hud->setNumber(2, _maxBombs);
+	//_context->hud->setNumber(2, _maxBombs);
+	char buffer[32];
+	sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
+	_context->hud->updateText(2, buffer);
 	_showBombs = false;
 	_endTimer = 0.0f;
 }
@@ -144,7 +142,10 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			_context->hud->setNumber(2, left);
+			//_context->hud->setNumber(2, left);
+			char buffer[32];
+			sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
+			_context->hud->updateText(2, buffer);
 		}
 		// left button
 		else {

@@ -24,6 +24,7 @@ Minesweeper::~Minesweeper() {
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
 	_context->hud = ds::res::getGUIDialog(18);
+	_sprites = ds::res::getSpriteBuffer(8);
 	addGameState(new MainGameState(_context));
 	addGameState(new GameOverState(_context));
 	addGameState(new MainMenuState(_context));
@@ -53,4 +54,14 @@ void Minesweeper::init() {
 	// for testing
 	_context->reset();
 	activate("MainMenu");
+}
+
+void Minesweeper::render() {
+	_sprites->begin();
+	for (int y = 0; y < 3; ++y) {
+		for (int i = 0; i < 4; ++i) {
+			_sprites->draw(v2(150 + i * 300, 150 + y * 300), math::buildTexture(510, 700, 300, 300));
+		}
+	}
+	_sprites->end();
 }
