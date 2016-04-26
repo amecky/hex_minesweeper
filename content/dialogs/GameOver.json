@@ -1,6 +1,6 @@
 image { 
     id : 11
-    pos : 140,660
+    pos : 140,650
     color : 255,255,255,255
     centered : true
     scale : 1

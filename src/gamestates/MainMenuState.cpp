@@ -1,5 +1,6 @@
 #include "MainMenuState.h"
 #include <utils\Log.h>
+#include <base\EventStream.h>
 
 MainMenuState::MainMenuState(GameContext* context) : ds::BasicMenuGameState("MainMenu",15), _context(context) {
 }
@@ -24,6 +25,9 @@ int MainMenuState::onGUIButton(int button) {
 	if (button == 3) {
 		_context->mode = 2;
 		return 1;
+	}
+	if (button == 4) {
+		ds::events::send(ds::InternalEvents::ENGINE_SHUTDOWN);
 	}
 	return button;
 }
