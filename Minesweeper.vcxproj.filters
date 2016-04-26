@@ -13,6 +13,9 @@
     <Filter Include="content\resources">
       <UniqueIdentifier>{445223f6-9972-4b71-b36e-a989f80f85ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="content\particles">
+      <UniqueIdentifier>{7ef10cf8-8119-44c7-a981-e2774ea54e2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Minesweeper.cpp" />
@@ -31,6 +34,9 @@
     </ClCompile>
     <ClCompile Include="src\Highscores.cpp" />
     <ClCompile Include="src\gamestates\IntroState.cpp">
+      <Filter>states</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gamestates\TestState.cpp">
       <Filter>states</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,6 +60,9 @@
     </ClInclude>
     <ClInclude Include="src\Highscores.h" />
     <ClInclude Include="src\gamestates\IntroState.h">
+      <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestates\TestState.h">
       <Filter>states</Filter>
     </ClInclude>
   </ItemGroup>
@@ -87,6 +96,12 @@
     </None>
     <None Include="content\resources\gui_font.json">
       <Filter>content\resources</Filter>
+    </None>
+    <None Include="content\particles\explosion.json">
+      <Filter>content\particles</Filter>
+    </None>
+    <None Include="content\particles\particlesystems.json">
+      <Filter>content\particles</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

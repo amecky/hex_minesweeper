@@ -126,3 +126,7 @@ dialog {
 	sprite_buffer : 8
     font : 7
 }
+particles {
+	id : 19
+	sprite_buffer : 8
+}

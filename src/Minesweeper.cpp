@@ -1,12 +1,12 @@
 #include "Minesweeper.h"
 #include "utils\Log.h"
-//#include <sprites\SpriteBatch.h>
 #include <gamestates\GameStateMachine.h>
 #include "gamestates\MainGameState.h"
 #include "gamestates\GameOverState.h"
 #include "gamestates\MainMenuState.h"
 #include "gamestates\HighscoreState.h"
 #include "gamestates\IntroState.h"
+#include "gamestates\TestState.h"
 
 ds::BaseApp *app = new Minesweeper(); 
 
@@ -29,6 +29,7 @@ bool Minesweeper::loadContent() {
 	addGameState(new GameOverState(_context));
 	addGameState(new MainMenuState(_context));
 	addGameState(new HighscoreState(_context));
+	addGameState(new TestState(_context));
 	connectGameStates("GameOver", 1, "MainGame");
 	connectGameStates("GameOver", 2, "MainMenu");
 	connectGameStates("MainGame", 1, "GameOver");
@@ -53,7 +54,7 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	activate("MainMenu");
+	activate("TestState");
 }
 
 void Minesweeper::render() {

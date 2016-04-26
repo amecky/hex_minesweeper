@@ -228,6 +228,7 @@
     <ClCompile Include="src\gamestates\IntroState.cpp" />
     <ClCompile Include="src\gamestates\MainGameState.cpp" />
     <ClCompile Include="src\gamestates\MainMenuState.cpp" />
+    <ClCompile Include="src\gamestates\TestState.cpp" />
     <ClCompile Include="src\HexGrid.cpp" />
     <ClCompile Include="src\Highscores.cpp" />
     <ClCompile Include="src\Minesweeper.cpp" />
@@ -241,6 +242,7 @@
     <ClInclude Include="src\gamestates\IntroState.h" />
     <ClInclude Include="src\gamestates\MainGameState.h" />
     <ClInclude Include="src\gamestates\MainMenuState.h" />
+    <ClInclude Include="src\gamestates\TestState.h" />
     <ClInclude Include="src\HexGrid.h" />
     <ClInclude Include="src\Highscores.h" />
     <ClInclude Include="src\Minesweeper.h" />
@@ -252,6 +254,8 @@
     <None Include="content\dialogs\MainMenu.json" />
     <None Include="content\dialogs\test_dialog.json" />
     <None Include="content\engine_settings.json" />
+    <None Include="content\particles\explosion.json" />
+    <None Include="content\particles\particlesystems.json" />
     <None Include="content\resources.json" />
     <None Include="content\resources\gui_font.json" />
     <None Include="content\resources\xscale.json" />
