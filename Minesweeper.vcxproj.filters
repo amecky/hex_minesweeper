@@ -103,6 +103,12 @@
     <None Include="content\particles\particlesystems.json">
       <Filter>content\particles</Filter>
     </None>
+    <None Include="content\particles\inner_explosion.json">
+      <Filter>content\particles</Filter>
+    </None>
+    <None Include="content\particles\streaks.json">
+      <Filter>content\particles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Minesweeper.rc" />

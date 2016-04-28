@@ -2,3 +2,12 @@ explosion {
 	file : "explosion" 
 	id : 1
 }
+inner_explosion {
+	file : "inner_explosion" 
+	id : 2
+}
+streaks {
+	file : "streaks" 
+	id : 3
+}
+

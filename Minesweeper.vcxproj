@@ -255,7 +255,9 @@
     <None Include="content\dialogs\test_dialog.json" />
     <None Include="content\engine_settings.json" />
     <None Include="content\particles\explosion.json" />
+    <None Include="content\particles\inner_explosion.json" />
     <None Include="content\particles\particlesystems.json" />
+    <None Include="content\particles\streaks.json" />
     <None Include="content\resources.json" />
     <None Include="content\resources\gui_font.json" />
     <None Include="content\resources\xscale.json" />
