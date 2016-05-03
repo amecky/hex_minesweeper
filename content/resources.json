@@ -130,3 +130,15 @@ particles {
 	id : 19
 	sprite_buffer : 8
 }
+quad_buffer {
+	id : 20
+	name : "MESH_Buffer"
+	size : 1024
+	index_buffer : 0
+	constant_buffer : 1
+	vertex_buffer : 2
+	shader : 3
+	blend_state : 4
+	color_map : 5
+	input_layout : 6
+}

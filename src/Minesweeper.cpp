@@ -58,6 +58,7 @@ void Minesweeper::init() {
 }
 
 void Minesweeper::render() {
+	/*
 	_sprites->begin();
 	for (int y = 0; y < 3; ++y) {
 		for (int i = 0; i < 4; ++i) {
@@ -65,4 +66,5 @@ void Minesweeper::render() {
 		}
 	}
 	_sprites->end();
+	*/
 }
