@@ -16,11 +16,13 @@ public:
 	int onButtonDown(int button, int x, int y);
 	int onKeyDown(WPARAM virtualKey);
 	int onKeyUp(WPARAM virtualKey);
+	int onChar(int ascii);
 private:
 	GameContext* _context;
-	//ds::ParticleManager* _particles;
 	bool _buttonPressed;
-	ds::QuadBuffer* _buffer;
 	ds::FPSCamera* _camera;
+	ds::Mesh* _cubes;
+	float _timer;
+	int _states[10];
 };
 

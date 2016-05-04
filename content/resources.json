@@ -142,3 +142,15 @@ quad_buffer {
 	color_map : 5
 	input_layout : 6
 }
+mesh {
+	id : 21
+	name : "Cubes"
+	size : 1024
+	index_buffer : 0
+	constant_buffer : 1
+	vertex_buffer : 2
+	shader : 3
+	blend_state : 4
+	color_map : 5
+	input_layout : 6
+}
