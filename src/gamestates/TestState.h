@@ -12,15 +12,13 @@ public:
 	void init();
 	int update(float dt);
 	void render();
-	int onButtonUp(int button, int x, int y);
-	int onButtonDown(int button, int x, int y);
 	int onKeyDown(WPARAM virtualKey);
 	int onKeyUp(WPARAM virtualKey);
 	int onChar(int ascii);
 private:
 	GameContext* _context;
-	bool _buttonPressed;
 	ds::FPSCamera* _camera;
+	ds::OrthoCamera* _orthoCamera;
 	ds::Mesh* _cubes;
 	float _timer;
 	int _states[10];

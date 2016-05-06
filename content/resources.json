@@ -56,6 +56,11 @@ texture {
 	name : "TextureArray" 
 	file : "TextureArray.png"
 }
+texture {
+	id : 11
+	name : "gui" 
+	file : "gui.png"
+}
 font {
 	id : 7
 	name : "xscale"

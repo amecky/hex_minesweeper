@@ -1,52 +1,28 @@
 #include "TestState.h"
 #include <utils\Log.h>
 #include <base\EventStream.h>
+#include <base\InputSystem.h>
+#include <utils\geometrics.h>
 
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	//_particles = ds::res::getParticleManager();
 	_camera = new ds::FPSCamera(1024, 768);
 	_camera->setPosition(v3(0, 2, -12), v3(0, 0, 1));
 	graphics::setCamera(_camera);
-	_buttonPressed = false;
-
+	_orthoCamera = new ds::OrthoCamera(1024, 768);
+	
 	_cubes = ds::res::getMesh(21);
-	ds::Texture t = math::buildTexture(ds::Rect(510, 0, 256, 256));
-	// front
-	_cubes->add(v3(-0.5f, 0.5f,-0.5f), t.getUV(0));
-	_cubes->add(v3( 0.5f, 0.5f,-0.5f), t.getUV(1));
-	_cubes->add(v3( 0.5f,-0.5f,-0.5f), t.getUV(2));
-	_cubes->add(v3(-0.5f,-0.5f,-0.5f), t.getUV(3));
 
-	// right
-	_cubes->add(v3(0.5f,  0.5f,-0.5f), t.getUV(0));
-	_cubes->add(v3(0.5f,  0.5f, 0.5f), t.getUV(1));
-	_cubes->add(v3(0.5f, -0.5f, 0.5f), t.getUV(2));
-	_cubes->add(v3(0.5f, -0.5f,-0.5f), t.getUV(3));
+	ds::geometrics::createCube(_cubes, ds::Rect(510, 0, 256, 256), v3(-6,-2,-1));
+	ds::geometrics::createCube(_cubes, ds::Rect(510, 0, 256, 256), v3(-6, -2, 8));
 
-	// top
-	_cubes->add(v3(-0.5f, 0.5f, 0.5f), t.getUV(0));
-	_cubes->add(v3( 0.5f, 0.5f, 0.5f), t.getUV(1));
-	_cubes->add(v3( 0.5f, 0.5f,-0.5f), t.getUV(2));
-	_cubes->add(v3(-0.5f, 0.5f,-0.5f), t.getUV(3));
-
-	// left
-	_cubes->add(v3(-0.5f, 0.5f, 0.5f), t.getUV(0));
-	_cubes->add(v3(-0.5f, 0.5f,-0.5f), t.getUV(1));
-	_cubes->add(v3(-0.5f,-0.5f,-0.5f), t.getUV(2));
-	_cubes->add(v3(-0.5f,-0.5f, 0.5f), t.getUV(3));
-
-	// back
-	_cubes->add(v3( 0.5f, 0.5f, 0.5f), t.getUV(0));
-	_cubes->add(v3(-0.5f, 0.5f, 0.5f), t.getUV(1));
-	_cubes->add(v3(-0.5f,-0.5f, 0.5f), t.getUV(2));
-	_cubes->add(v3( 0.5f,-0.5f, 0.5f), t.getUV(3));
-
-	// bottom
-	_cubes->add(v3(-0.5f,-0.5f,-0.5f), t.getUV(0));
-	_cubes->add(v3( 0.5f,-0.5f,-0.5f), t.getUV(1));
-	_cubes->add(v3( 0.5f,-0.5f, 0.5f), t.getUV(2));
-	_cubes->add(v3(-0.5f,-0.5f, 0.5f), t.getUV(3));
-
+	for (int i = 0; i < 5; ++i) {
+		ds::geometrics::createCube(_cubes, ds::Rect(510, 0, 256, 256),v3(0,-2 + i,0));
+	}
+	ds::geometrics::createCube(_cubes,ds::Rect(510, 0, 256, 256),v3(-2,0,0), v3(2,2,2));
+	ds::geometrics::createCube(_cubes, ds::Rect(510, 0, 256, 256), v3(2, 0, 0), v3(0.5f, 0.5f, 0.5f));
+	ds::geometrics::createCube(_cubes, ds::Rect(510, 0, 256, 256), v3(2, 0, 2), v3(0.5f, 0.5f, 0.5f));
+	ds::geometrics::createCube(_cubes, ds::Rect(510, 0, 256, 256), v3(2, 0, 4), v3(0.5f, 0.5f, 0.5f));
 	_timer = 0.0f;
 
 	for (int i = 0; i < 10; ++i) {
@@ -65,9 +41,8 @@ void TestState::init() {
 
 int TestState::update(float dt) {
 	//_particles->update(dt);
-	v2 mp;
-	graphics::getMousePosition(&mp);
-	_camera->update(dt, mp, _buttonPressed);
+	v2 mp = ds::input::getMousePosition();
+	_camera->update(dt, mp);
 	_timer += dt;
 	if (_states[1] == 1) {
 		_cubes->rotateX(_timer);
@@ -91,17 +66,24 @@ int TestState::update(float dt) {
 }
 
 void TestState::render() {
+	graphics::setCamera(_camera);
+	graphics::turnOnZBuffer();
 	_cubes->draw();
-}
-
-int TestState::onButtonUp(int button, int x, int y) {
-	_buttonPressed = false;
-	return 0;
-}
-
-int TestState::onButtonDown(int button, int x, int y) {
-	_buttonPressed = true;
-	return 0;
+	graphics::setCamera(_orthoCamera);
+	graphics::turnOffZBuffer();
+	v2 pos(10, 760);
+	int state = 1;
+	gui::start(1, &pos, true);
+	gui::begin("Camera", &state);
+	char buffer[128];
+	sprintf_s(buffer, 128, "%2.2f %2.2f %2.2f", _camera->getPosition().x, _camera->getPosition().y, _camera->getPosition().z);
+	gui::Value("Pos", buffer);
+	gui::Value("Angle", RADTODEG(_camera->getAngle()));
+	if (gui::Button("Reset")) {
+		_camera->setPosition(v3(0, 2, -12), v3(0, 0, 1));
+		_camera->resetYAngle();
+	}
+	gui::end();
 }
 
 int TestState::onKeyDown(WPARAM virtualKey) {
