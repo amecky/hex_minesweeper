@@ -16,6 +16,9 @@
     <Filter Include="content\particles">
       <UniqueIdentifier>{7ef10cf8-8119-44c7-a981-e2774ea54e2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="content\shaders">
+      <UniqueIdentifier>{12d73df3-e8d2-4f4b-ac8e-6c879f5eb9f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Minesweeper.cpp" />

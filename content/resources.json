@@ -19,11 +19,35 @@ shader {
 	shader_model : "4_0"
 	sampler_state : 10
 }
+shader {
+	id : 22
+	name : "LightningShader"
+	file : "content\shaders\Lightning.fx"
+	vertex_shader : "VS_Main"
+	pixel_shader : "PS_Main"
+	shader_model : "4_0"
+	sampler_state : 10
+}
+shader {
+	id : 25
+	name : "ColouredShader"
+	file : "content\shaders\Coloured.fx"
+	vertex_shader : "VS_Main"
+	pixel_shader : "PS_Main"
+	shader_model : "4_0"
+	sampler_state : 10
+}
 input_layout {
 	id : 6
 	name : "PTC_Layout"
 	attributes : "POSITION,TEXCOORD,COLOR"
 	shader : 3
+}
+input_layout {
+	id : 23
+	name : "PNTC_Layout"
+	attributes : "POSITION,NORMAL,TEXCOORD,COLOR"
+	shader : 22
 }
 shader_resource_view {
 	id : 0
@@ -50,6 +74,11 @@ constant_buffer {
 	id : 1
 	name : "MVP_CB"
 	size : 64
+}
+constant_buffer {
+	id : 24
+	name : "MVP_CB_WORLD"
+	size : 160
 }
 texture {
 	id : 5
@@ -149,13 +178,25 @@ quad_buffer {
 }
 mesh {
 	id : 21
-	name : "Cubes"
+	name : "Grid"
 	size : 1024
 	index_buffer : 0
-	constant_buffer : 1
+	constant_buffer : 24
 	vertex_buffer : 2
-	shader : 3
+	shader : 22
 	blend_state : 4
 	color_map : 5
-	input_layout : 6
+	input_layout : 23
+}
+mesh {
+	id : 26
+	name : "Player"
+	size : 1024
+	index_buffer : 0
+	constant_buffer : 24
+	vertex_buffer : 2
+	shader : 25
+	blend_state : 4
+	color_map : 5
+	input_layout : 23
 }
