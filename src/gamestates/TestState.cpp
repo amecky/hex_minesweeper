@@ -22,13 +22,13 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	}
 	
 	_cubes = ds::res::getMesh(21);	
-	ds::geometrics::createGrid(_cubes, 2.0f, 10, 10, ds::Rect(510, 0, 256, 256) , v3(-10, 0, -10));
+	ds::geometrics::createGrid(_cubes, 2.0f, 5, 7, ds::Rect(510, 0, 256, 256) , v3(-5, 0, -7));
 	//ds::geometrics::createCube(_cubes, _cubeTextures, v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
 
 	_player = ds::res::getMesh(26);
 	ds::ObjLoader loader;
 	loader.parse2("content\\objects\\player.obj",_player);
-	_playerPos = v3(0.0f, 0.2f, 0.0f);
+	_playerPos = v3(0.0f, 0.2f, -6.0f);
 	_player->translate(_playerPos);
 	_player->rotateX(DEGTORAD(-90.0f));
 	_playerAngle = 0.0f;
@@ -79,14 +79,25 @@ int TestState::update(float dt) {
 		float s = 0.8f + sin(_timer) * 0.2f;
 		_cubes->scale(v3(s, s, s));
 	}
+	bool move = false;
 	if (ds::input::getKeyState('D')) {
-		_playerAngle += 0.75 * PI * dt;
-		_player->rotateZ(_playerAngle);
+		//_playerAngle += 0.75 * PI * dt;
+		//_player->rotateZ(_playerAngle);
+		_player->rotateY(DEGTORAD(20.0f));
+		_playerPos.x += 4.0f * dt;
+		move = true;
 	}
 	if (ds::input::getKeyState('A')) {
-		_playerAngle -= 0.75 * PI * dt;
-		_player->rotateZ(_playerAngle);
+		//_playerAngle -= 0.75 * PI * dt;
+		_player->rotateY(DEGTORAD(-20.0f));
+		_playerPos.x -= 4.0f * dt;
+		move = true;
 	}
+	if (!move) {
+		_player->rotateY(0.0f);
+	}
+	_player->translate(_playerPos);
+	/*
 	if (ds::input::getKeyState('W')) {
 		ds::mat3 R = ds::matrix::mat3RotationY(_playerAngle);
 		v3 target = R * v3(0, 0, 1);
@@ -103,7 +114,7 @@ int TestState::update(float dt) {
 	float cz = _playerPos.z + cos(_playerAngle + DEGTORAD(180.0f)) * 4.0f;
 	_camera->setPosition(v3(cx, 8.0f, cz), _playerPos);
 	_camera->resetYaw(_playerAngle);
-
+	*/
 
 	Bullets::iterator it = _bulletList.begin();
 	while (it != _bulletList.end()) {
@@ -118,7 +129,7 @@ int TestState::update(float dt) {
 		else if (p->z < -10.0f) {
 			it = _bulletList.erase(it);
 		}
-		else if (p->z > 10.0f) {
+		else if (p->z > 7.0f) {
 			it = _bulletList.erase(it);
 		}
 		else {
@@ -146,6 +157,7 @@ int TestState::update(float dt) {
 				v->z *= -1.0f;
 			}
 			c->angle = math::getAngle(v2(1, 0), v2(v->x, v->z));
+			c->roll += dt * 2.0f;
 		}
 		else if (c->state == 1) {
 			c->timer -= dt * 4.0f;
@@ -180,7 +192,41 @@ int TestState::update(float dt) {
 		}
 	}
 
+	checkCollisions();
+
 	return 0;
+}
+
+// -------------------------------------------------------
+// simple collision check
+// -------------------------------------------------------
+void TestState::checkCollisions() {
+	Bullets::iterator it = _bulletList.begin();
+	while (it != _bulletList.end()) {
+		Bullet* b = &(*it);
+		bool hit = false;
+		Cubes::iterator cit = _cubeList.begin();
+		while (cit != _cubeList.end()) {
+			Cube* c = &(*cit);
+			v3 rel = b->position - c->position;
+			float distSqr = rel.x * rel.x + rel.y * rel.y + rel.z * rel.z;
+			// bullet : 0.3 cube : 0.5
+			float minDist = 0.3f + 0.5f;
+			if (distSqr <= minDist * minDist) {
+				hit = true;
+				cit = _cubeList.erase(cit);
+			}
+			else {
+				++cit;				
+			}
+		}
+		if (hit) {
+			it = _bulletList.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 }
 
 // -------------------------------------------------------

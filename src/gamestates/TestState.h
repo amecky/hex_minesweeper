@@ -39,6 +39,7 @@ private:
 	void addBullet();
 	void addCube();
 	void drawGUI();
+	void checkCollisions();
 	GameContext* _context;
 	ds::FPSCamera* _camera;
 	ds::OrthoCamera* _orthoCamera;
