@@ -47,7 +47,7 @@ PS_Input VS_Main( VS_Input vertex )
 float4 PS_Main( PS_Input frag ) : SV_TARGET
 {
     float3 ambientColor = float3(0.3f,0.3f,0.3f);
-    float4 lightColor = colorMap_.Sample( colorSampler_, frag.tex0 );    
+    float4 lightColor = colorMap_.Sample( colorSampler_, frag.tex0 ) * frag.color;    
     //float4 lightColor = frag.color;
     ambientColor *= lightColor.rgb;
     float3 lightVec = normalize(frag.pos - frag.lightVec);

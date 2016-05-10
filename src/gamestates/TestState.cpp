@@ -13,14 +13,22 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	_camera->resetYAngle();
 	graphics::setCamera(_camera);
 	_orthoCamera = new ds::OrthoCamera(1024, 768);
+
+	ds::Rect r(510, 340, 64, 64);
+	for (int i = 0; i < 6; ++i) {
+		_cubeTextures[i] = r;
+		r.left += 64;
+		r.right += 64;
+	}
 	
 	_cubes = ds::res::getMesh(21);	
-	ds::geometrics::createGrid(_cubes, 2.0f, 10, 10, ds::Rect(510, 0, 256, 256),v3(-10,0,-6));
+	ds::geometrics::createGrid(_cubes, 2.0f, 10, 10, ds::Rect(510, 0, 256, 256) , v3(-10, 0, -10));
+	//ds::geometrics::createCube(_cubes, _cubeTextures, v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
 
 	_player = ds::res::getMesh(26);
 	ds::ObjLoader loader;
 	loader.parse2("content\\objects\\player.obj",_player);
-	_playerPos = v3(0.0f, 0.6f, 6.0f);
+	_playerPos = v3(0.0f, 0.2f, 0.0f);
 	_player->translate(_playerPos);
 	_player->rotateX(DEGTORAD(-90.0f));
 	_playerAngle = 0.0f;
@@ -28,6 +36,10 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	for (int i = 0; i < 10; ++i) {
 		_states[i] = 0;
 	}
+
+	_bullets = ds::res::getMesh(27);
+	_firing = false;
+	_fireTimer = 0.0f;
 }
 
 
@@ -87,10 +99,87 @@ int TestState::update(float dt) {
 		_playerPos -= target * 6.0f * dt;
 		_player->translate(_playerPos);
 	}
-	float cx = _playerPos.x + sin(_playerAngle + DEGTORAD(180.0f)) * 6.0f;
-	float cz = _playerPos.z + cos(_playerAngle + DEGTORAD(180.0f)) * 6.0f;
+	float cx = _playerPos.x + sin(_playerAngle + DEGTORAD(180.0f)) * 4.0f;
+	float cz = _playerPos.z + cos(_playerAngle + DEGTORAD(180.0f)) * 4.0f;
 	_camera->setPosition(v3(cx, 8.0f, cz), _playerPos);
 	_camera->resetYaw(_playerAngle);
+
+
+	Bullets::iterator it = _bulletList.begin();
+	while (it != _bulletList.end()) {
+		v3* p = &it->position;
+		*p += it->velocity * dt;
+		if (p->x > 10.0f) {
+			it = _bulletList.erase(it);
+		}
+		else if (p->x < -10.0f) {
+			it = _bulletList.erase(it);
+		}
+		else if (p->z < -10.0f) {
+			it = _bulletList.erase(it);
+		}
+		else if (p->z > 10.0f) {
+			it = _bulletList.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+
+	Cubes::iterator cit = _cubeList.begin();
+	while (cit != _cubeList.end()) {
+		Cube* c = &(*cit);
+		if (c->state == 0) {
+			v3* p = &cit->position;
+			v3* v = &cit->velocity;
+			*p += *v * dt;
+			if (p->x > 10.0f) {
+				v->x *= -1.0f;
+			}
+			else if (p->x < -10.0f) {
+				v->x *= -1.0f;
+			}
+			else if (p->z < -10.0f) {
+				v->z *= -1.0f;
+			}
+			else if (p->z > 10.0f) {
+				v->z *= -1.0f;
+			}
+			c->angle = math::getAngle(v2(1, 0), v2(v->x, v->z));
+		}
+		else if (c->state == 1) {
+			c->timer -= dt * 4.0f;
+			c->position.x = -10.0f + cos(c->timer) * 1.3f;
+			c->position.y = -0.3f + sin(c->timer) * 1.3f;
+			c->roll = c->timer - DEGTORAD(60.0f);
+			if (c->timer <= DEGTORAD(60.0f)) {
+				c->state = 0;
+				c->roll = 0.0f;
+				float angle = DEGTORAD(315.0f) + math::random(0.0f, HALF_PI);
+				v2 v = math::getRadialVelocity(angle, 4.0f);
+				c->velocity.x = v.x;
+				c->velocity.y = 0.0f;
+				c->velocity.z = v.y;
+				c->angle = angle;
+			}
+		}
+		++cit;
+	}
+
+	if (ds::input::isMouseButtonPressed(0)) {
+		_firing = true;
+	}
+	else {
+		_firing = false;
+	}
+	if (_firing) {
+		_fireTimer += dt;
+		if (_fireTimer > 0.2f) {
+			_fireTimer -= 0.2f;
+			addBullet();
+		}
+	}
+
 	return 0;
 }
 
@@ -102,9 +191,47 @@ void TestState::render() {
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();
 	_cubes->draw();
+
+	_bullets->reset();
+	for (size_t i = 0; i < _bulletList.size(); ++i) {
+		ds::geometrics::createPlane(_bullets,_bulletList[i].position,ds::Rect(0,210,10,20),v2(0.05f,0.3f),_bulletList[i].angle, ds::Color(192,0,0,255));
+	}
+	for (size_t i = 0; i < _cubeList.size(); ++i) {
+		ds::geometrics::createCube(_bullets, _cubeTextures, _cubeList[i].position, v3(0.5f,0.5f,0.5f), v3(0.0f, _cubeList[i].angle, _cubeList[i].roll));
+	}
+	_bullets->draw();
+
 	_player->draw();
 	// GUI
 	//drawGUI();	
+}
+
+void TestState::addCube() {
+	Cube c;
+	c.position = v3(-10.0f, -0.3f, 0.0f);
+	//float angle = math::random(0.0f, TWO_PI);
+	//v2 v = math::getRadialVelocity(angle, 4.0f);
+	//c.velocity.x = v.y;
+	//c.velocity.y = 0.0f;
+	//c.velocity.z = v.x;
+	//c.angle = angle;
+	c.velocity = v3(0, 0, 0);
+	c.angle = 0.0f;
+	c.timer = DEGTORAD(225.0f);
+	c.state = 1;
+	_cubeList.push_back(c);
+}
+
+void TestState::addBullet() {
+	Bullet b;
+	b.position = _playerPos;
+	b.position.y = 0.2f;
+	b.velocity = v3(0, 0, 0);
+	v2 v = math::getRadialVelocity(_playerAngle, 10.0f);
+	b.velocity.x = v.y;
+	b.velocity.z = v.x;
+	b.angle = _playerAngle;
+	_bulletList.push_back(b);
 }
 
 // -------------------------------------------------------
@@ -185,5 +312,11 @@ int TestState::onKeyUp(WPARAM virtualKey) {
 }
 
 int TestState::onChar(int ascii) {
+	if (ascii == 'f') {
+		addBullet();
+	}
+	if (ascii == 'g') {
+		addCube();
+	}
 	return 0;
 }

@@ -200,3 +200,15 @@ mesh {
 	color_map : 5
 	input_layout : 23
 }
+mesh {
+	id : 27
+	name : "Bullets"
+	size : 1024
+	index_buffer : 0
+	constant_buffer : 24
+	vertex_buffer : 2
+	shader : 22
+	blend_state : 4
+	color_map : 5
+	input_layout : 23
+}

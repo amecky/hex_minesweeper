@@ -5,5 +5,6 @@ basic_settings {
 	clear_color : 16,16,16,255
 	full_screen : false
 	synched : true 
+	reporting_directory : "reports"
 }		
 
