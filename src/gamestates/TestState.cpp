@@ -14,36 +14,60 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	graphics::setCamera(_camera);
 	_orthoCamera = new ds::OrthoCamera(1024, 768);
 
-	ds::Rect r(510, 340, 64, 64);
+	ds::Rect r(512, 342, 60, 60);
 	for (int i = 0; i < 6; ++i) {
 		_cubeTextures[i] = r;
 		r.left += 64;
 		r.right += 64;
 	}
 	
-	_cubes = ds::res::getMesh(21);	
+	_texturedBuffer = ds::res::getMeshBuffer(21);
+	_colouredBuffer = ds::res::getMeshBuffer(26);
+	_cubes = new ds::Mesh();
 	ds::geometrics::createGrid(_cubes, 2.0f, 5, 7, ds::Rect(510, 0, 256, 256) , v3(-5, 0, -7));
 	//ds::geometrics::createCube(_cubes, _cubeTextures, v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
 
-	_player = ds::res::getMesh(26);
-	ds::ObjLoader loader;
-	loader.parse2("content\\objects\\player.obj",_player);
-	_playerPos = v3(0.0f, 0.2f, -6.0f);
-	_player->translate(_playerPos);
-	_player->rotateX(DEGTORAD(-90.0f));
+	_box = new ds::Mesh();
+	ds::geometrics::createCube(_box, _cubeTextures);// , v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
+	for (int y = 0; y < 10; ++y) {
+		for (int x = 0; x < 20; ++x) {
+			addCube(v3(-10.0f + x, 0.5 + y, 0.0f));
+		}
+	}
+
+	_playerMesh = ds::res::getMesh(28);
+	_playerPos = v3(0.0f, 1.2f, 0.0f);
+
+	//_player->translate(_playerPos);
+	//_player->rotateX(DEGTORAD(-90.0f));
 	_playerAngle = 0.0f;
 	_timer = 0.0f;
 	for (int i = 0; i < 10; ++i) {
 		_states[i] = 0;
 	}
 
-	_bullets = ds::res::getMesh(27);
 	_firing = false;
 	_fireTimer = 0.0f;
+
+	_pressed = false;
+	/*
+	ds::mat4 t = ds::matrix::mat4Transform(v3(0,0,0));
+	v3 nn = t * v3(1, 1, 1);
+	LOG << "==============> " << DBG_V3(nn);
+	ds::mat4 s = ds::matrix::mat4Scale(v3(0.5f,0.5f,0.5f));
+	ds::mat4 rx = ds::matrix::mat4RotationX(DEGTORAD(45.0f));
+	ds::mat4 ry = ds::matrix::mat4RotationY(DEGTORAD(45.0f));
+	ds::mat4 rz = ds::matrix::mat4RotationZ(DEGTORAD(45.0f));
+	ds::mat4 world = rz * ry * rx * s * t;
+	v3 n = world * v3(1, 1, 1);
+	LOG << "====================> " << DBG_V3(n);
+	*/
 }
 
 
 TestState::~TestState() {
+	delete _cubes;
+	delete _box;
 	delete _camera;
 }
 
@@ -59,7 +83,8 @@ void TestState::init() {
 int TestState::update(float dt) {
 	//_particles->update(dt);
 	v2 mp = ds::input::getMousePosition();
-	//_camera->update(dt, mp);
+	_camera->update(dt, mp);
+	/*
 	_timer += dt;
 	if (_states[1] == 1) {
 		_cubes->rotateX(_timer);
@@ -97,6 +122,7 @@ int TestState::update(float dt) {
 		_player->rotateY(0.0f);
 	}
 	_player->translate(_playerPos);
+	*/
 	/*
 	if (ds::input::getKeyState('W')) {
 		ds::mat3 R = ds::matrix::mat3RotationY(_playerAngle);
@@ -115,7 +141,7 @@ int TestState::update(float dt) {
 	_camera->setPosition(v3(cx, 8.0f, cz), _playerPos);
 	_camera->resetYaw(_playerAngle);
 	*/
-
+	/*
 	Bullets::iterator it = _bulletList.begin();
 	while (it != _bulletList.end()) {
 		v3* p = &it->position;
@@ -193,7 +219,57 @@ int TestState::update(float dt) {
 	}
 
 	checkCollisions();
+	*/
+	if (ds::input::isMouseButtonPressed(0) && !_pressed) {
+		_pressed = true;
+		v2 mp = ds::input::getMousePosition();
+		ds::mat4 projection = _camera->getProjectionMatrix();
+		float px = (((2.0f * mp.x) / 1024.0f) - 1.0f) / projection._11;
 
+		float py = (((2.0f * mp.y) / 768.0f) - 1.0f) / projection._22;
+
+		v3 origin = v3(0.0f, 0.0f, 0.0f);
+		v3 direction = v3(px, py, 1.0f);
+
+		ds::mat4 view = _camera->getViewMatrix();
+		view = ds::matrix::mat4Inverse(view);
+
+		origin = ds::matrix::transformCoordinate(origin,view);
+		direction = ds::matrix::transformNormal(direction, view);
+		direction = normalize(direction);
+		//LOG << "direction: " << DBG_V3(direction) << " origin: " << DBG_V3(origin);
+		Cubes::iterator cit = _cubeList.begin();
+		while (cit != _cubeList.end()) {
+			Cube* c = &(*cit);
+			v3 v = origin - c->position;
+
+			float b = 2.0f * dot(direction, v);
+			float cc = dot(v, v) - 0.5f * 0.5f;
+
+			float discriminant = (b * b) - (4.0f * cc);
+
+			if (discriminant >= 0.0f) {
+				discriminant = std::sqrt(discriminant);
+				float s0 = (-b + discriminant) / 2.0f;
+				float s1 = (-b - discriminant) / 2.0f;
+				if (s0 >= 0.0f || s1 >= 0.0f) {
+					//LOG << "HIT!!!!! AT " << DBG_V3(c->position);
+					if (c->scale.x == 1.0f) {
+						c->scale = v3(0.5f, 0.5f, 0.5f);
+						c->rotation = v3(0.0f, 0.0f, DEGTORAD(45.0f));
+					}
+					else {
+						c->scale = v3(1, 1, 1);
+						c->rotation = v3(0, 0, 0);
+					}
+				}
+			}
+			++cit;
+		}
+	}
+	if (!ds::input::isMouseButtonPressed(0) && _pressed) {
+		_pressed = false;
+	}
 	return 0;
 }
 
@@ -236,6 +312,18 @@ void TestState::render() {
 	// scene
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();
+	_texturedBuffer->begin();
+	_texturedBuffer->drawImmediate(_cubes,v3(0,0,0));	
+	Cubes::iterator cit = _cubeList.begin();
+	while (cit != _cubeList.end()) {
+		Cube* c = &(*cit);
+		_texturedBuffer->add(_box, c->position,c->scale,c->rotation);
+		++cit;
+	}	
+	_texturedBuffer->end();
+
+	_colouredBuffer->drawImmediate(_playerMesh,_playerPos);
+	/*
 	_cubes->draw();
 
 	_bullets->reset();
@@ -248,22 +336,19 @@ void TestState::render() {
 	_bullets->draw();
 
 	_player->draw();
+	*/
 	// GUI
 	//drawGUI();	
 }
 
-void TestState::addCube() {
+void TestState::addCube(const v3& pos) {
 	Cube c;
-	c.position = v3(-10.0f, -0.3f, 0.0f);
-	//float angle = math::random(0.0f, TWO_PI);
-	//v2 v = math::getRadialVelocity(angle, 4.0f);
-	//c.velocity.x = v.y;
-	//c.velocity.y = 0.0f;
-	//c.velocity.z = v.x;
-	//c.angle = angle;
+	c.position = pos;
+	c.scale = v3(1, 1, 1);
 	c.velocity = v3(0, 0, 0);
 	c.angle = 0.0f;
 	c.timer = DEGTORAD(225.0f);
+	c.rotation = v3(0, 0, 0);
 	c.state = 1;
 	_cubeList.push_back(c);
 }
@@ -299,6 +384,7 @@ void TestState::drawGUI() {
 		_camera->setPosition(v3(0, 2, -12), v3(0, 0, 1));
 		_camera->resetYAngle();
 	}
+	/*
 	v3* lp = _cubes->getLightPos();
 	gui::InputVec3("LightPos", lp);
 	if (gui::Button("Move")) {
@@ -346,6 +432,7 @@ void TestState::drawGUI() {
 			_cubes->scale(v3(1, 1, 1));
 		}
 	}
+	*/
 	gui::end();
 }
 
@@ -360,9 +447,6 @@ int TestState::onKeyUp(WPARAM virtualKey) {
 int TestState::onChar(int ascii) {
 	if (ascii == 'f') {
 		addBullet();
-	}
-	if (ascii == 'g') {
-		addCube();
 	}
 	return 0;
 }

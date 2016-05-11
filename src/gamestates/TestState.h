@@ -15,6 +15,8 @@ struct Bullet {
 struct Cube {
 	v3 position;
 	v3 velocity;
+	v3 scale;
+	v3 rotation;
 	float angle;
 	float timer;
 	int state;
@@ -37,15 +39,17 @@ public:
 	int onChar(int ascii);
 private:
 	void addBullet();
-	void addCube();
+	void addCube(const v3& pos);
 	void drawGUI();
 	void checkCollisions();
 	GameContext* _context;
 	ds::FPSCamera* _camera;
 	ds::OrthoCamera* _orthoCamera;
+	ds::MeshBuffer* _colouredBuffer;
+	ds::MeshBuffer* _texturedBuffer;
+	ds::Mesh* _playerMesh;
 	ds::Mesh* _cubes;
-	ds::Mesh* _player;
-	ds::Mesh* _bullets;
+	ds::Mesh* _box;
 	Bullets _bulletList;
 	Cubes _cubeList;
 	ds::Rect _cubeTextures[6];
@@ -55,5 +59,6 @@ private:
 	int _states[10];
 	bool _firing;
 	float _fireTimer;
+	bool _pressed;
 };
 

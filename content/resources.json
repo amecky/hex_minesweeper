@@ -176,9 +176,9 @@ quad_buffer {
 	color_map : 5
 	input_layout : 6
 }
-mesh {
+mesh_buffer {
 	id : 21
-	name : "Grid"
+	name : "TexturedBuffer"
 	size : 1024
 	index_buffer : 0
 	constant_buffer : 24
@@ -188,9 +188,9 @@ mesh {
 	color_map : 5
 	input_layout : 23
 }
-mesh {
+mesh_buffer {
 	id : 26
-	name : "Player"
+	name : "ColouredBuffer"
 	size : 1024
 	index_buffer : 0
 	constant_buffer : 24
@@ -201,14 +201,10 @@ mesh {
 	input_layout : 23
 }
 mesh {
-	id : 27
-	name : "Bullets"
-	size : 1024
-	index_buffer : 0
-	constant_buffer : 24
-	vertex_buffer : 2
-	shader : 22
-	blend_state : 4
-	color_map : 5
-	input_layout : 23
+	id : 28
+	name : "PlayerMesh"
+	fileName : "player.obj"
+	rotation : 90,0,0
+	scale : 1,1,1
+	position : 0,0,0
 }
