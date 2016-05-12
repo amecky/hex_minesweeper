@@ -38,7 +38,7 @@ PS_Input VS_Main( VS_Input vertex )
     vsOut.color = vertex.color;
     vsOut.norm = mul(vertex.normal,(float3x3)world);
     vsOut.norm = normalize(vsOut.norm);
-    vsOut.lightVec = light;//normalize(light);
+    vsOut.lightVec = normalize(light);
     vsOut.viewVec = normalize(camera);
     return vsOut;
 }

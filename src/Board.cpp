@@ -61,6 +61,29 @@ int MovingCellsState::update(float dt) {
 }
 
 // -------------------------------------------------------
+// Rebuilding cells state
+// -------------------------------------------------------
+int RebuildingCellsState::deactivate() {
+	BoardContext* ctx = static_cast<BoardContext*>(_ctx);
+	for (size_t i = 0; i < ctx->movingCells.size(); ++i) {
+		const MovingCell& m = ctx->movingCells[i];
+		MyEntry& e = ctx->grid->get(m.x, m.y);
+		e.hidden = false;
+	}
+	ctx->movingCells.clear();
+	return 0;
+}
+
+int RebuildingCellsState::update(float dt) {
+	BoardContext* ctx = static_cast<BoardContext*>(_ctx);
+	for (size_t i = 0; i < ctx->movingCells.size(); ++i) {
+		MovingCell& m = ctx->movingCells[i];
+		m.current = tweening::interpolate(&tweening::linear, m.start, m.end, getTimer(), ctx->settings->rebuildingTTL);
+	}
+	return 0;
+}
+
+// -------------------------------------------------------
 // PrepareBoardState
 // -------------------------------------------------------
 int PrepareBoardState::activate() {
@@ -83,7 +106,7 @@ int PrepareBoardState::activate() {
 			m.x = x;
 			m.y = y;
 			m.color = e.color;
-			m.start = grid::convert(x, y + 60 + y * 20);
+			m.start = grid::convert(x, y + 20 + y * 20 + math::random(0,6));
 			m.end = grid::convert(x, y);
 			m.current = m.start;
 			ctx->movingCells.push_back(m);
@@ -255,12 +278,14 @@ Board::Board(GameSettings* settings, ds::FPSCamera* camera) : _settings(settings
 	_states->add<SelectCellState>();
 	_states->add<ShrinkState>();
 	_states->add<DroppingCellsState>();
-	_states->addTransition(BM_FILLING,   0, BM_MOVING);
-	_states->addTransition(BM_MOVING,    0, BM_RUNNING, _settings->droppingTTL);
-	_states->addTransition(BM_SELECTION, 1, BM_FLASHING);
-	_states->addTransition(BM_SELECTION, 0, BM_RUNNING);
-	_states->addTransition(BM_FLASHING,  0, BM_DROPPING, _settings->flashTTL);
-	_states->addTransition(BM_DROPPING, 0, BM_RUNNING, _settings->droppingTTL);
+	_states->add<RebuildingCellsState>();
+	_states->addTransition(BM_FILLING,    0, BM_REBUILDING);
+	_states->addTransition(BM_REBUILDING, 0, BM_RUNNING, _settings->rebuildingTTL);
+	_states->addTransition(BM_MOVING,     0, BM_RUNNING, _settings->droppingTTL);
+	_states->addTransition(BM_SELECTION,  1, BM_FLASHING);
+	_states->addTransition(BM_SELECTION,  0, BM_RUNNING);
+	_states->addTransition(BM_FLASHING,   0, BM_DROPPING, _settings->flashTTL);
+	_states->addTransition(BM_DROPPING,   0, BM_RUNNING, _settings->droppingTTL);
 	_dialogState = 1;
 	_dialogPos = v2(10, 760);
 	_showStates = false;
@@ -273,11 +298,16 @@ Board::Board(GameSettings* settings, ds::FPSCamera* camera) : _settings(settings
 		r.left += 64;
 		r.right += 64;
 	}
-	_box = new ds::Mesh();
-	ds::geometrics::createCube(_box, _cubeTextures);
+	for (int i = 0; i < 5; ++i) {
+		ds::Mesh* box = new ds::Mesh();
+		ds::geometrics::createCube(box, ds::Rect(512, 342 + i * 64, 60, 60));
+		_boxes.push_back(box);
+	}
+	
 }
 
 Board::~Board(void) {
+	_boxes.destroy_all();
 	delete _states;
 }
 
@@ -293,7 +323,7 @@ void Board::render() {
 				MyEntry& e = m_Grid.get(x, y);
 				if (!e.hidden) {
 					float r = static_cast<float>(e.color) * DEGTORAD(90.0f);
-					_texturedBuffer->add(_box, v3(grid::convert(x, y)), v3(e.scale,e.scale,e.scale),v3(0.0f,r,0.0f));
+					_texturedBuffer->add(_boxes[e.color], v3(grid::convert(x, y)), v3(e.scale,e.scale,e.scale),v3(0.0f,r,0.0f));
 				}
 			}
 		}
@@ -302,7 +332,7 @@ void Board::render() {
 	for (size_t i = 0; i < _context.movingCells.size(); ++i) {
 		const MovingCell& cell = _context.movingCells[i];
 		float r = static_cast<float>(cell.color) * DEGTORAD(90.0f);
-		_texturedBuffer->add(_box, cell.current,v3(1,1,1),v3(0.0f,r,0.0f));
+		_texturedBuffer->add(_boxes[cell.color], cell.current,v3(1,1,1),v3(0.0f,r,0.0f));
 	}
 	_texturedBuffer->end();
 	if (_showStates) {

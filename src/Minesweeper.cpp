@@ -58,7 +58,7 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	activate("RunState");
+	activate("TestState");
 }
 
 void Minesweeper::render() {

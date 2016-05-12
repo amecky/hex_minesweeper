@@ -26,16 +26,16 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	_cubes = new ds::Mesh();
 	ds::geometrics::createGrid(_cubes, 2.0f, 5, 7, ds::Rect(510, 0, 256, 256) , v3(-5, 0, -7));
 	//ds::geometrics::createCube(_cubes, _cubeTextures, v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
-
+	
 	_box = new ds::Mesh();
 	ds::geometrics::createCube(_box, _cubeTextures);// , v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
-	for (int y = 0; y < 10; ++y) {
-		for (int x = 0; x < 20; ++x) {
+	for (int y = 0; y < 1; ++y) {
+		for (int x = 0; x < 1; ++x) {
 			addCube(v3(-10.0f + x, 0.5 + y, 0.0f));
 		}
 	}
 
-	_playerMesh = ds::res::getMesh(28);
+	_playerMesh = ds::res::getMesh(30);
 	_playerPos = v3(0.0f, 1.2f, 0.0f);
 
 	//_player->translate(_playerPos);
@@ -334,9 +334,8 @@ void TestState::render() {
 		ds::geometrics::createCube(_bullets, _cubeTextures, _cubeList[i].position, v3(0.5f,0.5f,0.5f), v3(0.0f, _cubeList[i].angle, _cubeList[i].roll));
 	}
 	_bullets->draw();
-
-	_player->draw();
 	*/
+	//_player->draw();
 	// GUI
 	drawGUI();	
 }

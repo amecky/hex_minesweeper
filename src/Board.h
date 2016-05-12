@@ -71,7 +71,8 @@ enum BoardMode {
 	BM_FLASHING,
 	BM_DROPPING,
 	BM_MOVING,
-	BM_READY
+	BM_READY,
+	BM_REBUILDING
 };
 
 // -------------------------------------------------------
@@ -113,6 +114,27 @@ public:
 	}
 	const char* getName() const {
 		return "MovingCellsState";
+	}
+	ds::StateBehavior getBehavior() const {
+		return ds::SB_TRANSIENT;
+	}
+};
+
+// -------------------------------------------------------
+// Moving cells state
+// -------------------------------------------------------
+class RebuildingCellsState : public ds::State {
+
+public:
+	RebuildingCellsState() : ds::State() {}
+	virtual ~RebuildingCellsState() {}
+	int deactivate();
+	int update(float dt);
+	int getMode() const {
+		return BM_REBUILDING;
+	}
+	const char* getName() const {
+		return "RebuildingCellsState";
 	}
 	ds::StateBehavior getBehavior() const {
 		return ds::SB_TRANSIENT;
@@ -239,7 +261,7 @@ private:
 	bool _showBoard;
 	bool _showStates;
 
-	ds::Mesh* _box;
+	ds::Array<ds::Mesh*> _boxes;
 	ds::MeshBuffer* _texturedBuffer;
 	ds::Rect _cubeTextures[6];
 };
