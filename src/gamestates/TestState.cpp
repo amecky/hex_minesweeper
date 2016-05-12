@@ -8,8 +8,8 @@
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	//_particles = ds::res::getParticleManager();
 	_camera = new ds::FPSCamera(1024, 768);
-	_camera->setPosition(v3(0, 8, -10), v3(0, 0, 1));
-	_camera->resetPitch(DEGTORAD(45.0f));
+	_camera->setPosition(v3(0, 8, -21), v3(0, 0, 1));
+	_camera->resetPitch(DEGTORAD(5.0f));
 	_camera->resetYAngle();
 	graphics::setCamera(_camera);
 	_orthoCamera = new ds::OrthoCamera(1024, 768);
@@ -338,7 +338,7 @@ void TestState::render() {
 	_player->draw();
 	*/
 	// GUI
-	//drawGUI();	
+	drawGUI();	
 }
 
 void TestState::addCube(const v3& pos) {
