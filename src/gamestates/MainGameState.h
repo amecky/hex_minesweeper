@@ -33,5 +33,9 @@ private:
 	bool _showBombs;
 	float _endTimer;
 	Hex _current;
+
+	ds::Mesh* _hexagon;
+	ds::MeshBuffer* _colouredBuffer;
+	ds::FPSCamera* _camera;
 };
 

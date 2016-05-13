@@ -24,7 +24,7 @@ struct PS_Input
     float4 pos  : SV_POSITION;
     float2 tex0 : TEXCOORD0;
     float4 color : COLOR0;
-    float3 norm : NORMAL;
+    float3 normal : NORMAL;
     float3 lightVec : TEXCOORD1;
     float3 viewVec : TEXCOORD2;
 };
@@ -36,22 +36,44 @@ PS_Input VS_Main( VS_Input vertex )
     vsOut.pos = mul( vertex.pos, mvp_ );
     vsOut.tex0 = vertex.tex0;
     vsOut.color = vertex.color;
-    vsOut.norm = mul(vertex.normal,(float3x3)world);
-    vsOut.norm = normalize(vsOut.norm);
-    vsOut.lightVec = light;//normalize(light);
+    vsOut.normal = mul(vertex.normal,(float3x3)world);
+    vsOut.normal = normalize(vsOut.normal);
+    vsOut.lightVec = normalize(light);
     vsOut.viewVec = normalize(camera);
     return vsOut;
 }
 
+float4 PS_Main_Plain( PS_Input frag ) : SV_TARGET
+{
+    return frag.color;
+}
 
 float4 PS_Main( PS_Input frag ) : SV_TARGET
+{
+    float4 ambientColor = float4(0.2,0.2,0.2,1.0);
+    float4 textureColor = frag.color;
+    float4 diffuseColor = float4(1,1,1,1);    
+    float4 color = ambientColor;    
+    float3 lightDir = -frag.lightVec;    
+    float3 normal = normalize(frag.normal);    
+    float lightIntensity = saturate(dot(normal,lightDir));    
+    if ( lightIntensity > 0.0f ) {
+         color += (diffuseColor * lightIntensity);   
+         color = saturate(color);         
+    }
+    color = color * textureColor;
+    return color;
+}
+
+
+float4 PS_Main_Specular( PS_Input frag ) : SV_TARGET
 {
     float3 ambientColor = float3(0.3f,0.3f,0.3f);
     float4 lightColor = frag.color;
     ambientColor *= lightColor.rgb;
     float3 lightVec = normalize(frag.pos - frag.lightVec);
     //float3 lightVec = normalize(frag.lightVec);
-    float3 normal = normalize(frag.norm);
+    float3 normal = normalize(frag.normal);
     float diffuseTerm = clamp(dot(normal,lightVec),0.0f,1.0f);
     float specularTerm = 0.0f;
     if ( diffuseTerm > 0.0f ) {

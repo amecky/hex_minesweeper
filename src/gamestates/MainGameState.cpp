@@ -1,6 +1,7 @@
 #include "MainGameState.h"
 #include <Vector.h>
 #include <resources\ResourceContainer.h>
+#include <base\InputSystem.h>
 
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
 	_sprites = ds::res::getSpriteBuffer(8);
@@ -9,6 +10,14 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 	_showBombs = false;
 	_endTimer = 0.0f;
 	_context->mode = 1;
+
+	_camera = new ds::FPSCamera(1024, 768);
+	_camera->setPosition(v3(0, 30, -15), v3(0, 0, 1));
+	_camera->resetPitch(DEGTORAD(45.0f));
+	_camera->resetYAngle();
+	graphics::setCamera(_camera);
+	_colouredBuffer = ds::res::getMeshBuffer(26);
+	_hexagon = ds::res::getMesh(30);
 }
 
 MainGameState::~MainGameState() {
@@ -182,6 +191,8 @@ int MainGameState::update(float dt) {
 			return 1;
 		}
 	}
+	v2 mp = ds::input::getMousePosition();
+	_camera->update(dt, mp);
 	return 0;
 }
 
@@ -189,8 +200,12 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-	_sprites->begin();
+	//_sprites->begin();
 	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
+
+	graphics::setCamera(_camera);
+	graphics::turnOnZBuffer();
+	_colouredBuffer->begin();
 
 	if (_context->mode == 0) {
 		//_easyGroup->render();
@@ -205,27 +220,29 @@ void MainGameState::render() {
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
 		if (_showBombs && item.bomb) {
-			_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
+			//_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
 		}
 		else {
 			// marked
 			if (item.state == 2) {
-				_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
+				//_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
 			}
 			// opened
 			else if (item.state == 1) {
 				int offset = item.adjacentBombs * 40;
-				_sprites->draw(item.position, math::buildTexture(ds::Rect(50, offset, 40, 44)));
+				//_sprites->draw(item.position, math::buildTexture(ds::Rect(50, offset, 40, 44)));
 			}
 			// closed
 			else {
-				_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 40, 40, 44)),0.0f,item.scale);
+				//_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 40, 40, 44)),0.0f,item.scale);
+				_colouredBuffer->add(_hexagon, v3(item.position.x, 0.0f, item.position.y), ds::Color(128,0,0,255));// , v3(1, 1, 1), v3(DEGTORAD(90.0f), 0.0f, 0.0f));// , c->scale, c->rotation);
 			}
 		}
 		
 	}
-	_sprites->end();
-	_context->hud->render();
+	_colouredBuffer->end();
+	//_sprites->end();
+	//_context->hud->render();
 }
 
 // -------------------------------------------------------

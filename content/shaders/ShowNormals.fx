@@ -38,18 +38,20 @@ PS_Input VS_Main( VS_Input vertex )
     vsOut.color = vertex.color;
     vsOut.normal = mul(vertex.normal,(float3x3)world);
     vsOut.normal = normalize(vsOut.normal);
-    float3 worldPosition = mul(vertex.pos,(float3x3)world);
     vsOut.lightVec = normalize(light);
-    vsOut.viewVec = normalize(camera - worldPosition);
+    vsOut.viewVec = normalize(camera);
     return vsOut;
 }
 
+float4 PS_Main_Plain( PS_Input frag ) : SV_TARGET
+{
+    return frag.color;
+}
 
 float4 PS_Main( PS_Input frag ) : SV_TARGET
 {
-    float4 specular;
     float4 ambientColor = float4(0.2,0.2,0.2,1.0);
-    float4 textureColor = colorMap_.Sample( colorSampler_, frag.tex0 ) * frag.color;
+    float4 textureColor = frag.color;
     float4 diffuseColor = float4(1,1,1,1);    
     float4 color = ambientColor;    
     float3 lightDir = -frag.lightVec;    
@@ -60,29 +62,33 @@ float4 PS_Main( PS_Input frag ) : SV_TARGET
          color = saturate(color);         
     }
     color = color * textureColor;
-    return color;
-
+    //return color;
+    float4 tmp = float4(normal,1);
+    tmp.x = (tmp.x + 1) / 2;
+    tmp.y = (tmp.y + 1) / 2;
+    tmp.z = (tmp.z + 1) / 2;
+    return tmp;
 }
+
 
 float4 PS_Main_Specular( PS_Input frag ) : SV_TARGET
 {
-    float4 specular;
     float3 ambientColor = float3(0.3f,0.3f,0.3f);
-    float4 textureColor = colorMap_.Sample( colorSampler_, frag.tex0 ) * frag.color;
-    float4 diffuseColor = float4(1,1,1,1);    
-    float3 lightVec = -frag.lightVec;//normalize(frag.lightVec);
+    float4 lightColor = frag.color;
+    ambientColor *= lightColor.rgb;
+    float3 lightVec = normalize(frag.pos - frag.lightVec);
+    //float3 lightVec = normalize(frag.lightVec);
     float3 normal = normalize(frag.normal);
-    float lightIntensity = saturate(dot(normal,lightVec));
+    float diffuseTerm = clamp(dot(normal,lightVec),0.0f,1.0f);
     float specularTerm = 0.0f;
-    float4 color = float4(0,0,0,0);
-    if ( lightIntensity > 0.0f ) {
-         color += (diffuseColor * lightIntensity);   
-         color = saturate(color);
-         float3 reflection = normalize(2 * lightIntensity * frag.normal - lightVec); 
-         specular = pow(saturate(dot(reflection, frag.viewVec)), 25.0);
+    if ( diffuseTerm > 0.0f ) {
+        float3 viewVec = normalize(frag.viewVec);
+        //float3 halfVec = normalize(lightVec + viewVec);
+        //float3 halfVec = normalize(lightVec + viewVec);
+        float3 halfVec = normalize(normalize(viewVec - frag.pos) - lightVec);
+        specularTerm = pow(saturate(dot(normal,halfVec)),25);        
     }
-    color = color * textureColor;
-    color = saturate(color + specular);
-    return color;
+    float3 finalColor = ambientColor +  lightColor.rgb * diffuseTerm + lightColor * specularTerm;
+   	return float4(finalColor,lightColor.a);
 
 }
