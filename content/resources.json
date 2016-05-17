@@ -46,6 +46,16 @@ shader {
 	shader_model : "4_0"
 	sampler_state : 10
 }
+shader {
+	id : 32
+	name : "SpriteShader"
+	file : "content\shaders\Sprite.fx"
+	vertex_shader : "VS_Main"
+	pixel_shader : "PS_Main"
+	geometry_shader : "GS_Main"
+	shader_model : "4_0"
+	sampler_state : 10
+}
 input_layout {
 	id : 6
 	name : "PTC_Layout"
@@ -57,6 +67,12 @@ input_layout {
 	name : "PNTC_Layout"
 	attributes : "POSITION,NORMAL,TEXCOORD,COLOR"
 	shader : 22
+}
+input_layout {
+	id : 31
+	name : "Sprite_Layout"
+	attributes : "POSITION,COLOR,NORMAL,COLOR"
+	shader : 32
 }
 shader_resource_view {
 	id : 0

@@ -25,6 +25,11 @@ void HexGrid::resize(int qMax, int rMax) {
 	fill();
 }
 
+v3 HexGrid::convert(int q, int r) {
+	Hex hex = Hex(q, r);
+	v2 position = hex_math::hex_to_pixel(_layout, hex);
+	return v3(position.x, 0.0f, position.y);
+}
 // -------------------------------------------------------
 // fill
 // -------------------------------------------------------

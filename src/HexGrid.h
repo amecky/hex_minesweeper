@@ -35,6 +35,7 @@ public:
 	void setOrigin(const v2& origin);
 	void update(float dt);
 	int getIndex(const Hex& h)const;
+	v3 convert(int q, int r);
 private:
 	int _qMax;
 	int _rMax;

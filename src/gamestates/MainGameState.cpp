@@ -217,6 +217,12 @@ void MainGameState::render() {
 		//_hardGroup->render();
 	}
 
+	for (int r = 0; r < _width + 1; ++r) {
+		v3 p = _grid.convert(-_width/2 + r + 1, _height);
+		_colouredBuffer->add(_hexagon, p, ds::Color(128, 128, 128, 255));
+		p = _grid.convert(r, -1);
+		_colouredBuffer->add(_hexagon, p, ds::Color(128, 128, 128, 255));
+	}
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
 		if (_showBombs && item.bomb) {
