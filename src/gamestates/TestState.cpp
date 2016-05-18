@@ -7,6 +7,7 @@
 
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	//_particles = ds::res::getParticleManager();
+	_sprites = ds::res::getSpriteBuffer(8);
 	_camera = new ds::FPSCamera(1024, 768);
 	_camera->setPosition(v3(0, 8, -21), v3(0, 0, 1));
 	_camera->resetPitch(DEGTORAD(5.0f));
@@ -310,6 +311,7 @@ void TestState::checkCollisions() {
 // -------------------------------------------------------
 void TestState::render() {
 	// scene
+	/*
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();
 	_texturedBuffer->begin();
@@ -323,6 +325,7 @@ void TestState::render() {
 	_texturedBuffer->end();
 
 	_colouredBuffer->drawImmediate(_playerMesh,_playerPos);
+	*/
 	/*
 	_cubes->draw();
 
@@ -336,8 +339,17 @@ void TestState::render() {
 	_bullets->draw();
 	*/
 	//_player->draw();
+	graphics::setCamera(_orthoCamera);
+	graphics::turnOffZBuffer();
+
 	// GUI
-	drawGUI();	
+	drawGUI();
+
+
+	_sprites->begin();
+	_sprites->draw(v2(512, 600), math::buildTexture(510, 0, 256, 256), DEGTORAD(0.0f), v2(1.0f, 1.0f), ds::Color(255, 255, 255, 255));
+	_sprites->end();
+		
 }
 
 void TestState::addCube(const v3& pos) {

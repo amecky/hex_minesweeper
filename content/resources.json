@@ -92,6 +92,11 @@ constant_buffer {
 	size : 64
 }
 constant_buffer {
+	id : 33
+	name : "Screen_Dimension"
+	size : 16
+}
+constant_buffer {
 	id : 24
 	name : "MVP_CB_WORLD"
 	size : 160
@@ -116,7 +121,7 @@ sprite_buffer {
 	name : "BasicSpriteBuffer"
 	size : 1024
 	index_buffer : 0
-	constant_buffer : 1
+	constant_buffer : 33
 	vertex_buffer : 2
 	shader : 32
 	blend_state : 4
@@ -134,7 +139,7 @@ sprite_buffer {
 	name : "IMGUI_Buffer"
 	size : 1024
 	index_buffer : 0
-	constant_buffer : 1
+	constant_buffer : 33
 	vertex_buffer : 2
 	shader : 32
 	blend_state : 4

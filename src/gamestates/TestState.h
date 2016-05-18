@@ -43,6 +43,7 @@ private:
 	void drawGUI();
 	void checkCollisions();
 	GameContext* _context;
+	ds::SpriteBuffer* _sprites;
 	ds::FPSCamera* _camera;
 	ds::OrthoCamera* _orthoCamera;
 	ds::MeshBuffer* _colouredBuffer;

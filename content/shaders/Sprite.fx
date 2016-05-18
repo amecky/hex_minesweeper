@@ -1,9 +1,5 @@
-cbuffer cbChangesPerFrame : register( b0 )
-{
-    matrix mvp_;
-    matrix world;
-    float3 camera;
-    float3 light;
+cbuffer cbChangesPerFrame : register( b0 ) {
+    float4 screenDimension;
 };
 
 
@@ -34,54 +30,49 @@ struct PS_Input {
 
 GSPS_INPUT VS_Main( VS_Input vertex ) {
     GSPS_INPUT vsOut = ( GSPS_INPUT )0;
-    vsOut.Pos = float4(vertex.pos,1.0);//mul( vertex.pos, mvp_ );
+    vsOut.Pos = float4(vertex.pos,1.0);
     vsOut.Tex = vertex.tex;
     vsOut.Color = vertex.color;
     vsOut.Size = vertex.size;
     return vsOut;
 }
 
-// We expand each point into a quad (4 vertices), so the maximum number of vertices
- // we output per geometry shader invocation is 4.
 [maxvertexcount(4)]
 void GS_Main(point GSPS_INPUT gin[1], inout TriangleStream<PS_Input> triStream)
 {    
-    float VP_ARRAY[8] = { -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f };
-    float2 viewportPosition = float2(512,384);
+    float VP_ARRAY[8] = { -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f };
     float2 t[4];
-    float4 ret;
-    float tw = gin[0].Tex.z / 1024.0;
-    float th = gin[0].Tex.w / 1024.0;
-    ret.x = gin[0].Tex.x / 1024.0;
-    ret.z = ret.x + tw;
-    ret.y = gin[0].Tex.y / 1024.0;
-    ret.w = ret.y + th;
-    t[0] = float2(ret.x,ret.y);
-    t[1] = float2(ret.z,ret.y);
-    t[2] = float2(ret.z,ret.w);
-    t[3] = float2(ret.x,ret.w);
+    float4 ret = gin[0].Tex;
+    float left = ret.x / screenDimension.z;
+    float top = ret.y / screenDimension.w;
+    float right = left + ret.z / screenDimension.z;
+    float bottom = top + ret.w / screenDimension.w;
+    t[0] = float2(left,top);
+    t[1] = float2(right,top);
+    t[2] = float2(left,bottom);
+    t[3] = float2(right,bottom);
 
+    float dx = ret.z / screenDimension.x;
+    float dy = ret.w / screenDimension.y;
     float4 pos = gin[0].Pos;
-    //pos -= float3(viewportPosition, 0.0f);
+    pos.x = pos.x / screenDimension.x * 2.0 - 1.0;
+    pos.y = pos.y / screenDimension.y * 2.0 - 1.0;
     PS_Input gout;
+    triStream.RestartStrip();
     [unroll]
     for(int i = 0; i < 4; ++i) {
-        float px = VP_ARRAY[i * 2] * tw;
-        float py = VP_ARRAY[i * 2 + 1] * th;
+        float px = VP_ARRAY[i * 2] * dx;
+        float py = VP_ARRAY[i * 2 + 1] * dy;
         float sx = px * gin[0].Size.x;
         float sy = py * gin[0].Size.y;
         float xt = cos(gin[0].Size.z) * sx - sin(gin[0].Size.z) * sy;
         float yt = sin(gin[0].Size.z) * sx + cos(gin[0].Size.z) * sy;
-        xt += pos.x;
-        yt += pos.y;
-        //gout.pos = mul(float4(pos.x, pos.y, 0.0f, 1.0f), mvp_); 
-        gout.pos = float4(pos.x, pos.y, 2.0f, 1.0f); 
+        gout.pos = float4(xt + pos.x, yt + pos.y, 0.5f, 1.0f); 
         gout.tex0 = t[i];
         gout.color = gin[0].Color;
-        //gout.PrimID = primID;        
         triStream.Append(gout);
     }
-    //triStream.RestartStrip();
+    triStream.RestartStrip();
 }
 
 
