@@ -310,6 +310,7 @@ void TestState::checkCollisions() {
 // -------------------------------------------------------
 void TestState::render() {
 	// scene
+	/*
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();
 	_texturedBuffer->begin();
@@ -323,6 +324,7 @@ void TestState::render() {
 	_texturedBuffer->end();
 
 	_colouredBuffer->drawImmediate(_playerMesh,_playerPos);
+	*/
 	/*
 	_cubes->draw();
 

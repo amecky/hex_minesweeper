@@ -11,15 +11,6 @@ sampler_state {
 	addressW : "CLAMP"
 }
 shader {
-	id : 3
-	name : "SpriteShader"
-	file : "TextureMap.fx"
-	vertex_shader : "VS_Main"
-	pixel_shader : "PS_Main"
-	shader_model : "4_0"
-	sampler_state : 10
-}
-shader {
 	id : 22
 	name : "LightningShader"
 	file : "content\shaders\Lightning.fx"
@@ -60,7 +51,7 @@ input_layout {
 	id : 6
 	name : "PTC_Layout"
 	attributes : "POSITION,TEXCOORD,COLOR"
-	shader : 3
+	shader : 29
 }
 input_layout {
 	id : 23
@@ -127,10 +118,10 @@ sprite_buffer {
 	index_buffer : 0
 	constant_buffer : 1
 	vertex_buffer : 2
-	shader : 3
+	shader : 32
 	blend_state : 4
 	color_map : 5
-	input_layout : 6
+	input_layout : 31
 	font : 7
 }
 font {
@@ -145,10 +136,10 @@ sprite_buffer {
 	index_buffer : 0
 	constant_buffer : 1
 	vertex_buffer : 2
-	shader : 3
+	shader : 32
 	blend_state : 4
 	color_map : 11
-	input_layout : 6
+	input_layout : 31
 	font : 14
 }
 imgui {
