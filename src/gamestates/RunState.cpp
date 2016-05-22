@@ -22,6 +22,7 @@ RunState::RunState(GameContext* context) : ds::GameState("RunState"), _context(c
 
 
 RunState::~RunState() {
+	delete _orthoCamera;
 	delete _cubes;
 	delete _board;
 	delete _camera;

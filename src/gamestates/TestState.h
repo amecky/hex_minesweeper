@@ -4,6 +4,7 @@
 #include <particles\ParticleSystem.h>
 #include <renderer\QuadBuffer.h>
 #include <vector>
+#include "..\Enemies.h"
 
 struct Bullet {
 
@@ -24,8 +25,8 @@ struct Cube {
 };
 
 typedef std::vector<Bullet> Bullets;
-typedef std::vector<Cube> Cubes;
-
+typedef std::vector<Enemies*> EnemyList;
+typedef std::vector<EnemyMovement*> MovementList;
 class TestState : public ds::GameState {
 
 public:
@@ -39,7 +40,6 @@ public:
 	int onChar(int ascii);
 private:
 	void addBullet();
-	void addCube(const v3& pos);
 	void drawGUI();
 	void checkCollisions();
 	GameContext* _context;
@@ -48,12 +48,7 @@ private:
 	ds::OrthoCamera* _orthoCamera;
 	ds::MeshBuffer* _colouredBuffer;
 	ds::MeshBuffer* _texturedBuffer;
-	ds::Mesh* _playerMesh;
-	ds::Mesh* _cubes;
-	ds::Mesh* _box;
 	Bullets _bulletList;
-	Cubes _cubeList;
-	ds::Rect _cubeTextures[6];
 	v3 _playerPos;
 	float _playerAngle;
 	float _timer;
@@ -61,5 +56,10 @@ private:
 	bool _firing;
 	float _fireTimer;
 	bool _pressed;
+	EnemyList _enemies;
+	AnimateFunc _animation;
+	MovementList _movements;
+	int _activeMovement;
+	int _activeEnemies;
 };
 

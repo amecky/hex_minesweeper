@@ -4,7 +4,7 @@
 #include <base\InputSystem.h>
 
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
-	_sprites = ds::res::getSpriteBuffer(8);
+	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
 	_selected = -1;
 	_maxBombs = 60;
 	_showBombs = false;
@@ -21,7 +21,7 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 }
 
 MainGameState::~MainGameState() {
-
+	delete _camera;
 }
 
 // -------------------------------------------------------

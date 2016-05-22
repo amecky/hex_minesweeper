@@ -4,6 +4,7 @@ cbuffer cbChangesPerFrame : register( b0 )
     matrix world;
     float3 camera;
     float3 light;
+    float4 diffuseColor;
 };
 
 
@@ -48,47 +49,10 @@ float4 PS_Main_Plain( PS_Input frag ) : SV_TARGET
     return frag.color;
 }
 
-float4 PS_Main( PS_Input frag ) : SV_TARGET
-{
-    float4 ambientColor = float4(0.2,0.2,0.2,1.0);
-    float4 textureColor = frag.color;
-    float4 diffuseColor = float4(1,1,1,1);    
-    float4 color = ambientColor;    
-    float3 lightDir = -frag.lightVec;    
-    float3 normal = normalize(frag.normal);    
-    float lightIntensity = saturate(dot(normal,lightDir));    
-    if ( lightIntensity > 0.0f ) {
-         color += (diffuseColor * lightIntensity);   
-         color = saturate(color);         
-    }
-    color = color * textureColor;
-    //return color;
-    float4 tmp = float4(normal,1);
+float4 PS_Main( PS_Input frag ) : SV_TARGET {
+    float4 tmp = float4(frag.normal,1);
     tmp.x = (tmp.x + 1) / 2;
     tmp.y = (tmp.y + 1) / 2;
     tmp.z = (tmp.z + 1) / 2;
     return tmp;
-}
-
-
-float4 PS_Main_Specular( PS_Input frag ) : SV_TARGET
-{
-    float3 ambientColor = float3(0.3f,0.3f,0.3f);
-    float4 lightColor = frag.color;
-    ambientColor *= lightColor.rgb;
-    float3 lightVec = normalize(frag.pos - frag.lightVec);
-    //float3 lightVec = normalize(frag.lightVec);
-    float3 normal = normalize(frag.normal);
-    float diffuseTerm = clamp(dot(normal,lightVec),0.0f,1.0f);
-    float specularTerm = 0.0f;
-    if ( diffuseTerm > 0.0f ) {
-        float3 viewVec = normalize(frag.viewVec);
-        //float3 halfVec = normalize(lightVec + viewVec);
-        //float3 halfVec = normalize(lightVec + viewVec);
-        float3 halfVec = normalize(normalize(viewVec - frag.pos) - lightVec);
-        specularTerm = pow(saturate(dot(normal,halfVec)),25);        
-    }
-    float3 finalColor = ambientColor +  lightColor.rgb * diffuseTerm + lightColor * specularTerm;
-   	return float4(finalColor,lightColor.a);
-
 }

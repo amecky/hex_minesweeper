@@ -17,7 +17,7 @@ shader {
 	vertex_shader : "VS_Main"
 	pixel_shader : "PS_Main"
 	shader_model : "4_0"
-	sampler_state : 10
+	sampler_state : "ClampSamplerState"
 }
 shader {
 	id : 25
@@ -26,7 +26,7 @@ shader {
 	vertex_shader : "VS_Main"
 	pixel_shader : "PS_Main"
 	shader_model : "4_0"
-	sampler_state : 10
+	sampler_state : "ClampSamplerState"
 }
 shader {
 	id : 29
@@ -35,7 +35,7 @@ shader {
 	vertex_shader : "VS_Main"
 	pixel_shader : "PS_Main"
 	shader_model : "4_0"
-	sampler_state : 10
+	sampler_state : "ClampSamplerState"
 }
 shader {
 	id : 32
@@ -45,35 +45,39 @@ shader {
 	pixel_shader : "PS_Main"
 	geometry_shader : "GS_Main"
 	shader_model : "4_0"
-	sampler_state : 10
-}
+	sampler_state : "ClampSamplerState"
+} 
+shader {
+	id : 37
+	name : "ShowNormalsShader"
+	file : "content\shaders\ShowNormals.fx"
+	vertex_shader : "VS_Main"
+	pixel_shader : "PS_Main"
+	shader_model : "4_0"
+	sampler_state : "ClampSamplerState"
+} 
 input_layout {
 	id : 6
 	name : "PTC_Layout"
-	attributes : "POSITION,TEXCOORD,COLOR"
-	shader : 29
+	attributes : "POSITION,NORMAL,TEXCOORD,COLOR"
+	shader : "TexturedShader"
 }
 input_layout {
 	id : 23
 	name : "PNTC_Layout"
 	attributes : "POSITION,NORMAL,TEXCOORD,COLOR"
-	shader : 22
+	shader : "LightningShader"
 }
 input_layout {
 	id : 31
 	name : "Sprite_Layout"
 	attributes : "POSITION,COLOR,NORMAL,COLOR"
-	shader : 32
-}
-shader_resource_view {
-	id : 0
-	name : "PS_Texture"
-	texture : "TextureArray.png"
+	shader : "SpriteShader"
 }
 vertex_buffer {
 	id : 2
 	name : "SpriteVertexBuffer"
-	layout : 6
+	layout : "Sprite_Layout"
 	size : 147456
 	dynamic : true
 }
@@ -99,7 +103,7 @@ constant_buffer {
 constant_buffer {
 	id : 24
 	name : "MVP_CB_WORLD"
-	size : 160
+	size : 176
 }
 texture {
 	id : 5
@@ -121,13 +125,13 @@ sprite_buffer {
 	name : "BasicSpriteBuffer"
 	size : 1024
 	index_buffer : 0
-	constant_buffer : 33
-	vertex_buffer : 2
+	constant_buffer : "Screen_Dimension"
+	vertex_buffer : "SpriteVertexBuffer"
 	shader : 32
 	blend_state : 4
 	color_map : 5
-	input_layout : 31
-	font : 7
+	input_layout : "Sprite_Layout"
+	font : "xscale"
 }
 font {
 	id : 14
@@ -139,19 +143,19 @@ sprite_buffer {
 	name : "IMGUI_Buffer"
 	size : 1024
 	index_buffer : 0
-	constant_buffer : 33
-	vertex_buffer : 2
+	constant_buffer : "Screen_Dimension"
+	vertex_buffer : "SpriteVertexBuffer"
 	shader : 32
 	blend_state : 4
 	color_map : 11
-	input_layout : 31
-	font : 14
+	input_layout : "Sprite_Layout"
+	font : "gui_font"
 }
 imgui {
 	id : 13
 	name : "IMGUI"
-	font : 14
-	sprite_buffer : 12
+	font : "gui_font"
+	sprite_buffer : "IMGUI_Buffer"
 }
 dialog {
     id : 15
@@ -201,25 +205,25 @@ mesh_buffer {
 	id : 21
 	name : "TexturedBuffer"
 	size : 1024
-	index_buffer : 0
-	constant_buffer : 24
-	vertex_buffer : 2
-	shader : 22
-	blend_state : 4
+	index_buffer : "SpriteQuadBuffer"
+	constant_buffer : "MVP_CB_WORLD"
+	vertex_buffer : "SpriteVertexBuffer"
+	shader : "LightningShader"
+	blend_state : "regular_blendstate"
 	color_map : 5
-	input_layout : 23
+	input_layout : "PNTC_Layout"
 }
 mesh_buffer {
 	id : 26
 	name : "ColouredBuffer"
 	size : 1024
-	index_buffer : 0
-	constant_buffer : 24
-	vertex_buffer : 2
-	shader : 25
-	blend_state : 4
+	index_buffer : "SpriteQuadBuffer"
+	constant_buffer : "MVP_CB_WORLD"
+	vertex_buffer : "SpriteVertexBuffer"
+	shader : "ColouredShader"
+	blend_state : "regular_blendstate"
 	color_map : 5
-	input_layout : 23
+	input_layout : "PNTC_Layout"
 }
 mesh {
 	id : 28
@@ -233,6 +237,22 @@ mesh {
 	id : 30
 	name : "HexagonMesh"
 	fileName : "hexagon.obj"
+	rotation : 90,0,0
+	scale : 1,1,1
+	position : 0,0,0
+}
+mesh {
+	id : 35
+	name : "RingMesh"
+	fileName : "ring.obj"
+	rotation : 90,0,0
+	scale : 1,1,1
+	position : 0,0,0
+}
+mesh {
+	id : 36
+	name : "CubeMesh"
+	fileName : "cube.obj"
 	rotation : 90,0,0
 	scale : 1,1,1
 	position : 0,0,0

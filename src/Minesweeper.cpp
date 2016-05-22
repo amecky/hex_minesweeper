@@ -13,12 +13,14 @@
 ds::BaseApp *app = new Minesweeper(); 
 
 Minesweeper::Minesweeper() : ds::BaseApp() {
+	//_CrtSetBreakAlloc(187);
 	_context = new GameContext;
 	_context->mode = 0;
 	_context->settings = new GameSettings;
 }
 
 Minesweeper::~Minesweeper() {
+	delete _context->settings;
 	delete _context;
 }
 
@@ -27,12 +29,13 @@ Minesweeper::~Minesweeper() {
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
 	_context->hud = ds::res::getGUIDialog(18);
-	_sprites = ds::res::getSpriteBuffer(8);
-	addGameState(new MainGameState(_context));
-	addGameState(new GameOverState(_context));
-	addGameState(new MainMenuState(_context));
-	addGameState(new HighscoreState(_context));
+	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
+	//addGameState(new MainGameState(_context));
+	//addGameState(new GameOverState(_context));
+	//addGameState(new MainMenuState(_context));
+	//addGameState(new HighscoreState(_context));
 	addGameState(new TestState(_context));
+	/*
 	addGameState(new RunState(_context));
 	connectGameStates("GameOver", 1, "MainGame");
 	connectGameStates("GameOver", 2, "MainMenu");
@@ -51,13 +54,14 @@ bool Minesweeper::loadContent() {
 			_context->highscore_service.save();
 		}
 	}
+	*/
 	//scoring::load(&_context->highscore);
 	return true;
 }
 
 void Minesweeper::init() {
 	// for testing
-	_context->reset();
+	//_context->reset();
 	activate("TestState");
 }
 

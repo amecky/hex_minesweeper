@@ -1,9 +1,12 @@
-cbuffer cbChangesPerFrame : register( b0 )
+cbuffer cbChangesPerObject : register( b0 )
 {
     matrix mvp_;
     matrix world;
     float3 camera;
-    float3 light;
+    float tmp;
+    float3 light;    
+    float more;
+    float4 diffuseColor;
 };
 
 
@@ -27,6 +30,7 @@ struct PS_Input
     float3 normal : NORMAL;
     float3 lightVec : TEXCOORD1;
     float3 viewVec : TEXCOORD2;
+    float4 diffuseColor : COLOR1;
 };
 
 
@@ -40,6 +44,7 @@ PS_Input VS_Main( VS_Input vertex )
     vsOut.normal = normalize(vsOut.normal);
     vsOut.lightVec = normalize(light);
     vsOut.viewVec = normalize(camera);
+    vsOut.diffuseColor = diffuseColor;
     return vsOut;
 }
 
@@ -51,14 +56,14 @@ float4 PS_Main_Plain( PS_Input frag ) : SV_TARGET
 float4 PS_Main( PS_Input frag ) : SV_TARGET
 {
     float4 ambientColor = float4(0.2,0.2,0.2,1.0);
-    float4 textureColor = frag.color;
-    float4 diffuseColor = float4(1,1,1,1);    
+    float4 textureColor = frag.color * frag.diffuseColor;
+    float4 dc = float4(1,1,1,1);    
     float4 color = ambientColor;    
-    float3 lightDir = -frag.lightVec;    
+    float3 lightDir = frag.lightVec;    
     float3 normal = normalize(frag.normal);    
     float lightIntensity = saturate(dot(normal,lightDir));    
     if ( lightIntensity > 0.0f ) {
-         color += (diffuseColor * lightIntensity);   
+         color += (dc * lightIntensity);   
          color = saturate(color);         
     }
     color = color * textureColor;

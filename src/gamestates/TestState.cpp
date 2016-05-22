@@ -6,69 +6,39 @@
 #include <utils\ObjLoader.h>
 
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
-	//_particles = ds::res::getParticleManager();
-	_sprites = ds::res::getSpriteBuffer(8);
+	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
 	_camera = new ds::FPSCamera(1024, 768);
-	_camera->setPosition(v3(0, 8, -21), v3(0, 0, 1));
-	_camera->resetPitch(DEGTORAD(5.0f));
+	_camera->setPosition(v3(0, 0, -26), v3(0, 0, 1));
+	_camera->resetPitch(0.0f);
 	_camera->resetYAngle();
 	graphics::setCamera(_camera);
 	_orthoCamera = new ds::OrthoCamera(1024, 768);
-
-	ds::Rect r(512, 342, 60, 60);
-	for (int i = 0; i < 6; ++i) {
-		_cubeTextures[i] = r;
-		r.left += 64;
-		r.right += 64;
-	}
 	
 	_texturedBuffer = ds::res::getMeshBuffer(21);
 	_colouredBuffer = ds::res::getMeshBuffer(26);
-	_cubes = new ds::Mesh();
-	ds::geometrics::createGrid(_cubes, 2.0f, 5, 7, ds::Rect(510, 0, 256, 256) , v3(-5, 0, -7));
-	//ds::geometrics::createCube(_cubes, _cubeTextures, v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
-	
-	_box = new ds::Mesh();
-	ds::geometrics::createCube(_box, _cubeTextures);// , v3(0, 2, 0), v3(1, 1, 1));// , v3(0.0f, 0.0f, DEGTORAD(45.0f)));
-	for (int y = 0; y < 1; ++y) {
-		for (int x = 0; x < 1; ++x) {
-			addCube(v3(-10.0f + x, 0.5 + y, 0.0f));
-		}
-	}
 
-	_playerMesh = ds::res::getMesh(30);
-	_playerPos = v3(0.0f, 1.2f, 0.0f);
-
-	//_player->translate(_playerPos);
-	//_player->rotateX(DEGTORAD(-90.0f));
-	_playerAngle = 0.0f;
-	_timer = 0.0f;
-	for (int i = 0; i < 10; ++i) {
-		_states[i] = 0;
-	}
-
+	_enemies.push_back(new Enemies("RingMesh"));
+	_enemies.push_back(new Enemies("CubeMesh"));
+	_movements.push_back(new FirstMovement());
+	_movements.push_back(new SecondMovement());
+	_activeEnemies = -1;
+	_activeMovement = -1;
 	_firing = false;
 	_fireTimer = 0.0f;
-
 	_pressed = false;
-	/*
-	ds::mat4 t = ds::matrix::mat4Transform(v3(0,0,0));
-	v3 nn = t * v3(1, 1, 1);
-	LOG << "==============> " << DBG_V3(nn);
-	ds::mat4 s = ds::matrix::mat4Scale(v3(0.5f,0.5f,0.5f));
-	ds::mat4 rx = ds::matrix::mat4RotationX(DEGTORAD(45.0f));
-	ds::mat4 ry = ds::matrix::mat4RotationY(DEGTORAD(45.0f));
-	ds::mat4 rz = ds::matrix::mat4RotationZ(DEGTORAD(45.0f));
-	ds::mat4 world = rz * ry * rx * s * t;
-	v3 n = world * v3(1, 1, 1);
-	LOG << "====================> " << DBG_V3(n);
-	*/
+	
+	_animation = scale_enemy;
 }
 
 
 TestState::~TestState() {
-	delete _cubes;
-	delete _box;
+	for (size_t i = 0; i < _enemies.size(); ++i) {
+		delete _enemies[i];
+	}
+	for (size_t i = 0; i < _movements.size(); ++i) {
+		delete _movements[i];
+	}
+	delete _orthoCamera;
 	delete _camera;
 }
 
@@ -85,6 +55,10 @@ int TestState::update(float dt) {
 	//_particles->update(dt);
 	v2 mp = ds::input::getMousePosition();
 	_camera->update(dt, mp);
+	_timer += dt;
+	if (_activeEnemies != -1) {
+		_enemies[_activeEnemies]->update(dt);
+	}
 	/*
 	_timer += dt;
 	if (_states[1] == 1) {
@@ -164,47 +138,6 @@ int TestState::update(float dt) {
 		}
 	}
 
-	Cubes::iterator cit = _cubeList.begin();
-	while (cit != _cubeList.end()) {
-		Cube* c = &(*cit);
-		if (c->state == 0) {
-			v3* p = &cit->position;
-			v3* v = &cit->velocity;
-			*p += *v * dt;
-			if (p->x > 10.0f) {
-				v->x *= -1.0f;
-			}
-			else if (p->x < -10.0f) {
-				v->x *= -1.0f;
-			}
-			else if (p->z < -10.0f) {
-				v->z *= -1.0f;
-			}
-			else if (p->z > 10.0f) {
-				v->z *= -1.0f;
-			}
-			c->angle = math::getAngle(v2(1, 0), v2(v->x, v->z));
-			c->roll += dt * 2.0f;
-		}
-		else if (c->state == 1) {
-			c->timer -= dt * 4.0f;
-			c->position.x = -10.0f + cos(c->timer) * 1.3f;
-			c->position.y = -0.3f + sin(c->timer) * 1.3f;
-			c->roll = c->timer - DEGTORAD(60.0f);
-			if (c->timer <= DEGTORAD(60.0f)) {
-				c->state = 0;
-				c->roll = 0.0f;
-				float angle = DEGTORAD(315.0f) + math::random(0.0f, HALF_PI);
-				v2 v = math::getRadialVelocity(angle, 4.0f);
-				c->velocity.x = v.x;
-				c->velocity.y = 0.0f;
-				c->velocity.z = v.y;
-				c->angle = angle;
-			}
-		}
-		++cit;
-	}
-
 	if (ds::input::isMouseButtonPressed(0)) {
 		_firing = true;
 	}
@@ -221,6 +154,7 @@ int TestState::update(float dt) {
 
 	checkCollisions();
 	*/
+	/*
 	if (ds::input::isMouseButtonPressed(0) && !_pressed) {
 		_pressed = true;
 		v2 mp = ds::input::getMousePosition();
@@ -268,6 +202,7 @@ int TestState::update(float dt) {
 			++cit;
 		}
 	}
+	*/
 	if (!ds::input::isMouseButtonPressed(0) && _pressed) {
 		_pressed = false;
 	}
@@ -278,6 +213,7 @@ int TestState::update(float dt) {
 // simple collision check
 // -------------------------------------------------------
 void TestState::checkCollisions() {
+	/*
 	Bullets::iterator it = _bulletList.begin();
 	while (it != _bulletList.end()) {
 		Bullet* b = &(*it);
@@ -304,6 +240,7 @@ void TestState::checkCollisions() {
 			++it;
 		}
 	}
+	*/
 }
 
 // -------------------------------------------------------
@@ -311,9 +248,9 @@ void TestState::checkCollisions() {
 // -------------------------------------------------------
 void TestState::render() {
 	// scene
-	/*
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();
+	/*
 	_texturedBuffer->begin();
 	_texturedBuffer->drawImmediate(_cubes,v3(0,0,0));	
 	Cubes::iterator cit = _cubeList.begin();
@@ -323,9 +260,12 @@ void TestState::render() {
 		++cit;
 	}	
 	_texturedBuffer->end();
-
-	_colouredBuffer->drawImmediate(_playerMesh,_playerPos);
 	*/
+	//_colouredBuffer->drawImmediate(_playerMesh,_playerPos,v3(1,1,1),v3(_timer * 10.0f,0.0f,0.0f));
+	if (_activeEnemies != -1) {
+		_enemies[_activeEnemies]->draw();
+	}
+	
 	/*
 	_cubes->draw();
 
@@ -346,22 +286,10 @@ void TestState::render() {
 	drawGUI();
 
 
-	_sprites->begin();
-	_sprites->draw(v2(512, 600), math::buildTexture(510, 0, 256, 256), DEGTORAD(0.0f), v2(1.0f, 1.0f), ds::Color(255, 255, 255, 255));
-	_sprites->end();
+	//_sprites->begin();
+	//_sprites->draw(v2(512, 600), math::buildTexture(510, 0, 256, 256), DEGTORAD(0.0f), v2(1.0f, 1.0f), ds::Color(255, 255, 255, 255));
+	//_sprites->end();
 		
-}
-
-void TestState::addCube(const v3& pos) {
-	Cube c;
-	c.position = pos;
-	c.scale = v3(1, 1, 1);
-	c.velocity = v3(0, 0, 0);
-	c.angle = 0.0f;
-	c.timer = DEGTORAD(225.0f);
-	c.rotation = v3(0, 0, 0);
-	c.state = 1;
-	_cubeList.push_back(c);
 }
 
 void TestState::addBullet() {
@@ -394,6 +322,24 @@ void TestState::drawGUI() {
 	if (gui::Button("Reset")) {
 		_camera->setPosition(v3(0, 2, -12), v3(0, 0, 1));
 		_camera->resetYAngle();
+	}
+	gui::InputInt("Enemy", &_activeEnemies);
+	gui::InputInt("Movement", &_activeMovement);
+	if (gui::Button("Start")) {
+		if (_activeEnemies != -1 && _activeMovement != -1) {
+			_enemies[_activeEnemies]->start(_animation, _movements[_activeMovement]);
+		}
+	}
+	if (gui::Button("Toggle")) {
+		if (_activeEnemies != -1) {
+			_enemies[_activeEnemies]->toggle();
+		}
+	}
+	if (gui::Button("Rotate E")) {
+		_animation = rotate_enemy;
+	}
+	if (gui::Button("Scale E")) {
+		_animation = scale_enemy;
 	}
 	/*
 	v3* lp = _cubes->getLightPos();
