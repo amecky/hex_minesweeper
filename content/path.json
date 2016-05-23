@@ -1,0 +1,18 @@
+path {
+    type : "straight"
+    size : 5
+    p0 : 16,4
+    p1 : 12,4
+    p2 : 12,3
+    p3 : 12,4
+    p4 : 12,4
+}
+path {
+    type : "cubic"
+    size : 5
+    p0 : 16,4
+    p1 : 12,4
+    p2 : 12,3
+    p3 : 12,4
+    p4 : 12,4
+}

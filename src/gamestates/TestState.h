@@ -42,6 +42,7 @@ private:
 	void addBullet();
 	void drawGUI();
 	void checkCollisions();
+	void readPathInformations();
 	GameContext* _context;
 	ds::SpriteBuffer* _sprites;
 	ds::FPSCamera* _camera;
@@ -61,7 +62,7 @@ private:
 	MovementList _movements;
 	int _activeMovement;
 	int _activeEnemies;
-
+	ds::Array<ds::Path*> _paths;
 	ds::Scene* _scene;
 };
 

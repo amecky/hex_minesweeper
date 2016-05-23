@@ -2,6 +2,7 @@
 #include <renderer\MeshBuffer.h>
 #include <math\CubicBezierPath.h>
 #include <renderer\Scene.h>
+#include <math\StraightPath.h>
 
 typedef ds::Array<ID> EnemyArray;
 
@@ -51,6 +52,37 @@ public:
 	bool tick(EnemyArray& array, float dt);
 private:
 	ds::CubicBezierPath _path;
+};
+
+class ThirdMovement : public EnemyMovement {
+
+public:
+	ThirdMovement(ds::Scene* scene) : EnemyMovement(scene) {
+		_path.create(v2(16, -4), v2(12, -4));
+		_path.add(v2( 12, 0));
+		_path.add(v2(  8, 0));
+		_path.add(v2(  8, -4));
+		_path.add(v2(-16, -4));
+		_path.build();
+	}
+	virtual ~ThirdMovement() {}
+	void prepare(EnemyArray& array) {}
+	bool tick(EnemyArray& array, float dt);
+private:
+	ds::StraightPath _path;
+};
+
+class PathMovement : public EnemyMovement {
+
+public:
+	PathMovement(ds::Scene* scene,ds::Path* path) : EnemyMovement(scene) {
+		_path = path;
+	}
+	virtual ~PathMovement() {}
+	void prepare(EnemyArray& array) {}
+	bool tick(EnemyArray& array, float dt);
+private:
+	ds::Path* _path;
 };
 
 

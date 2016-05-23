@@ -4,6 +4,7 @@
 #include <base\InputSystem.h>
 #include <utils\geometrics.h>
 #include <utils\ObjLoader.h>
+#include <io\json.h>
 
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
@@ -18,12 +19,41 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	_texturedBuffer = ds::res::getMeshBuffer(21);
 	_colouredBuffer = ds::res::getMeshBuffer(26);
 
+	ds::StraightPath* p0 = new ds::StraightPath;
+	p0->create(v2(16, -6), v2(12, -6));
+	p0->add(v2(12, -2));
+	p0->add(v2(6, -6));
+	p0->add(v2(-16, -6));
+	p0->build();
+	_paths.push_back(p0);
+
+	ds::StraightPath* p1 = new ds::StraightPath;
+	p1->create(v2(16, 6), v2(12, 6));
+	p1->add(v2(12, 2));
+	p1->add(v2(6, 6));
+	p1->add(v2(-16, 6));
+	p1->build();
+	_paths.push_back(p1);
+
+	ds::StraightPath* p2 = new ds::StraightPath;
+	p2->create(v2(16, 1), v2(12, 1));
+	p2->add(v2(12, 3));
+	p2->add(v2(8, -1));
+	p2->add(v2(-16, -1));
+	p2->build();
+	_paths.push_back(p2);
+
+	readPathInformations();
+
 	_enemies.push_back(new Enemies(_scene, "RingMesh"));
 	_enemies.push_back(new Enemies(_scene, "CubeMesh"));
 	_movements.push_back(new FirstMovement(_scene));
 	_movements.push_back(new SecondMovement(_scene));
+	_movements.push_back(new PathMovement(_scene,_paths[0]));
+	_movements.push_back(new PathMovement(_scene, _paths[1]));
+	_movements.push_back(new PathMovement(_scene, _paths[2]));
 	_activeEnemies = 0;
-	_activeMovement = 0;
+	_activeMovement = 2;
 	_firing = false;
 	_fireTimer = 0.0f;
 	_pressed = false;
@@ -244,6 +274,26 @@ void TestState::checkCollisions() {
 	*/
 }
 
+void TestState::readPathInformations() {
+	ds::JSONReader reader;
+	if (reader.parse("content\\path.json")) {
+		int children[256];
+		int num = reader.get_categories(children, 256);
+		for (int i = 0; i < num; ++i) {
+			uint32_t size = 0;
+			reader.get(children[i], "size", &size);
+			const char* type = reader.get_string(children[i], "type");
+			LOG << "type: " << type << " size: " << size;
+			if (strcmp(type, "straight")) {
+
+			}
+			else {
+
+			}
+		}
+	}
+}
+
 // -------------------------------------------------------
 // render
 // -------------------------------------------------------
@@ -252,6 +302,7 @@ void TestState::render() {
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();
 	if (_activeEnemies != -1) {
+		_scene->transform();
 		_scene->draw();
 	}
 	graphics::setCamera(_orthoCamera);

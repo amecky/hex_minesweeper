@@ -79,7 +79,7 @@ bool FirstMovement::tick(EnemyArray & array, float dt) {
 		e.timer += dt;
 		if (e.timer >= 0.0f && e.timer <= 2.0f) {
 			v2 p;
-			_path.get(e.timer * 0.5f, &p);
+			_path.approx(e.timer * 0.5f, &p);
 			e.position = v3(p.x, p.y, 0.0f);
 		}
 		if (e.timer > 2.0f) {
@@ -102,7 +102,53 @@ bool SecondMovement::tick(EnemyArray & array, float dt) {
 		e.timer += dt;
 		if (e.timer >= 0.0f && e.timer <= 2.0f) {
 			v2 p;
-			_path.get(e.timer * 0.5f, &p);
+			_path.approx(e.timer * 0.5f, &p);
+			e.position = v3(p.x, p.y, 0.0f);
+		}
+		if (e.timer > 2.0f) {
+			//_scene->remove(id);
+			e.active = false;
+			--_alive;
+		}
+	}
+
+	return false;
+}
+
+// ------------------------------------------------
+// Second movement
+// ------------------------------------------------
+bool ThirdMovement::tick(EnemyArray & array, float dt) {
+	for (int i = 0; i < array.size(); ++i) {
+		ID id = array[i];
+		ds::Entity& e = _scene->get(id);
+		e.timer += dt;
+		if (e.timer >= 0.0f && e.timer <= 2.0f) {
+			v2 p;
+			_path.approx(e.timer * 0.5f, &p);
+			e.position = v3(p.x, p.y, 0.0f);
+		}
+		if (e.timer > 2.0f) {
+			//_scene->remove(id);
+			e.active = false;
+			--_alive;
+		}
+	}
+
+	return false;
+}
+
+// ------------------------------------------------
+// Second movement
+// ------------------------------------------------
+bool PathMovement::tick(EnemyArray & array, float dt) {
+	for (int i = 0; i < array.size(); ++i) {
+		ID id = array[i];
+		ds::Entity& e = _scene->get(id);
+		e.timer += dt;
+		if (e.timer >= 0.0f && e.timer <= 2.0f) {
+			v2 p;
+			_path->approx(e.timer * 0.5f, &p);
 			e.position = v3(p.x, p.y, 0.0f);
 		}
 		if (e.timer > 2.0f) {
