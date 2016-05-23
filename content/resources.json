@@ -257,3 +257,9 @@ mesh {
 	scale : 1,1,1
 	position : 0,0,0
 }
+scene {
+	id : 38
+	name : "EnemiesScene"
+	mesh_buffer : "ColouredBuffer"
+	size : 256
+}

@@ -7,6 +7,7 @@
 
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
+	_scene = ds::res::getScene("EnemiesScene");
 	_camera = new ds::FPSCamera(1024, 768);
 	_camera->setPosition(v3(0, 0, -26), v3(0, 0, 1));
 	_camera->resetPitch(0.0f);
@@ -17,17 +18,17 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	_texturedBuffer = ds::res::getMeshBuffer(21);
 	_colouredBuffer = ds::res::getMeshBuffer(26);
 
-	_enemies.push_back(new Enemies("RingMesh"));
-	_enemies.push_back(new Enemies("CubeMesh"));
-	_movements.push_back(new FirstMovement());
-	_movements.push_back(new SecondMovement());
-	_activeEnemies = -1;
-	_activeMovement = -1;
+	_enemies.push_back(new Enemies(_scene, "RingMesh"));
+	_enemies.push_back(new Enemies(_scene, "CubeMesh"));
+	_movements.push_back(new FirstMovement(_scene));
+	_movements.push_back(new SecondMovement(_scene));
+	_activeEnemies = 0;
+	_activeMovement = 0;
 	_firing = false;
 	_fireTimer = 0.0f;
 	_pressed = false;
 	
-	_animation = scale_enemy;
+	_animation = rotate_enemy;
 }
 
 
@@ -250,42 +251,13 @@ void TestState::render() {
 	// scene
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();
-	/*
-	_texturedBuffer->begin();
-	_texturedBuffer->drawImmediate(_cubes,v3(0,0,0));	
-	Cubes::iterator cit = _cubeList.begin();
-	while (cit != _cubeList.end()) {
-		Cube* c = &(*cit);
-		_texturedBuffer->add(_box, c->position,c->scale,c->rotation);
-		++cit;
-	}	
-	_texturedBuffer->end();
-	*/
-	//_colouredBuffer->drawImmediate(_playerMesh,_playerPos,v3(1,1,1),v3(_timer * 10.0f,0.0f,0.0f));
 	if (_activeEnemies != -1) {
-		_enemies[_activeEnemies]->draw();
+		_scene->draw();
 	}
-	
-	/*
-	_cubes->draw();
-
-	_bullets->reset();
-	for (size_t i = 0; i < _bulletList.size(); ++i) {
-		ds::geometrics::createPlane(_bullets,_bulletList[i].position,ds::Rect(0,210,10,20),v2(0.05f,0.3f),_bulletList[i].angle, ds::Color(192,0,0,255));
-	}
-	for (size_t i = 0; i < _cubeList.size(); ++i) {
-		ds::geometrics::createCube(_bullets, _cubeTextures, _cubeList[i].position, v3(0.5f,0.5f,0.5f), v3(0.0f, _cubeList[i].angle, _cubeList[i].roll));
-	}
-	_bullets->draw();
-	*/
-	//_player->draw();
 	graphics::setCamera(_orthoCamera);
 	graphics::turnOffZBuffer();
-
 	// GUI
 	drawGUI();
-
-
 	//_sprites->begin();
 	//_sprites->draw(v2(512, 600), math::buildTexture(510, 0, 256, 256), DEGTORAD(0.0f), v2(1.0f, 1.0f), ds::Color(255, 255, 255, 255));
 	//_sprites->end();

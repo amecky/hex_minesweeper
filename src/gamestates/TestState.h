@@ -61,5 +61,7 @@ private:
 	MovementList _movements;
 	int _activeMovement;
 	int _activeEnemies;
+
+	ds::Scene* _scene;
 };
 
