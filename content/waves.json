@@ -14,28 +14,28 @@ wave {
 }
 wave {
     type : 0
-    enemy : 0
+    enemy : 2
     movement : 1
     shoot_delay : 0.4
     animation : 0    
 }
 wave {
     type : 0
-    enemy : 1
+    enemy : 0
     movement : 2
     shoot_delay : 0.4
     animation : 0    
 }
 wave {
     type : 0
-    enemy : 0
+    enemy : 1
     movement : 3
     shoot_delay : 0.4
     animation : 0    
 }
 wave {
     type : 0
-    enemy : 1
+    enemy : 2
     movement : 4
     shoot_delay : 0.4
     animation : 0    

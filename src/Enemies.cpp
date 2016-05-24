@@ -7,6 +7,7 @@ Enemies::Enemies(ds::Scene* scene, const char * meshName) : _scene(scene) {
 		ds::Entity& e = _scene->get(id);
 		e.active = false;
 		e.timer = -i * 0.25f;
+		e.color = ds::Color(255, 0, 0, 255);
 		_enemies.push_back(id);
 	}
 	_active = false;

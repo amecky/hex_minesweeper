@@ -27,6 +27,7 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 
 	_enemies.push_back(new Enemies(_scene, "RingMesh"));
 	_enemies.push_back(new Enemies(_scene, "CubeMesh"));
+	_enemies.push_back(new Enemies(_scene, "IcoSphereMesh"));
 
 	_movements.push_back(new PathMovement(_scene,_paths[0]));
 	_movements.push_back(new PathMovement(_scene, _paths[1]));
@@ -90,7 +91,7 @@ void TestState::startWave() {
 int TestState::update(float dt) {
 	//_particles->update(dt);
 	v2 mp = ds::input::getMousePosition();
-	//_camera->update(dt, mp);
+	_camera->update(dt, mp);
 	_timer += dt;
 
 	_stars.move(dt);
@@ -152,6 +153,7 @@ int TestState::update(float dt) {
 		_cubes->scale(v3(s, s, s));
 	}
 	*/
+	/*
 	ds::Entity& player = _objects->get(_player);
 	bool move = false;
 	if (ds::input::getKeyState('D')) {
@@ -165,6 +167,7 @@ int TestState::update(float dt) {
 		//_player->rotateY(DEGTORAD(-20.0f));
 		player.position.x -= 4.0f * dt;
 	}
+	*/
 	//if (!move) {
 		//_player->rotateY(0.0f);
 	//}
