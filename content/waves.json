@@ -1,0 +1,42 @@
+wave {
+    type : 0
+    enemy : 0
+    movement : 0
+    shoot_delay : 0.4
+    animation : 0    
+}
+wave {
+    type : 0
+    enemy : 1
+    movement : 1
+    shoot_delay : -1.0
+    animation : 0    
+}
+wave {
+    type : 0
+    enemy : 0
+    movement : 1
+    shoot_delay : 0.4
+    animation : 0    
+}
+wave {
+    type : 0
+    enemy : 1
+    movement : 2
+    shoot_delay : 0.4
+    animation : 0    
+}
+wave {
+    type : 0
+    enemy : 0
+    movement : 3
+    shoot_delay : 0.4
+    animation : 0    
+}
+wave {
+    type : 0
+    enemy : 1
+    movement : 4
+    shoot_delay : 0.4
+    animation : 0    
+}

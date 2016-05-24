@@ -257,9 +257,39 @@ mesh {
 	scale : 1,1,1
 	position : 0,0,0
 }
+camera {
+	id : 39
+	name : "ortho"
+	type : "orthographic"
+}
+camera {
+	id : 40
+	name : "fps"
+	type : "fps"
+	position : 0,0,-26
+	target : 0,0,1
+}
 scene {
 	id : 38
 	name : "EnemiesScene"
 	mesh_buffer : "ColouredBuffer"
 	size : 256
+	camera : "fps"
+	depth_enabled : true
+}
+scene {
+	id : 41
+	name : "Stars"
+	mesh_buffer : "ColouredBuffer"
+	size : 256
+	camera : "fps"
+	depth_enabled : true
+}
+scene {
+	id : 42
+	name : "Objects"
+	mesh_buffer : "ColouredBuffer"
+	size : 256
+	camera : "fps"
+	depth_enabled : true
 }

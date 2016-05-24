@@ -5,12 +5,16 @@
 #include <renderer\QuadBuffer.h>
 #include <vector>
 #include "..\Enemies.h"
+#include "..\Stars.h"
+#include "..\Waves.h"
 
 struct Bullet {
-
+	ID id;
 	v3 position;
 	v3 velocity;
 	float angle;
+	int type;
+	float timer;
 };
 
 struct Cube {
@@ -40,16 +44,15 @@ public:
 	int onChar(int ascii);
 private:
 	void addBullet();
+	void addEnemyBullet(const v3& pos);
 	void drawGUI();
 	void checkCollisions();
 	void readPathInformations();
+	void startWave();
 	GameContext* _context;
 	ds::SpriteBuffer* _sprites;
 	ds::FPSCamera* _camera;
 	ds::OrthoCamera* _orthoCamera;
-	ds::MeshBuffer* _colouredBuffer;
-	ds::MeshBuffer* _texturedBuffer;
-	Bullets _bulletList;
 	v3 _playerPos;
 	float _playerAngle;
 	float _timer;
@@ -64,5 +67,13 @@ private:
 	int _activeEnemies;
 	ds::Array<ds::Path*> _paths;
 	ds::Scene* _scene;
+	ds::Scene* _objects;
+	ds::Mesh* _bulletMesh;
+	ID _player;
+	Stars _stars;
+	Waves _waves;
+	int _wavesIndex;
+	float _enemyShootTimer;
+	float _currentShootDelay;
 };
 

@@ -9,51 +9,32 @@
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
 	_scene = ds::res::getScene("EnemiesScene");
-	_camera = new ds::FPSCamera(1024, 768);
-	_camera->setPosition(v3(0, 0, -26), v3(0, 0, 1));
-	_camera->resetPitch(0.0f);
-	_camera->resetYAngle();
+	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	graphics::setCamera(_camera);
-	_orthoCamera = new ds::OrthoCamera(1024, 768);
+	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
 	
-	_texturedBuffer = ds::res::getMeshBuffer(21);
-	_colouredBuffer = ds::res::getMeshBuffer(26);
+	_objects = ds::res::getScene("Objects");
+	ds::Mesh* m = ds::res::getMesh("PlayerMesh");
+	_player = _objects->add(m, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
 
-	ds::StraightPath* p0 = new ds::StraightPath;
-	p0->create(v2(16, -6), v2(12, -6));
-	p0->add(v2(12, -2));
-	p0->add(v2(6, -6));
-	p0->add(v2(-16, -6));
-	p0->build();
-	_paths.push_back(p0);
+	_bulletMesh = new ds::Mesh();
+	ds::geometrics::createXYPlane(_bulletMesh, v3(0, 0, 0), ds::Rect(0, 0, 128, 128), v2(0.2f, 0.2f));
 
-	ds::StraightPath* p1 = new ds::StraightPath;
-	p1->create(v2(16, 6), v2(12, 6));
-	p1->add(v2(12, 2));
-	p1->add(v2(6, 6));
-	p1->add(v2(-16, 6));
-	p1->build();
-	_paths.push_back(p1);
-
-	ds::StraightPath* p2 = new ds::StraightPath;
-	p2->create(v2(16, 1), v2(12, 1));
-	p2->add(v2(12, 3));
-	p2->add(v2(8, -1));
-	p2->add(v2(-16, -1));
-	p2->build();
-	_paths.push_back(p2);
+	_waves.load();
+	_wavesIndex = 0;
 
 	readPathInformations();
 
 	_enemies.push_back(new Enemies(_scene, "RingMesh"));
 	_enemies.push_back(new Enemies(_scene, "CubeMesh"));
-	_movements.push_back(new FirstMovement(_scene));
-	_movements.push_back(new SecondMovement(_scene));
+
 	_movements.push_back(new PathMovement(_scene,_paths[0]));
 	_movements.push_back(new PathMovement(_scene, _paths[1]));
 	_movements.push_back(new PathMovement(_scene, _paths[2]));
+	_movements.push_back(new PathMovement(_scene, _paths[3]));
+	_movements.push_back(new PathMovement(_scene, _paths[4]));
 	_activeEnemies = 0;
-	_activeMovement = 2;
+	_activeMovement = 0;
 	_firing = false;
 	_fireTimer = 0.0f;
 	_pressed = false;
@@ -69,8 +50,12 @@ TestState::~TestState() {
 	for (size_t i = 0; i < _movements.size(); ++i) {
 		delete _movements[i];
 	}
-	delete _orthoCamera;
-	delete _camera;
+	for (size_t i = 0; i < _paths.size(); ++i) {
+		delete _paths[i];
+	}
+	//delete _orthoCamera;
+	//delete _camera;
+	delete _bulletMesh;
 }
 
 // -------------------------------------------------------
@@ -79,16 +64,72 @@ TestState::~TestState() {
 void TestState::init() {
 }
 
+void TestState::startWave() {
+	if (_wavesIndex < _waves.size()) {
+		const WaveDescriptor& desc = _waves.getDescriptor(_wavesIndex++);
+		if (desc.type == 0) {
+			_activeEnemies = desc.enemy;
+			_enemies[_activeEnemies]->start(rotate_enemy, _movements[desc.movement]);
+			_currentShootDelay = desc.shootDelay;
+			_enemyShootTimer = 0.0f;
+		}
+		else {
+			// start upgrades
+		}
+	}
+	else {
+		// GAME OVER - player has won!!!
+		_activeEnemies = -1;
+		_wavesIndex = 0;
+		_currentShootDelay = -1.0f;
+	}
+}
 // -------------------------------------------------------
 // update
 // -------------------------------------------------------
 int TestState::update(float dt) {
 	//_particles->update(dt);
 	v2 mp = ds::input::getMousePosition();
-	_camera->update(dt, mp);
+	//_camera->update(dt, mp);
 	_timer += dt;
-	if (_activeEnemies != -1) {
-		_enemies[_activeEnemies]->update(dt);
+
+	_stars.move(dt);
+
+	if (_activeEnemies != -1 && _enemies[_activeEnemies]->isActive()) {
+		if (!_enemies[_activeEnemies]->update(dt)) {
+			_enemies[_activeEnemies]->setActive(false);
+			startWave();
+		}
+		if (_currentShootDelay > 0.0f) {
+			_enemyShootTimer += dt;
+			if (_enemyShootTimer >= _currentShootDelay) {
+				_enemyShootTimer -= _currentShootDelay;
+				// pick random pos from enemies
+				v3 bp;
+				if (_enemies[_activeEnemies]->pickRandomPos(&bp)) {
+					// start bullet
+					ID id = _objects->add(_bulletMesh, bp);
+					ds::Entity& bullet = _objects->get(id);
+					bullet.type = 4;
+				}
+			}
+		}
+	}
+	ID bullets[128];
+	ID toKill[128];
+	int numKills = 0;
+	int numBullets = _objects->find(4, bullets, 128);
+	for (int i = 0; i < numBullets; ++i) {
+		ds::Entity& e = _objects->get(bullets[i]);
+		e.position += v3(-2, 0, 0) * dt;
+		if (e.position.x < -14.0f) {
+			toKill[numKills++] = bullets[i];
+		}
+	}
+	if (numKills > 0) {
+		for (int i = 0; i < numKills; ++i) {
+			_objects->remove(toKill[i]);
+		}
 	}
 	/*
 	_timer += dt;
@@ -110,25 +151,25 @@ int TestState::update(float dt) {
 		float s = 0.8f + sin(_timer) * 0.2f;
 		_cubes->scale(v3(s, s, s));
 	}
+	*/
+	ds::Entity& player = _objects->get(_player);
 	bool move = false;
 	if (ds::input::getKeyState('D')) {
 		//_playerAngle += 0.75 * PI * dt;
 		//_player->rotateZ(_playerAngle);
-		_player->rotateY(DEGTORAD(20.0f));
-		_playerPos.x += 4.0f * dt;
-		move = true;
+		//_player->rotateY(DEGTORAD(20.0f));
+		player.position.x += 4.0f * dt;
 	}
 	if (ds::input::getKeyState('A')) {
 		//_playerAngle -= 0.75 * PI * dt;
-		_player->rotateY(DEGTORAD(-20.0f));
-		_playerPos.x -= 4.0f * dt;
-		move = true;
+		//_player->rotateY(DEGTORAD(-20.0f));
+		player.position.x -= 4.0f * dt;
 	}
-	if (!move) {
-		_player->rotateY(0.0f);
-	}
-	_player->translate(_playerPos);
-	*/
+	//if (!move) {
+		//_player->rotateY(0.0f);
+	//}
+	//_player->translate(_playerPos);
+	
 	/*
 	if (ds::input::getKeyState('W')) {
 		ds::mat3 R = ds::matrix::mat3RotationY(_playerAngle);
@@ -274,8 +315,13 @@ void TestState::checkCollisions() {
 	*/
 }
 
+// -------------------------------------------------------
+// read path informations
+// -------------------------------------------------------
 void TestState::readPathInformations() {
 	ds::JSONReader reader;
+	char tmp[128];
+	v2 buffer[32];
 	if (reader.parse("content\\path.json")) {
 		int children[256];
 		int num = reader.get_categories(children, 256);
@@ -283,12 +329,31 @@ void TestState::readPathInformations() {
 			uint32_t size = 0;
 			reader.get(children[i], "size", &size);
 			const char* type = reader.get_string(children[i], "type");
-			LOG << "type: " << type << " size: " << size;
-			if (strcmp(type, "straight")) {
-
+			int cnt = 0;
+			for (int j = 0; j < size; ++j) {
+				sprintf_s(tmp, 128, "p%d", j);
+				v2 p;
+				reader.get(children[i], tmp, &p);
+				buffer[cnt++] = p;
+			}
+			if (strcmp(type, "straight") == 0 ) {				
+				ds::StraightPath* path = new ds::StraightPath;
+				path->create(buffer[0], buffer[1]);
+				for (int j = 2; j < cnt; ++j) {
+					path->add(buffer[j]);
+				}
+				path->build();
+				_paths.push_back(path);
 			}
 			else {
-
+				ds::CubicBezierPath* path = new ds::CubicBezierPath;
+				path->create(buffer[0], buffer[1], buffer[2], buffer[3]);
+				int n = (cnt - 4) / 3;
+				for (int j = 0; j < n; ++j) {
+					path->add(buffer[j * 3 + 4], buffer[j * 3 + 5], buffer[j * 3 + 6]);
+				}
+				path->build();
+				_paths.push_back(path);
 			}
 		}
 	}
@@ -299,14 +364,14 @@ void TestState::readPathInformations() {
 // -------------------------------------------------------
 void TestState::render() {
 	// scene
-	graphics::setCamera(_camera);
-	graphics::turnOnZBuffer();
+	_stars.draw();
 	if (_activeEnemies != -1) {
 		_scene->transform();
 		_scene->draw();
 	}
-	graphics::setCamera(_orthoCamera);
-	graphics::turnOffZBuffer();
+	_objects->transform();
+	_objects->draw();
+
 	// GUI
 	drawGUI();
 	//_sprites->begin();
@@ -324,7 +389,7 @@ void TestState::addBullet() {
 	b.velocity.x = v.y;
 	b.velocity.z = v.x;
 	b.angle = _playerAngle;
-	_bulletList.push_back(b);
+	//_bulletList.push_back(b);
 }
 
 // -------------------------------------------------------
@@ -363,6 +428,10 @@ void TestState::drawGUI() {
 	}
 	if (gui::Button("Scale E")) {
 		_animation = scale_enemy;
+	}
+	gui::InputInt("WaveIndex", &_wavesIndex);
+	if (gui::Button("Start waves")) {
+		startWave();
 	}
 	/*
 	v3* lp = _cubes->getLightPos();
