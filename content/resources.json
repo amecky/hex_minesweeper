@@ -301,3 +301,9 @@ scene {
 	camera : "fps"
 	depth_enabled : true
 }
+settings {
+	id : 44
+	name : "GameSettings"
+	definition : "basic_settings_def.json"
+	file : "basic_settings.json"
+}

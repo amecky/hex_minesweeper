@@ -1,0 +1,12 @@
+settings { 
+    var { 
+        name : "movement_ttl"
+        type : 1
+        value : 4
+    }
+    var { 
+        name : "rotation_amplitude"
+        type : 1
+        value : 2
+    }
+}

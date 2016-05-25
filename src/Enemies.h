@@ -3,18 +3,55 @@
 #include <math\CubicBezierPath.h>
 #include <renderer\Scene.h>
 #include <math\StraightPath.h>
+#include <data\DynamicSettings.h>
 
 typedef ds::Array<ID> EnemyArray;
 
-typedef void(*AnimateFunc)(ds::Scene*,ID, float);
+// ---------------------------------------
+// Virtual enemy animation base class
+// ---------------------------------------
+class EnemyAnimation {
 
-void scale_enemy(ds::Scene* scene,ID id, float dt);
-void rotate_enemy(ds::Scene* scene, ID id, float dt);
+public:
+	EnemyAnimation(ds::Scene* scene) : _scene(scene) {}
+	virtual ~EnemyAnimation() {}
+	virtual void prepare(EnemyArray& array) = 0;
+	virtual void tick(EnemyArray& array, float dt) = 0;
+protected:
+	ds::Scene* _scene;
+};
 
+class ScaleAnimation : public EnemyAnimation{
+
+public:
+	ScaleAnimation(ds::Scene* scene) : EnemyAnimation(scene) {}
+	virtual ~ScaleAnimation() {}
+	void prepare(EnemyArray& array) {}
+	void tick(EnemyArray& array, float dt);
+};
+
+class RotateAnimation : public EnemyAnimation{
+
+public:
+	RotateAnimation(ds::Scene* scene) : EnemyAnimation(scene) {
+		_amplitude = ds::settings::addFloat("rotation_amplitude", "Enemy rotation amplitude", 2.0f);
+	}
+	virtual ~RotateAnimation() {}
+	void prepare(EnemyArray& array) {}
+	void tick(EnemyArray& array, float dt);
+private:
+	float* _amplitude;
+};
+
+// ---------------------------------------
+// Virtual enemy movement base class
+// ---------------------------------------
 class EnemyMovement {
 
 public:
-	EnemyMovement(ds::Scene* scene) : _scene(scene) , _alive(0) {}
+	EnemyMovement(ds::Scene* scene) : _scene(scene) , _alive(0) {
+		_movementTTL = ds::settings::addFloat("movement_ttl", "Enemy movement TTL", 4.0f);
+	}
 	virtual ~EnemyMovement() {}
 	virtual void prepare(EnemyArray& array) = 0;
 	virtual int tick(EnemyArray& array, float dt) = 0;
@@ -22,6 +59,7 @@ public:
 		return _alive;
 	}
 protected:
+	float* _movementTTL;
 	int _alive;
 	ds::Scene* _scene;
 };
@@ -46,7 +84,7 @@ public:
 	Enemies(ds::Scene* scene,const char* meshName);
 	~Enemies();
 	bool update(float dt);
-	void start(AnimateFunc animateFunction,EnemyMovement* movement);
+	void start(EnemyAnimation* animation, EnemyMovement* movement);
 	void toggle();
 	bool isActive() const {
 		return _active;
@@ -56,7 +94,7 @@ public:
 	}
 	bool pickRandomPos(v3* pos);
 private:
-	AnimateFunc _animateFunction;
+	EnemyAnimation* _animation;
 	EnemyMovement* _movement;
 	EnemyArray _enemies;
 	int _alive;

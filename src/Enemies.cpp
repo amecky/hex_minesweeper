@@ -12,7 +12,7 @@ Enemies::Enemies(ds::Scene* scene, const char * meshName) : _scene(scene) {
 	}
 	_active = false;
 	_timer = 0.0f;
-	_animateFunction = rotate_enemy;
+	_animation = 0;
 }
 
 
@@ -22,11 +22,11 @@ Enemies::~Enemies() {
 bool Enemies::update(float dt) {
 	_timer += dt;
 	if (_active) {
-		_alive = _movement->tick(_enemies, dt);
-		for (int i = 0; i < _enemies.size(); ++i) {
-			ID id = _enemies[i];
-			//e.timer += dt;
-			(*_animateFunction)(_scene, id, dt);
+		if (_movement != 0) {
+			_alive = _movement->tick(_enemies, dt);
+		}
+		if (_animation != 0) {
+			_animation->tick(_enemies, dt);
 		}
 	}
 	return _alive > 0;
@@ -43,8 +43,8 @@ bool Enemies::pickRandomPos(v3* pos) {
 	return false;
 }
 
-void Enemies::start(AnimateFunc animateFunction, EnemyMovement* movement) {
-	_animateFunction = animateFunction;
+void Enemies::start(EnemyAnimation* animation, EnemyMovement* movement) {
+	_animation = animation;
 	_movement = movement;
 	for (int i = 0; i < _enemies.size(); ++i) {
 		ID id = _enemies[i];
@@ -66,20 +66,27 @@ void Enemies::toggle() {
 }
 
 // ------------------------------------------------
-// scale enemy
+// rotate enemy around x axis
 // ------------------------------------------------
-void scale_enemy(ds::Scene* scene, ID id, float dt) {
-	ds::Entity& e = scene->get(id);
-	float s = 0.75f + sin(e.timer * 8.0f) * 0.25f;
-	e.scale = v3(s);
+void ScaleAnimation::tick(EnemyArray& array, float dt) {
+	for (int i = 0; i < array.size(); ++i) {
+		ID id = array[i];
+		ds::Entity& e = _scene->get(id);
+		float s = 0.75f + sin(e.timer * 8.0f) * 0.25f;
+		e.scale = v3(s);
+	}
 }
 
 // ------------------------------------------------
 // rotate enemy around x axis
 // ------------------------------------------------
-void rotate_enemy(ds::Scene* scene, ID id, float dt) {
-	ds::Entity& e = scene->get(id);
-	e.rotation.x = e.timer * 4.0f;
+void RotateAnimation::tick(EnemyArray& array, float dt) {
+	float amplitude = *_amplitude;
+	for (int i = 0; i < array.size(); ++i) {
+		ID id = array[i];
+		ds::Entity& e = _scene->get(id);
+		e.rotation.x = e.timer * amplitude;
+	}
 }
 
 // ------------------------------------------------
@@ -87,17 +94,19 @@ void rotate_enemy(ds::Scene* scene, ID id, float dt) {
 // ------------------------------------------------
 int PathMovement::tick(EnemyArray & array, float dt) {
 	int alive = 0;
+	float ttl = *_movementTTL;
+	float invTTL = 1.0f / ttl;
 	for (int i = 0; i < array.size(); ++i) {
 		ID id = array[i];
 		ds::Entity& e = _scene->get(id);
 		e.timer += dt;
-		if (e.timer >= 0.0f && e.timer <= 2.0f) {
+		if (e.timer >= 0.0f && e.timer <= ttl) {
 			v2 p;
-			_path->approx(e.timer * 0.5f, &p);
+			_path->approx(e.timer * invTTL, &p);
 			e.position = v3(p.x, p.y, 0.0f);
 			++alive;
 		}
-		if (e.timer > 2.0f) {
+		if (e.timer > ttl) {
 			//_scene->remove(id);
 			e.active = false;
 		}

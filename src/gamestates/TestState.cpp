@@ -15,7 +15,7 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	
 	_objects = ds::res::getScene("Objects");
 	ds::Mesh* m = ds::res::getMesh("PlayerMesh");
-	_player = _objects->add(m, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
+	//_player = _objects->add(m, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
 
 	_bulletMesh = new ds::Mesh();
 	ds::geometrics::createXYPlane(_bulletMesh, v3(0, 0, 0), ds::Rect(0, 0, 128, 128), v2(0.2f, 0.2f));
@@ -34,13 +34,16 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	_movements.push_back(new PathMovement(_scene, _paths[2]));
 	_movements.push_back(new PathMovement(_scene, _paths[3]));
 	_movements.push_back(new PathMovement(_scene, _paths[4]));
+
+	_animations.push_back(new RotateAnimation(_scene));
+	_animations.push_back(new ScaleAnimation(_scene));
 	_activeEnemies = 0;
 	_activeMovement = 0;
+	_activeAnimation = 0;
 	_firing = false;
 	_fireTimer = 0.0f;
 	_pressed = false;
 	
-	_animation = rotate_enemy;
 }
 
 
@@ -70,7 +73,8 @@ void TestState::startWave() {
 		const WaveDescriptor& desc = _waves.getDescriptor(_wavesIndex++);
 		if (desc.type == 0) {
 			_activeEnemies = desc.enemy;
-			_enemies[_activeEnemies]->start(rotate_enemy, _movements[desc.movement]);
+			_activeAnimation = desc.animation;
+			_enemies[_activeEnemies]->start(_animations[_activeAnimation], _movements[desc.movement]);
 			_currentShootDelay = desc.shootDelay;
 			_enemyShootTimer = 0.0f;
 		}
@@ -85,17 +89,11 @@ void TestState::startWave() {
 		_currentShootDelay = -1.0f;
 	}
 }
-// -------------------------------------------------------
-// update
-// -------------------------------------------------------
-int TestState::update(float dt) {
-	//_particles->update(dt);
-	v2 mp = ds::input::getMousePosition();
-	_camera->update(dt, mp);
-	_timer += dt;
 
-	_stars.move(dt);
-
+// -------------------------------------------------------
+// move enemies
+// -------------------------------------------------------
+void TestState::moveEnemies(float dt) {
 	if (_activeEnemies != -1 && _enemies[_activeEnemies]->isActive()) {
 		if (!_enemies[_activeEnemies]->update(dt)) {
 			_enemies[_activeEnemies]->setActive(false);
@@ -116,6 +114,20 @@ int TestState::update(float dt) {
 			}
 		}
 	}
+}
+// -------------------------------------------------------
+// update
+// -------------------------------------------------------
+int TestState::update(float dt) {
+	//_particles->update(dt);
+	v2 mp = ds::input::getMousePosition();
+	_camera->update(dt, mp);
+	_timer += dt;
+
+	_stars.move(dt);
+	_upgrades.tick(dt);
+	moveEnemies(dt);
+
 	ID bullets[128];
 	ID toKill[128];
 	int numKills = 0;
@@ -416,9 +428,10 @@ void TestState::drawGUI() {
 	}
 	gui::InputInt("Enemy", &_activeEnemies);
 	gui::InputInt("Movement", &_activeMovement);
+	gui::InputInt("Anim", &_activeAnimation);
 	if (gui::Button("Start")) {
 		if (_activeEnemies != -1 && _activeMovement != -1) {
-			_enemies[_activeEnemies]->start(_animation, _movements[_activeMovement]);
+			_enemies[_activeEnemies]->start(_animations[_activeAnimation], _movements[_activeMovement]);
 		}
 	}
 	if (gui::Button("Toggle")) {
@@ -426,15 +439,12 @@ void TestState::drawGUI() {
 			_enemies[_activeEnemies]->toggle();
 		}
 	}
-	if (gui::Button("Rotate E")) {
-		_animation = rotate_enemy;
-	}
-	if (gui::Button("Scale E")) {
-		_animation = scale_enemy;
-	}
 	gui::InputInt("WaveIndex", &_wavesIndex);
 	if (gui::Button("Start waves")) {
 		startWave();
+	}
+	if (gui::Button("Upgrades")) {
+		_upgrades.start(2);
 	}
 	/*
 	v3* lp = _cubes->getLightPos();

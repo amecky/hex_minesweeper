@@ -7,6 +7,7 @@
 #include "..\Enemies.h"
 #include "..\Stars.h"
 #include "..\Waves.h"
+#include "..\Upgrades.h"
 
 struct Bullet {
 	ID id;
@@ -31,6 +32,7 @@ struct Cube {
 typedef std::vector<Bullet> Bullets;
 typedef std::vector<Enemies*> EnemyList;
 typedef std::vector<EnemyMovement*> MovementList;
+typedef std::vector<EnemyAnimation*> AnimationList;
 class TestState : public ds::GameState {
 
 public:
@@ -43,6 +45,7 @@ public:
 	int onKeyUp(WPARAM virtualKey);
 	int onChar(int ascii);
 private:
+	void moveEnemies(float dt);
 	void addBullet();
 	void addEnemyBullet(const v3& pos);
 	void drawGUI();
@@ -61,9 +64,10 @@ private:
 	float _fireTimer;
 	bool _pressed;
 	EnemyList _enemies;
-	AnimateFunc _animation;
+	AnimationList _animations;
 	MovementList _movements;
 	int _activeMovement;
+	int _activeAnimation;
 	int _activeEnemies;
 	ds::Array<ds::Path*> _paths;
 	ds::Scene* _scene;
@@ -72,6 +76,7 @@ private:
 	ID _player;
 	Stars _stars;
 	Waves _waves;
+	Upgrades _upgrades;
 	int _wavesIndex;
 	float _enemyShootTimer;
 	float _currentShootDelay;
