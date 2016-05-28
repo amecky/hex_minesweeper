@@ -1,0 +1,13 @@
+add_face -1,1,0 1,1,0 1,-1,0 -1,-1,0
+extrude_edge 1 0,0,2
+split_edge 0
+split_edge 4
+extrude_edge 13 -2,0,0
+split_edge 16
+extrude_edge 21 0,0,-2
+split_edge 24
+move_edge 1 0.0,0.0,-0.5
+move_edge 5 0.5,0.0,0.0
+move_edge 17 0.0,0.0,0.5
+move_edge 25 -0.5,0.0, 0.0
+set_color 0 255,0,0,255

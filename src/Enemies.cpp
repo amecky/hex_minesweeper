@@ -15,6 +15,20 @@ Enemies::Enemies(ds::Scene* scene, const char * meshName) : _scene(scene) {
 	_animation = 0;
 }
 
+Enemies::Enemies(ds::Scene * scene, ds::Mesh * mesh) : _scene(scene) {
+	for (int i = 0; i < 8; ++i) {
+		ID id = _scene->add(mesh, v3(16, 2, 0));
+		ds::Entity& e = _scene->get(id);
+		e.active = false;
+		e.timer = -i * 0.25f;
+		e.color = ds::Color(255, 0, 0, 255);
+		_enemies.push_back(id);
+	}
+	_active = false;
+	_timer = 0.0f;
+	_animation = 0;
+}
+
 
 Enemies::~Enemies() {
 }

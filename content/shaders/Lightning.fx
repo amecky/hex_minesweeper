@@ -47,19 +47,22 @@ PS_Input VS_Main( VS_Input vertex )
 
 float4 PS_Main( PS_Input frag ) : SV_TARGET
 {
-    float4 specular;
     float4 ambientColor = float4(0.2,0.2,0.2,1.0);
-    float4 textureColor = colorMap_.Sample( colorSampler_, frag.tex0 ) * frag.color;
-    float4 diffuseColor = float4(1,1,1,1);    
-    float4 color = ambientColor;    
-    float3 lightDir = -frag.lightVec;    
-    float3 normal = normalize(frag.normal);    
-    float lightIntensity = saturate(dot(normal,lightDir));    
+    float4 textureColor =  colorMap_.Sample( colorSampler_, frag.tex0 ) * frag.color;
+    float4 dc = float4(1,1,1,1);    
+    float4 color = float4(0,0,0,0);    
+    float3 n = normalize(frag.normal);
+    float3 ln = normalize(frag.lightVec);
+    float lightIntensity = saturate(dot(n,ln));    
     if ( lightIntensity > 0.0f ) {
-         color += (diffuseColor * lightIntensity);   
-         color = saturate(color);         
+         color += (dc * lightIntensity);   
+         color.a = frag.color.a;        
     }
+    else {
+        color = ambientColor;  
+    }     
     color = color * textureColor;
+    color = saturate(color);    
     return color;
 
 }

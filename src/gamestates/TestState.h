@@ -73,6 +73,7 @@ private:
 	ds::Scene* _scene;
 	ds::Scene* _objects;
 	ds::Mesh* _bulletMesh;
+	ds::Mesh* _cubeEnemy;
 	ID _player;
 	Stars _stars;
 	Waves _waves;

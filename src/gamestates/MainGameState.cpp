@@ -191,8 +191,7 @@ int MainGameState::update(float dt) {
 			return 1;
 		}
 	}
-	v2 mp = ds::input::getMousePosition();
-	_camera->update(dt, mp);
+	_camera->update(dt);
 	return 0;
 }
 

@@ -39,7 +39,7 @@ PS_Input VS_Main( VS_Input vertex )
     PS_Input vsOut = ( PS_Input )0;
     vsOut.pos = mul( vertex.pos, mvp_ );
     vsOut.tex0 = vertex.tex0;
-    vsOut.color = vertex.color;
+    vsOut.color = vertex.color * diffuseColor;
     vsOut.normal = mul(vertex.normal,(float3x3)world);
     vsOut.normal = normalize(vsOut.normal);
     vsOut.lightVec = normalize(light);
@@ -56,17 +56,21 @@ float4 PS_Main_Plain( PS_Input frag ) : SV_TARGET
 float4 PS_Main( PS_Input frag ) : SV_TARGET
 {
     float4 ambientColor = float4(0.2,0.2,0.2,1.0);
-    float4 textureColor = frag.color * frag.diffuseColor;
+    float4 textureColor = frag.color;
     float4 dc = float4(1,1,1,1);    
-    float4 color = ambientColor;    
-    float3 lightDir = frag.lightVec;    
-    float3 normal = normalize(frag.normal);    
-    float lightIntensity = saturate(dot(normal,lightDir));    
+    float4 color = float4(0,0,0,0);    
+    float3 n = normalize(frag.normal);
+    float3 ln = normalize(frag.lightVec);
+    float lightIntensity = saturate(dot(n,ln));    
     if ( lightIntensity > 0.0f ) {
          color += (dc * lightIntensity);   
-         color = saturate(color);         
+         color.a = frag.color.a;        
     }
+    else {
+        color = ambientColor;  
+    }     
     color = color * textureColor;
+    color = saturate(color);    
     return color;
 }
 

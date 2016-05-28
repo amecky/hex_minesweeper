@@ -307,3 +307,11 @@ settings {
 	definition : "basic_settings_def.json"
 	file : "basic_settings.json"
 }
+scene {
+	id : 45
+	name : "TestObjects"
+	mesh_buffer : "TexturedBuffer"
+	size : 256
+	camera : "fps"
+	depth_enabled : true
+}

@@ -53,8 +53,7 @@ void RunState::activate() {
 // update
 // -------------------------------------------------------
 int RunState::update(float dt) {
-	v2 mp = ds::input::getMousePosition();
-	_camera->update(dt, mp);
+	_camera->update(dt);
 	_board->update(dt);
 	if (ds::input::isMouseButtonPressed(0) && !_pressed) {
 		_pressed = true;

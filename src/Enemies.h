@@ -77,11 +77,14 @@ private:
 	ds::Path* _path;
 };
 
-
+// ---------------------------------------
+// Enemies
+// ---------------------------------------
 class Enemies {
 
 public:
 	Enemies(ds::Scene* scene,const char* meshName);
+	Enemies(ds::Scene* scene, ds::Mesh* mesh);
 	~Enemies();
 	bool update(float dt);
 	void start(EnemyAnimation* animation, EnemyMovement* movement);

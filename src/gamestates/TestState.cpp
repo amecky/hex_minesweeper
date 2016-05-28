@@ -5,6 +5,7 @@
 #include <utils\geometrics.h>
 #include <utils\ObjLoader.h>
 #include <io\json.h>
+#include "..\objects.h"
 
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
@@ -25,8 +26,11 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 
 	readPathInformations();
 
+	_cubeEnemy = new ds::Mesh();
+	objects::createCubeEnemy(_cubeEnemy);
+
 	_enemies.push_back(new Enemies(_scene, "RingMesh"));
-	_enemies.push_back(new Enemies(_scene, "CubeMesh"));
+	_enemies.push_back(new Enemies(_scene, _cubeEnemy));
 	_enemies.push_back(new Enemies(_scene, "IcoSphereMesh"));
 
 	_movements.push_back(new PathMovement(_scene,_paths[0]));
@@ -59,6 +63,7 @@ TestState::~TestState() {
 	}
 	//delete _orthoCamera;
 	//delete _camera;
+	delete _cubeEnemy;
 	delete _bulletMesh;
 }
 
@@ -120,8 +125,7 @@ void TestState::moveEnemies(float dt) {
 // -------------------------------------------------------
 int TestState::update(float dt) {
 	//_particles->update(dt);
-	v2 mp = ds::input::getMousePosition();
-	_camera->update(dt, mp);
+	_camera->update(dt);
 	_timer += dt;
 
 	_stars.move(dt);
