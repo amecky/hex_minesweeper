@@ -26,7 +26,8 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	//gen.move_edge(16, v3(-0.4f, 0.0f, 0.0f));
 	//gen.move_edge(18, v3( 0.4f, 0.0f, 0.0f));
 	//gen.parse("triangle.def");
-	gen.parse("gem_stone.def");
+	//gen.parse("gem_stone.def");
+	gen.create_torus(5.0f, 0.5f, 32);
 	//
 	//
 	/*
@@ -60,10 +61,11 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	*/
 	//gen.create_cube_ring(1.0f, 0.5f, 4);
 	//gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
-	/*
-	for (int i = 0; i < 32; ++i) {
-		gen.texture_face(i, math::buildTexture(650, 260, 64, 64));
+	
+	for (int i = 0; i < 128; ++i) {
+		gen.texture_face(i, math::buildTexture(650, 260, 32, 32));
 	}
+	/*
 	v2 uv[] = { v2(286,650),v2(298,650),v2(324,714),v2(260,714) };
 	gen.texture_face(0, math::buildTexture(uv));
 	gen.texture_face(2, math::buildTexture(uv));
