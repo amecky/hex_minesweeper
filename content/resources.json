@@ -208,7 +208,7 @@ mesh_buffer {
 	index_buffer : "SpriteQuadBuffer"
 	constant_buffer : "MVP_CB_WORLD"
 	vertex_buffer : "SpriteVertexBuffer"
-	shader : "LightningShader"
+	shader : "TexturedShader"
 	blend_state : "regular_blendstate"
 	color_map : 5
 	input_layout : "PNTC_Layout"
@@ -274,7 +274,7 @@ camera {
 	id : 40
 	name : "fps"
 	type : "fps"
-	position : 0,0,-26
+	position : 0,0,-10
 	target : 0,0,1
 }
 scene {

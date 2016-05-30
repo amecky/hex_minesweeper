@@ -8,12 +8,39 @@
 #include "..\objects.h"
 
 TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
+	
+	
+}
+
+
+TestState::~TestState() {
+	if (isInitialized()) {
+		for (size_t i = 0; i < _enemies.size(); ++i) {
+			delete _enemies[i];
+		}
+		for (size_t i = 0; i < _movements.size(); ++i) {
+			delete _movements[i];
+		}
+		for (size_t i = 0; i < _paths.size(); ++i) {
+			delete _paths[i];
+		}
+		//delete _orthoCamera;
+		//delete _camera;
+		delete _cubeEnemy;
+		delete _bulletMesh;
+	}
+}
+
+// -------------------------------------------------------
+// init
+// -------------------------------------------------------
+void TestState::init() {
 	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
 	_scene = ds::res::getScene("EnemiesScene");
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	graphics::setCamera(_camera);
 	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
-	
+
 	_objects = ds::res::getScene("Objects");
 	ds::Mesh* m = ds::res::getMesh("PlayerMesh");
 	//_player = _objects->add(m, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
@@ -33,7 +60,7 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	_enemies.push_back(new Enemies(_scene, _cubeEnemy));
 	_enemies.push_back(new Enemies(_scene, "IcoSphereMesh"));
 
-	_movements.push_back(new PathMovement(_scene,_paths[0]));
+	_movements.push_back(new PathMovement(_scene, _paths[0]));
 	_movements.push_back(new PathMovement(_scene, _paths[1]));
 	_movements.push_back(new PathMovement(_scene, _paths[2]));
 	_movements.push_back(new PathMovement(_scene, _paths[3]));
@@ -47,30 +74,6 @@ TestState::TestState(GameContext* context) : ds::GameState("TestState"), _contex
 	_firing = false;
 	_fireTimer = 0.0f;
 	_pressed = false;
-	
-}
-
-
-TestState::~TestState() {
-	for (size_t i = 0; i < _enemies.size(); ++i) {
-		delete _enemies[i];
-	}
-	for (size_t i = 0; i < _movements.size(); ++i) {
-		delete _movements[i];
-	}
-	for (size_t i = 0; i < _paths.size(); ++i) {
-		delete _paths[i];
-	}
-	//delete _orthoCamera;
-	//delete _camera;
-	delete _cubeEnemy;
-	delete _bulletMesh;
-}
-
-// -------------------------------------------------------
-// init
-// -------------------------------------------------------
-void TestState::init() {
 }
 
 void TestState::startWave() {

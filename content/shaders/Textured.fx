@@ -24,7 +24,7 @@ struct PS_Input
     float4 pos  : SV_POSITION;
     float2 tex0 : TEXCOORD0;
     float4 color : COLOR0;
-    float3 norm : NORMAL;
+    float3 normal : NORMAL;
     float3 lightVec : TEXCOORD1;
     float3 viewVec : TEXCOORD2;
 };
@@ -35,10 +35,11 @@ PS_Input VS_Main( VS_Input vertex ) {
     vsOut.pos = mul( vertex.pos, mvp_ );
     vsOut.tex0 = vertex.tex0;
     vsOut.color = vertex.color;
-    vsOut.norm = mul(vertex.normal,(float3x3)world);
-    vsOut.norm = normalize(vsOut.norm);
-    vsOut.lightVec = light;//normalize(light);
-    vsOut.viewVec = normalize(camera);
+    vsOut.normal = mul(vertex.normal,(float3x3)world);
+    vsOut.normal = normalize(vsOut.normal);
+    float3 worldPosition = mul(vertex.pos,(float3x3)world);
+    vsOut.lightVec = normalize(light);
+    vsOut.viewVec = normalize(camera - worldPosition);
     return vsOut;
 }
 
