@@ -8,7 +8,7 @@
 #include "Map.h"
 #include <imgui\IMGUI.h>
 #include <resources\ResourceContainer.h>
-#include <utils\geometrics.h>
+#include <utils\MeshGen.h>
 #include <base\InputSystem.h>
 // -------------------------------------------------------
 // Mouse over state

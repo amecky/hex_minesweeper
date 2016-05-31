@@ -1,7 +1,7 @@
 #include "Upgrades.h"
 #include <resources\ResourceContainer.h>
 #include <math\math.h>
-#include <utils\geometrics.h>
+#include <utils\MeshGen.h>
 
 // -------------------------------------------
 // Upgrades

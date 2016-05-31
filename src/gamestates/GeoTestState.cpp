@@ -2,7 +2,7 @@
 #include <utils\Log.h>
 #include <base\EventStream.h>
 #include <base\InputSystem.h>
-#include <utils\geometrics.h>
+#include <utils\MeshGen.h>
 #include <utils\ObjLoader.h>
 #include "..\objects.h"
 #include <renderer\graphics.h>
@@ -22,12 +22,23 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 
 	// triangle
 	//uint16_t faces[6];
-	//uint16_t f = gen.add_cube(v3(0, 0, 0), v3(1.0f, 1.0f, 0.1f), faces);
+	uint16_t f = gen.add_cube(v3(-5, 0, 0), v3(1.0f, 2.0f, 0.5f));
+	
 	//gen.move_edge(16, v3(-0.4f, 0.0f, 0.0f));
 	//gen.move_edge(18, v3( 0.4f, 0.0f, 0.0f));
 	//gen.parse("triangle.def");
 	//gen.parse("gem_stone.def");
-	gen.create_torus(5.0f, 0.5f, 32);
+	//gen.create_torus(5.0f, 0.5f, 32);
+	gen.create_grid(v2(1, 1), 5, 5);
+	gen.move_edge(28, v3(0.0f, 0.2f, 0.0f));
+	gen.split_edge(104, 0.25f);
+	gen.move_face(18, v3(0.0f, 0.0f, -0.2f));
+	gen.scale_face(19, 0.8f);
+	gen.extrude_edge(41, v3(0, 0, 1));
+
+	uint16_t torus = gen.create_torus(v3(4,0,0),1.0f, 0.2f, 0.4f, 12);
+	uint16_t torus_faces[128];
+	int num_torus = gen.get_connected_faces(torus, torus_faces, 128);
 	//
 	//
 	/*
@@ -63,7 +74,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	//gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
 	
 	for (int i = 0; i < 128; ++i) {
-		gen.texture_face(i, math::buildTexture(650, 260, 32, 32));
+		gen.texture_face(i, math::buildTexture(682, 260, 32, 32));
 	}
 	/*
 	v2 uv[] = { v2(286,650),v2(298,650),v2(324,714),v2(260,714) };
@@ -93,7 +104,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 		//gen.set_color(i, ds::Color(math::random(0,255), math::random(0, 255), math::random(0, 255), 255));
 	//}
 	//gen.recalculate_normals();
-	gen.debug();
+	//gen.debug();
 	gen.build(_mesh);
 	ID id = _scene->add(_mesh, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
 }

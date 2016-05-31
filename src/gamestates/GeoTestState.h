@@ -2,7 +2,7 @@
 #include <gamestates\GameState.h>
 #include <renderer\QuadBuffer.h>
 #include <vector>
-#include <utils\geometrics.h>
+#include <utils\MeshGen.h>
 
 class GeoTestState : public ds::GameState {
 
