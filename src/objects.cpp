@@ -4,7 +4,7 @@
 namespace objects {
 
 	void createCubeEnemy(ds::Mesh* mesh) {
-		ds::MeshGen gen;
+		ds::gen::MeshGen gen;
 		uint16_t faces[20];
 		float dim = 1.0f;
 		float size = 0.5f;
@@ -41,7 +41,7 @@ namespace objects {
 	}
 
 	void createWingEnemy(ds::Mesh* mesh) {
-		ds::MeshGen gen;
+		ds::gen::MeshGen gen;
 		uint16_t faces[20];
 		float dim = 1.0f;
 		float size = 0.5f;

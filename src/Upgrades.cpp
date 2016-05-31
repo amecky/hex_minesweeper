@@ -10,7 +10,13 @@ Upgrades::Upgrades() {
 	_scene = ds::res::getScene("Objects");
 	for (int i = 0; i < 7; ++i) {
 		ds::Mesh* m = new ds::Mesh();
-		ds::geometrics::createCube(m, ds::Rect(0, 0, 128, 128), v3(0, 0, 0));
+		ds::gen::MeshGen gen;
+		gen.add_cube(v3(0, 0, 0), v3(1, 1, 1));
+		for (int i = 0; i < 6; ++i) {
+			gen.texture_face(i,math::buildTexture(0, 0, 128, 128));
+		}
+		gen.recalculate_normals();
+		gen.build(m);
 		_meshes.push_back(m);
 	}
 

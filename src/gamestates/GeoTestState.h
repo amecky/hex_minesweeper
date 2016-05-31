@@ -13,7 +13,8 @@ public:
 	void render();
 	int onChar(int ascii);
 private:
-	ds::MeshGen gen;
+	void createGriderBox(ds::gen::MeshGen* gen,float dim, float griderSize);
+	ds::gen::MeshGen gen;
 	ds::FPSCamera* _camera;
 	ds::MeshBuffer* _buffer;
 	ds::Mesh* _mesh;

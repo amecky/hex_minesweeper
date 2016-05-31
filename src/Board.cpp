@@ -298,9 +298,15 @@ Board::Board(GameSettings* settings, ds::FPSCamera* camera) : _settings(settings
 		r.left += 64;
 		r.right += 64;
 	}
+	ds::gen::MeshGen gen;
+	gen.add_cube(v3(0, 0, 0), v3(1, 1, 1));	
+	gen.recalculate_normals();
 	for (int i = 0; i < 5; ++i) {
 		ds::Mesh* box = new ds::Mesh();
-		ds::geometrics::createCube(box, ds::Rect(512, 342 + i * 64, 60, 60));
+		for (int j = 0; j < 6; ++j) {
+			gen.texture_face(i, math::buildTexture(512, 342 + i * 64, 60, 60));
+		}
+		gen.build(box);
 		_boxes.push_back(box);
 	}
 	

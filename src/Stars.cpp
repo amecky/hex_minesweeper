@@ -10,7 +10,7 @@ Stars::Stars() {
 	_stars = ds::res::getScene("Stars");
 	_star = new ds::Mesh();
 	// create star
-	ds::geometrics::createXYPlane(_star, v3(0, 0, 0), ds::Rect(0, 0, 128, 128), v2(0.1f, 0.1f));
+	//ds::geometrics::createXYPlane(_star, v3(0, 0, 0), ds::Rect(0, 0, 128, 128), v2(0.1f, 0.1f));
 	// fill scene with stars
 	float z = 2.0f;
 	for (int i = 0; i < 60; ++i) {

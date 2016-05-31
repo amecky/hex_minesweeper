@@ -22,13 +22,14 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 
 	// triangle
 	//uint16_t faces[6];
-	uint16_t f = gen.add_cube(v3(-5, 0, 0), v3(1.0f, 2.0f, 0.5f));
+	//uint16_t f = gen.add_cube(v3(-5, 0, 0), v3(1.0f, 2.0f, 0.5f));
 	
 	//gen.move_edge(16, v3(-0.4f, 0.0f, 0.0f));
 	//gen.move_edge(18, v3( 0.4f, 0.0f, 0.0f));
 	//gen.parse("triangle.def");
 	//gen.parse("gem_stone.def");
 	//gen.create_torus(5.0f, 0.5f, 32);
+	/*
 	gen.create_grid(v2(1, 1), 5, 5);
 	gen.move_edge(28, v3(0.0f, 0.2f, 0.0f));
 	gen.split_edge(104, 0.25f);
@@ -39,12 +40,24 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	uint16_t torus = gen.create_torus(v3(4,0,0),1.0f, 0.2f, 0.4f, 12);
 	uint16_t torus_faces[128];
 	int num_torus = gen.get_connected_faces(torus, torus_faces, 128);
+	*/
 	//
 	//
+	//uint16_t faces[20];
+	//v3 p[] = { v3(-1,1,-1),v3(1,1,-1),v3(1,-1,-1),v3(-1,-1,-1) };
+	//faces[0] = gen.add_face(p);
+	//gen.hsplit_edge(0, 0.2f);
+	//gen.hsplit_edge(4, 0.5f);
+	//gen.move_face(1, v3(0.0f, 0.0f, -0.1f));
+	//gen.vsplit_edge(3, 0.2f);
+	//gen.subdivide(0);
+	LOG << "creating grider";
+	ds::gen::MeshGen* g2 = new ds::gen::MeshGen;
+	createGriderBox(g2, 0.75f, 0.08f);
+	gen.add(g2, v3(-2, 0, 0));
+	delete g2;
+	//gen.transform(v3(0, 0, 0), v3(0.5f,0.5f,0.5f), v3(DEGTORAD(45.0f), 0.0f, 0.0f));
 	/*
-	uint16_t faces[20];
-	v3 p[] = { v3(-1,1,-1),v3(1,1,-1),v3(1,-1,-1),v3(-1,-1,-1) };
-	faces[0] = gen.add_face(p);
 	v3 pn[] = { v3(1,1,1), v3(-1,1,1),v3(-1,-1,1),v3(1,-1,1) };
 	faces[1] = gen.add_face(pn);
 	// left
@@ -114,6 +127,26 @@ GeoTestState::~GeoTestState() {
 	delete _mesh;
 }
 
+void GeoTestState::createGriderBox(ds::gen::MeshGen* gen, float dim, float griderSize) {
+	float size = dim;
+	float hs = size * 0.5f;
+	float w = griderSize;
+	float hw = w * 0.5f;
+	gen->add_cube(v3(-hs + hw, 0.0f,-hs + hw), v3(w, size, w));
+	gen->add_cube(v3( hs - hw, 0.0f,-hs + hw), v3(w, size, w));
+	gen->add_cube(v3(-hs + hw, 0.0f, hs - hw), v3(w, size, w));
+	gen->add_cube(v3( hs - hw, 0.0f, hs - hw), v3(w, size, w));
+
+	gen->add_cube(v3(0.0f, hs - hw, hs - hw), v3(size - 2.0f * w, w, w));
+	gen->add_cube(v3(0.0f,-hs + hw,-hs + hw), v3(size - 2.0f * w, w, w));
+	gen->add_cube(v3(0.0f, hs - hw,-hs + hw), v3(size - 2.0f * w, w, w));
+	gen->add_cube(v3(0.0f,-hs + hw, hs - hw), v3(size - 2.0f * w, w, w));
+
+	gen->add_cube(v3( hs - hw,-hs + hw, 0.0f), v3(w, w, size - 2.0f * w));
+	gen->add_cube(v3( hs - hw, hs - hw, 0.0f), v3(w, w, size - 2.0f * w));
+	gen->add_cube(v3(-hs + hw,-hs + hw, 0.0f), v3(w, w, size - 2.0f * w));
+	gen->add_cube(v3(-hs + hw, hs - hw, 0.0f), v3(w, w, size - 2.0f * w));
+}
 // -------------------------------------------------------
 // update
 // -------------------------------------------------------

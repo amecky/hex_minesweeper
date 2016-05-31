@@ -46,7 +46,7 @@ void TestState::init() {
 	//_player = _objects->add(m, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
 
 	_bulletMesh = new ds::Mesh();
-	ds::geometrics::createXYPlane(_bulletMesh, v3(0, 0, 0), ds::Rect(0, 0, 128, 128), v2(0.2f, 0.2f));
+	//ds::geometrics::createXYPlane(_bulletMesh, v3(0, 0, 0), ds::Rect(0, 0, 128, 128), v2(0.2f, 0.2f));
 
 	_waves.load();
 	_wavesIndex = 0;

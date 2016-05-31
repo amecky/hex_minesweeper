@@ -16,7 +16,7 @@ RunState::RunState(GameContext* context) : ds::GameState("RunState"), _context(c
 	_texturedBuffer = ds::res::getMeshBuffer(21);
 
 	_cubes = new ds::Mesh();
-	ds::geometrics::createGrid(_cubes, 2.0f, 12, 6, ds::Rect(512, 2, 252, 252) , v3(-12, 0, -6));
+	//ds::geometrics::createGrid(_cubes, 2.0f, 12, 6, ds::Rect(512, 2, 252, 252) , v3(-12, 0, -6));
 	_board = new Board(context->settings, _camera);
 }
 
