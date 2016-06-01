@@ -1,7 +1,7 @@
 quad_index_buffer {
 	id : 0
 	name : "SpriteQuadBuffer"
-	size : 6144
+	size : 12288
 }
 sampler_state {
 	id : 10
@@ -216,7 +216,7 @@ mesh_buffer {
 mesh_buffer {
 	id : 26
 	name : "ColouredBuffer"
-	size : 1024
+	size : 4096
 	index_buffer : "SpriteQuadBuffer"
 	constant_buffer : "MVP_CB_WORLD"
 	vertex_buffer : "SpriteVertexBuffer"
@@ -304,7 +304,7 @@ scene {
 scene {
 	id : 45
 	name : "TestObjects"
-	mesh_buffer : "TexturedBuffer"
+	mesh_buffer : "ColouredBuffer"
 	size : 256
 	camera : "fps"
 	depth_enabled : true
