@@ -1,5 +1,5 @@
 #include "objects.h"
-#include <utils\MeshGen.h>
+#include <gen\MeshGen.h>
 
 namespace objects {
 

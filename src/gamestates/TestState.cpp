@@ -2,7 +2,7 @@
 #include <utils\Log.h>
 #include <base\EventStream.h>
 #include <base\InputSystem.h>
-#include <utils\MeshGen.h>
+#include <gen\MeshGen.h>
 #include <utils\ObjLoader.h>
 #include <io\json.h>
 #include "..\objects.h"

@@ -2,51 +2,40 @@
 #include <utils\Log.h>
 #include <base\EventStream.h>
 #include <base\InputSystem.h>
-#include <utils\MeshGen.h>
+#include <gen\MeshGen.h>
+#include <gen\MeshGenCommand.h>
 #include <utils\ObjLoader.h>
 #include "..\objects.h"
 #include <renderer\graphics.h>
 
 GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
-	_pressed = false;
-	_selectedFace = -1;
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
-	_state.reset();
 	//_camera->setPosition(v3(0, -8, -21), v3(0, 0, 1));
 	//_camera->resetPitch(DEGTORAD(355.0f));
 	//_camera->resetYAngle();
 	_mesh = new ds::Mesh();
 
-	_commands.push_back(new AddCubeCommand(&gen, _mesh));
+	_ctx.gen = &gen;
+	_ctx.mesh = _mesh;
+	_ctx.selectedFace = -1;
+
+	_gui = new ds::gen::MeshGenGUI("ortho",&_ctx);
 
 	LOG << " ======================================================== ";
 	_scene = ds::res::getScene("TestObjects");
 	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
 
-	// coordsystem
-	uint16_t faces[6];
-	gen.add_cube(v3(0.5f,0.0f,0.0f),v3(1.0f, 0.1f, 0.1f),faces);
-	for (int i = 0; i < 6; ++i) {
-		gen.set_color(faces[i], ds::Color(255, 0, 0, 255));
-	}
-	gen.add_cube(v3(0.05f, 0.5f, 0.0f), v3(0.1f, 0.9f, 0.1f), faces);
-	for (int i = 0; i < 6; ++i) {
-		gen.set_color(faces[i], ds::Color(0, 255, 0, 255));
-	}
-	gen.add_cube(v3(0.05f, 0.0f, 0.5f), v3(0.1f, 0.1f, 0.9f), faces);
-	for (int i = 0; i < 6; ++i) {
-		gen.set_color(faces[i], ds::Color(0, 0, 255, 255));
-	}
-
-
+	
+	//createHandrail(6.0f, 0.1f);
+	/*
 	ds::Quaternion q = ds::quat::euler2quat(0.0f,0.0f,DEGTORAD(45.0f));
 	ds::mat4 m = ds::quat::quat2matrix(q);
 	v3 v(1, 0, 0);
 	v3 n = m * v;
 	LOG << "===> N: " << DBG_V3(n);
-	/*
-	gen.add_cube(v3(0, 0, 0), v3(1, 1, 1));
+	*/
+	gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
 	ds::gen::IndexList il;
 	for (int i = 0; i < 3; ++i) {
 		il.clear();
@@ -59,9 +48,9 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	gen.find_adjacent_faces(0, il);
 	LOG << "faces: " << il.indices.size();
 	gen.debug_face(242);
-	//gen.smooth(il,1.0f);
+	gen.smooth(il,1.0f);
 	gen.debug_face(242);
-	*/
+	
 	// triangle
 	//uint16_t faces[6];
 	//uint16_t f = gen.add_cube(v3(-5, 0, 0), v3(1.0f, 2.0f, 0.5f));
@@ -181,10 +170,50 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 
 
 GeoTestState::~GeoTestState() {
-	for (int i = 0; i < _commands.size(); ++i) {
-		delete _commands[i];
-	}
+	delete _gui;
 	delete _mesh;
+}
+
+void GeoTestState::createHandrail(float length, float griderSize) {
+	uint16_t faces[16];
+	faces[0] = gen.add_cube(v3(0, 0, 0), v3(length, griderSize, griderSize), v3(DEGTORAD(45.0f), 0.0f, 0.0f));
+	
+	float height = 1.0f;
+	int segments = 5;
+	// first
+	faces[1] = gen.add_cube(v3(-length * 0.5f + griderSize * 2.0f, -height * 0.5f - griderSize * 0.5f, 0.0f), v3(griderSize, height, griderSize));
+	// last
+	faces[2] = gen.add_cube(v3(length * 0.5f - griderSize * 2.0f, -height * 0.5f - griderSize * 0.5f, 0.0f), v3(griderSize, height, griderSize));
+	// other
+	int d = segments - 2;
+	float il = (length - griderSize * 2.0f) * 0.5f;
+	float step = (length - griderSize * 2.0f) / d;
+	for (int i = 0; i < d; ++i) {
+		faces[i + 3] = gen.add_cube(v3(-step + step * i, -height * 0.5f - griderSize * 0.5f, 0.0f), v3(griderSize, height, griderSize));
+	}
+	for (int i = 0; i < 6; ++i) {
+		gen.set_color(faces[i], ds::Color(128, 128, 128, 255));
+	}
+	gen.save_bin("Test.data");
+	gen.save_text("Test.txt");
+	gen.load_bin("Test.data");
+}
+
+void GeoTestState::createCoords() {
+	// coordsystem
+	uint16_t faces[6];
+	gen.add_cube(v3(0.5f, 0.0f, 0.0f), v3(1.0f, 0.1f, 0.1f), faces);
+	for (int i = 0; i < 6; ++i) {
+		gen.set_color(faces[i], ds::Color(255, 0, 0, 255));
+	}
+	gen.add_cube(v3(0.05f, 0.5f, 0.0f), v3(0.1f, 0.9f, 0.1f), faces);
+	for (int i = 0; i < 6; ++i) {
+		gen.set_color(faces[i], ds::Color(0, 255, 0, 255));
+	}
+	gen.add_cube(v3(0.05f, 0.0f, 0.5f), v3(0.1f, 0.1f, 0.9f), faces);
+	for (int i = 0; i < 6; ++i) {
+		gen.set_color(faces[i], ds::Color(0, 0, 255, 255));
+	}
 }
 
 void GeoTestState::createGriderBox(ds::gen::MeshGen* gen, float dim, float griderSize) {
@@ -212,18 +241,7 @@ void GeoTestState::createGriderBox(ds::gen::MeshGen* gen, float dim, float gride
 // -------------------------------------------------------
 int GeoTestState::update(float dt) {
 	_camera->update(dt);	
-	if (ds::input::isMouseButtonPressed(0) && !_pressed) {
-		_pressed = true;
-		ds::Ray r = graphics::getCameraRay(_camera);
-		int selection = gen.intersects(r);
-		_selectedFace = selection;
-		if (selection != -1 ) {
-			gen.debug_face(selection);
-		}
-	}
-	if (!ds::input::isMouseButtonPressed(0) && _pressed) {
-		_pressed = false;
-	}
+	_gui->handleClick(_camera);
 	return 0;
 }
 
@@ -233,7 +251,7 @@ int GeoTestState::update(float dt) {
 void GeoTestState::render() {
 	// scene
 	_scene->draw();
-	drawGUI();
+	_gui->drawGUI();
 }
 
 int GeoTestState::onChar(int ascii) {
@@ -261,22 +279,6 @@ void GeoTestState::drawGUI() {
 	if (gui::Button("Reset")) {
 		_camera->setPosition(v3(0, 0, -10), v3(0, 0, 1));
 		_camera->resetYAngle();
-	}
-	gui::Value("Face", _selectedFace);
-	for (int i = 0; i < _commands.size(); ++i) {
-		MeshCommand* cmd = _commands[i];
-		if (cmd->isActive()) {
-			cmd->draw();
-		}
-		else {
-			if (gui::Button(cmd->getButtonName())) {
-				cmd->setActive(true);
-			}
-		}
-	}
-	if (gui::Button("Clear")) {
-		gen.clear();
-		_mesh->clear();
 	}
 	gui::end();
 }

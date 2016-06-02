@@ -2,21 +2,9 @@
 #include <gamestates\GameState.h>
 #include <renderer\QuadBuffer.h>
 #include <vector>
-#include <utils\MeshGen.h>
-#include "..\commands\MeshCommand.h"
-
-struct GUIState {
-
-	v3 pos;
-	v3 scale;
-	bool showAddCube;
-
-	void reset() {
-		showAddCube = false;
-		pos = v3(0, 0, 0);
-		scale = v3(1, 1, 1);
-	}
-};
+#include <gen\MeshGen.h>
+#include <gen\MeshGenCommand.h>
+#include <gen\MeshGenGUI.h>
 
 class GeoTestState : public ds::GameState {
 
@@ -28,16 +16,16 @@ public:
 	int onChar(int ascii);
 private:
 	void drawGUI();
+	void createCoords();
+	void createHandrail(float length, float griderSize);
 	void createGriderBox(ds::gen::MeshGen* gen,float dim, float griderSize);
 	ds::gen::MeshGen gen;
 	ds::FPSCamera* _camera;
 	ds::MeshBuffer* _buffer;
 	ds::Mesh* _mesh;
 	ds::Scene* _scene;
-	bool _pressed;
 	ds::OrthoCamera* _orthoCamera;
-	int _selectedFace;
-	GUIState _state;
-	ds::Array<MeshCommand*> _commands;
+	ds::gen::CommandContext _ctx;
+	ds::gen::MeshGenGUI* _gui;
 };
 
