@@ -18,7 +18,6 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 
 	_ctx.gen = &gen;
 	_ctx.mesh = _mesh;
-	_ctx.selectedFace = -1;
 
 	_gui = new ds::gen::MeshGenGUI("ortho",&_ctx);
 
@@ -26,8 +25,39 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	_scene = ds::res::getScene("TestObjects");
 	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
 
-	
-	//createHandrail(6.0f, 0.1f);
+	//createHandrail(6.0f, 0.1f, 7 , 0.6f);
+	//createCoords();
+	//v3 p[] = {v3(-6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,-6.0f),v3(-6.0f,-0.6f,-6.0f)};
+	v3 p[] = { v3(-1,1,0), v3(1,1,0),v3(1,-1,0),v3(-1,-1,0) };
+	//uint16_t f = gen.add_face(p);
+	uint16_t f = gen.add_cube(v3(0, 0, 0), v3(1.0f, 0.1f, 1.0f));
+	/*
+	ds::gen::IndexList il;
+	for (int i = 0; i < 3; ++i) {
+		il.clear();
+		gen.find_adjacent_faces(f, il);
+		for (int i = 0; i < il.indices.size(); ++i) {
+			gen.subdivide(i);
+		}
+	}
+	il.clear();
+	gen.find_adjacent_faces(f, il);
+	for (int i = 0; i < il.indices.size(); ++i) {
+		gen.scale_face(i,0.9f);
+	}
+	*/	
+	gen.slice(4, 5);
+	/*
+	gen.move_edge(2, v3(0.0f, 0.5f, 0.0f));	
+	gen.move_edge(10, v3(0.0f,0.5f, 0.0f));
+	gen.move_edge(24, v3(0.0f, -0.5f, 0.0f));
+	gen.move_edge(32, v3(0.0f, -0.5f, 0.0f));
+	gen.move_edge(11, v3(0.5f, 0.0f, 0.0f));
+	gen.move_edge(35, v3(0.5f, 0.0f, 0.0f));
+	gen.move_edge(1, v3(-0.5f, 0.0f, 0.0f));
+	gen.move_edge(25, v3(-0.5f, 0.0f, 0.0f));
+	*/
+	//gen.scale_face(4, 1.5f);
 	/*
 	ds::Quaternion q = ds::quat::euler2quat(0.0f,0.0f,DEGTORAD(45.0f));
 	ds::mat4 m = ds::quat::quat2matrix(q);
@@ -35,6 +65,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	v3 n = m * v;
 	LOG << "===> N: " << DBG_V3(n);
 	*/
+	/*
 	gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
 	ds::gen::IndexList il;
 	for (int i = 0; i < 3; ++i) {
@@ -50,7 +81,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	gen.debug_face(242);
 	gen.smooth(il,1.0f);
 	gen.debug_face(242);
-	
+	*/
 	// triangle
 	//uint16_t faces[6];
 	//uint16_t f = gen.add_cube(v3(-5, 0, 0), v3(1.0f, 2.0f, 0.5f));
@@ -131,10 +162,10 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	//gen.create_cube_ring(1.0f, 0.5f, 4);
 	//gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
 	
-	//for (int i = 0; i < 1024; ++i) {
+	for (int i = 0; i < 1024; ++i) {
 		//gen.texture_face(i, math::buildTexture(682, 260, 32, 32));
-		//gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
-	//}
+		gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
+	}
 	/*
 	v2 uv[] = { v2(286,650),v2(298,650),v2(324,714),v2(260,714) };
 	gen.texture_face(0, math::buildTexture(uv));
@@ -163,7 +194,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 		//gen.set_color(i, ds::Color(math::random(0,255), math::random(0, 255), math::random(0, 255), 255));
 	//}
 	gen.recalculate_normals();
-	//gen.debug();
+	gen.debug();
 	gen.build(_mesh);
 	ID id = _scene->add(_mesh, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
 }
@@ -174,24 +205,17 @@ GeoTestState::~GeoTestState() {
 	delete _mesh;
 }
 
-void GeoTestState::createHandrail(float length, float griderSize) {
+void GeoTestState::createHandrail(float length, float griderSize, int segments, float height) {
 	uint16_t faces[16];
-	faces[0] = gen.add_cube(v3(0, 0, 0), v3(length, griderSize, griderSize), v3(DEGTORAD(45.0f), 0.0f, 0.0f));
-	
-	float height = 1.0f;
-	int segments = 5;
-	// first
-	faces[1] = gen.add_cube(v3(-length * 0.5f + griderSize * 2.0f, -height * 0.5f - griderSize * 0.5f, 0.0f), v3(griderSize, height, griderSize));
-	// last
-	faces[2] = gen.add_cube(v3(length * 0.5f - griderSize * 2.0f, -height * 0.5f - griderSize * 0.5f, 0.0f), v3(griderSize, height, griderSize));
-	// other
-	int d = segments - 2;
-	float il = (length - griderSize * 2.0f) * 0.5f;
-	float step = (length - griderSize * 2.0f) / d;
-	for (int i = 0; i < d; ++i) {
-		faces[i + 3] = gen.add_cube(v3(-step + step * i, -height * 0.5f - griderSize * 0.5f, 0.0f), v3(griderSize, height, griderSize));
+	int cnt = 0;
+	faces[cnt++] = gen.add_cube(v3(0, 0, 0), v3(length, griderSize, griderSize), v3(DEGTORAD(45.0f), 0.0f, 0.0f));
+	int s = (segments - 1) / 2;
+	float il = (length - griderSize * 4.0f);
+	float step = il * 0.5f / s;	
+	for (int i = -s; i < s + 1; ++i) {
+		faces[cnt++] = gen.add_cube(v3(step * i, -height * 0.5f - griderSize * 0.5f, 0.0f), v3(griderSize, height, griderSize));
 	}
-	for (int i = 0; i < 6; ++i) {
+	for (int i = 0; i < cnt; ++i) {
 		gen.set_color(faces[i], ds::Color(128, 128, 128, 255));
 	}
 	gen.save_bin("Test.data");

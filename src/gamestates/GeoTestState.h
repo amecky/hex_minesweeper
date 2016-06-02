@@ -17,7 +17,7 @@ public:
 private:
 	void drawGUI();
 	void createCoords();
-	void createHandrail(float length, float griderSize);
+	void createHandrail(float length, float griderSize, int segments, float height);
 	void createGriderBox(ds::gen::MeshGen* gen,float dim, float griderSize);
 	ds::gen::MeshGen gen;
 	ds::FPSCamera* _camera;
