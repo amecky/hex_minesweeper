@@ -25,28 +25,30 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	_scene = ds::res::getScene("TestObjects");
 	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
 
-	//createHandrail(6.0f, 0.1f, 7 , 0.6f);
+	createHandrail(6.0f, 0.1f, 7 , 0.6f);
 	//createCoords();
 	//v3 p[] = {v3(-6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,-6.0f),v3(-6.0f,-0.6f,-6.0f)};
-	v3 p[] = { v3(-1,1,0), v3(1,1,0),v3(1,-1,0),v3(-1,-1,0) };
-	//uint16_t f = gen.add_face(p);
-	uint16_t f = gen.add_cube(v3(0, 0, 0), v3(1.0f, 0.1f, 1.0f));
 	/*
-	ds::gen::IndexList il;
-	for (int i = 0; i < 3; ++i) {
-		il.clear();
-		gen.find_adjacent_faces(f, il);
-		for (int i = 0; i < il.indices.size(); ++i) {
-			gen.subdivide(i);
-		}
-	}
-	il.clear();
-	gen.find_adjacent_faces(f, il);
-	for (int i = 0; i < il.indices.size(); ++i) {
-		gen.scale_face(i,0.9f);
-	}
-	*/	
-	gen.slice(4, 5);
+	v3 p[] = { v3(-1,1,0), v3(1,1,0),v3(1,-1,0),v3(-1,-1,0) };
+	uint16_t f = gen.add_cube(v3(0, 0, 0), v3(1.0f, 1.0f, 1.0f));
+	uint16_t slices[32];
+	int num = gen.slice(4, 5, slices, 32);
+	gen.move_edge(17,  v3(-0.1f, 0.0f, 0.0f));
+	gen.move_edge(61,  v3(-0.1f, 0.0f, 0.0f));
+	gen.move_edge(101, v3(-0.1f, 0.0f, 0.0f));
+
+	gen.move_edge(25, v3(-0.1f, 0.0f, 0.0f));
+	gen.move_edge(65, v3(-0.1f, 0.0f, 0.0f));
+	gen.move_edge(105, v3(-0.1f, 0.0f, 0.0f));
+	gen.move_edge(39, v3(0.1f, 0.0f, 0.0f));
+	gen.move_edge(79, v3(0.1f, 0.0f, 0.0f));
+	gen.move_edge(119, v3(0.1f, 0.0f, 0.0f));
+	gen.move_edge(35, v3(0.1f, 0.0f, 0.0f));
+	gen.move_edge(75, v3(0.1f, 0.0f, 0.0f));
+	gen.move_edge(115, v3(0.1f, 0.0f, 0.0f));
+	*/
+	//gen.create_cylinder(1.0f, 1.0f, 12);
+	
 	/*
 	gen.move_edge(2, v3(0.0f, 0.5f, 0.0f));	
 	gen.move_edge(10, v3(0.0f,0.5f, 0.0f));
@@ -162,10 +164,10 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	//gen.create_cube_ring(1.0f, 0.5f, 4);
 	//gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
 	
-	for (int i = 0; i < 1024; ++i) {
+	//for (int i = 0; i < 1024; ++i) {
 		//gen.texture_face(i, math::buildTexture(682, 260, 32, 32));
-		gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
-	}
+		//gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
+	//}
 	/*
 	v2 uv[] = { v2(286,650),v2(298,650),v2(324,714),v2(260,714) };
 	gen.texture_face(0, math::buildTexture(uv));
@@ -194,10 +196,15 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 		//gen.set_color(i, ds::Color(math::random(0,255), math::random(0, 255), math::random(0, 255), 255));
 	//}
 	gen.recalculate_normals();
-	gen.debug();
-	gen.build(_mesh);
+	//gen.debug();
+	//gen.build(_mesh);
+	gen.save_mesh("handrail");
+	_mesh->load("handrail");
 	ID id = _scene->add(_mesh, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
+	_scene->add(_mesh, v3(0, 0, 2), ds::DrawMode::IMMEDIATE);
+	_scene->add(_mesh, v3(0, 0, -2), ds::DrawMode::IMMEDIATE);
 }
+
 
 
 GeoTestState::~GeoTestState() {
