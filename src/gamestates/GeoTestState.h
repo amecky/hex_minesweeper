@@ -23,6 +23,7 @@ private:
 	ds::FPSCamera* _camera;
 	ds::MeshBuffer* _buffer;
 	ds::Mesh* _mesh;
+	ds::Array<ds::Mesh*> _objects;
 	ds::Scene* _scene;
 	ds::OrthoCamera* _orthoCamera;
 	ds::gen::CommandContext _ctx;

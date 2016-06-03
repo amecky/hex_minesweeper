@@ -25,28 +25,65 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	_scene = ds::res::getScene("TestObjects");
 	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
 
-	createHandrail(6.0f, 0.1f, 7 , 0.6f);
+	//createHandrail(6.0f, 0.1f, 7 , 0.6f);
 	//createCoords();
 	//v3 p[] = {v3(-6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,-6.0f),v3(-6.0f,-0.6f,-6.0f)};
-	/*
-	v3 p[] = { v3(-1,1,0), v3(1,1,0),v3(1,-1,0),v3(-1,-1,0) };
-	uint16_t f = gen.add_cube(v3(0, 0, 0), v3(1.0f, 1.0f, 1.0f));
+	//v3 p[] = { v3(-1,1,0), v3(1,1,0),v3(1,-1,0),v3(-1,-1,0) };
+
+	uint16_t f = gen.add_cube(v3(0, -3, 0), v3(1.0f, 0.1f, 1.0f));
 	uint16_t slices[32];
 	int num = gen.slice(4, 5, slices, 32);
-	gen.move_edge(17,  v3(-0.1f, 0.0f, 0.0f));
-	gen.move_edge(61,  v3(-0.1f, 0.0f, 0.0f));
-	gen.move_edge(101, v3(-0.1f, 0.0f, 0.0f));
 
 	gen.move_edge(25, v3(-0.1f, 0.0f, 0.0f));
 	gen.move_edge(65, v3(-0.1f, 0.0f, 0.0f));
 	gen.move_edge(105, v3(-0.1f, 0.0f, 0.0f));
-	gen.move_edge(39, v3(0.1f, 0.0f, 0.0f));
-	gen.move_edge(79, v3(0.1f, 0.0f, 0.0f));
-	gen.move_edge(119, v3(0.1f, 0.0f, 0.0f));
+
 	gen.move_edge(35, v3(0.1f, 0.0f, 0.0f));
 	gen.move_edge(75, v3(0.1f, 0.0f, 0.0f));
 	gen.move_edge(115, v3(0.1f, 0.0f, 0.0f));
+
+	gen.move_edge(42, v3(0.0f, 0.0f, 0.1f));
+	gen.move_edge(50, v3(0.0f, 0.0f, 0.1f));
+	gen.move_edge(58, v3(0.0f, 0.0f, 0.1f));
+
+	gen.move_edge(62, v3(0.0f, 0.0f, -0.1f));
+	gen.move_edge(70, v3(0.0f, 0.0f, -0.1f));
+	gen.move_edge(78, v3(0.0f, 0.0f, -0.1f));
+	
+	int colors[] = {
+		0, 1, 2, 1, 0,
+		0, 1, 2, 1, 0,
+		0, 1, 2, 1, 0,
+		0, 1, 2, 1, 0,
+		0, 1, 2, 1, 0
+	};
+	
+	// crossing
+	/*
+	int colors[] = {
+		0, 1, 2, 1, 0,
+		1, 1, 2, 1, 1,
+		2, 2, 2, 2, 2,
+		1, 1, 2, 1, 1,
+		0, 1, 2, 1, 0
+	};
 	*/
+	for (int i = 0; i < num; ++i) {
+		if (colors[i] == 0) {
+			gen.set_color(slices[i], ds::Color(184, 203, 98, 255));
+		}
+		else if (colors[i] == 1) {
+			gen.set_color(slices[i], ds::Color(223, 215, 204, 255));
+		}
+		if (colors[i] == 2) {
+			gen.set_color(slices[i], ds::Color(151, 144, 138, 255));
+		}
+	}
+
+	//for (int i = 0; i < 1024; ++i) {
+		//gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
+	//}
+
 	//gen.create_cylinder(1.0f, 1.0f, 12);
 	
 	/*
@@ -198,16 +235,25 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	gen.recalculate_normals();
 	//gen.debug();
 	//gen.build(_mesh);
-	gen.save_mesh("handrail");
-	_mesh->load("handrail");
-	ID id = _scene->add(_mesh, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
-	_scene->add(_mesh, v3(0, 0, 2), ds::DrawMode::IMMEDIATE);
-	_scene->add(_mesh, v3(0, 0, -2), ds::DrawMode::IMMEDIATE);
+	//gen.save_mesh("street_1");
+	//_mesh->load("street_1");
+	//ID id = _scene->add(_mesh, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
+	//_scene->add(_mesh, v3(0, 0, 2), ds::DrawMode::IMMEDIATE);
+	//_scene->add(_mesh, v3(0, 0, -2), ds::DrawMode::IMMEDIATE);
+	ds::Mesh* m1 = new ds::Mesh();
+	m1->load("street_1");
+	_scene->add(m1, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
+	_objects.push_back(m1);
+	ds::Mesh* m2 = new ds::Mesh();
+	m2->load("street_2");
+	_scene->add(m2, v3(0, 0, 1), ds::DrawMode::IMMEDIATE);
+	_objects.push_back(m2);
 }
 
 
 
 GeoTestState::~GeoTestState() {
+	_objects.destroy_all();
 	delete _gui;
 	delete _mesh;
 }
@@ -225,9 +271,9 @@ void GeoTestState::createHandrail(float length, float griderSize, int segments, 
 	for (int i = 0; i < cnt; ++i) {
 		gen.set_color(faces[i], ds::Color(128, 128, 128, 255));
 	}
-	gen.save_bin("Test.data");
-	gen.save_text("Test.txt");
-	gen.load_bin("Test.data");
+	//gen.save_bin("Test.data");
+	//gen.save_text("Test.txt");
+	gen.save_mesh("handrail");
 }
 
 void GeoTestState::createCoords() {

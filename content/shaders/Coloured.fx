@@ -48,12 +48,12 @@ PS_Input VS_Main( VS_Input vertex )
     return vsOut;
 }
 
-float4 PS_Main_Plain( PS_Input frag ) : SV_TARGET
+float4 PS_Main( PS_Input frag ) : SV_TARGET
 {
     return frag.color;
 }
 
-float4 PS_Main( PS_Input frag ) : SV_TARGET
+float4 PS_Main_Lightning( PS_Input frag ) : SV_TARGET
 {
     float4 ambientColor = float4(0.2,0.2,0.2,1.0);
     float4 textureColor = frag.color;
