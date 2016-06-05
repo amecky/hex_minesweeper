@@ -15,6 +15,7 @@ public:
 	void render();
 	int onChar(int ascii);
 private:
+	void buildTerrain();
 	void drawGUI();
 	void createCoords();
 	void createHandrail(float length, float griderSize, int segments, float height);

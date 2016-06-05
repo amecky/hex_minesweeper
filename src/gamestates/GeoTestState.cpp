@@ -7,6 +7,10 @@
 #include <utils\ObjLoader.h>
 #include "..\objects.h"
 #include <renderer\graphics.h>
+#include "..\TileMapReader.h"
+
+const int SIZE_X = 8;
+const int SIZE_Y = 8;
 
 GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
@@ -24,16 +28,89 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	LOG << " ======================================================== ";
 	_scene = ds::res::getScene("TestObjects");
 	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
+	
+	char buffer[32];
 
 	//createHandrail(6.0f, 0.1f, 7 , 0.6f);
 	//createCoords();
 	//v3 p[] = {v3(-6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,-6.0f),v3(-6.0f,-0.6f,-6.0f)};
 	//v3 p[] = { v3(-1,1,0), v3(1,1,0),v3(1,-1,0),v3(-1,-1,0) };
-
-	uint16_t f = gen.add_cube(v3(0, -3, 0), v3(1.0f, 0.1f, 1.0f));
-	uint16_t slices[32];
-	int num = gen.slice(4, 5, slices, 32);
-
+	
+	uint16_t f = gen.add_cube(v3(0.0f, 0.5f, 0.0f), v3(1.0f, 1.0f, 1.0f));	
+	uint16_t slices[45];
+	int num = gen.slice(0, 9, 5, slices, 32);
+	for (int i = 0; i < 5; ++i) {
+		uint16_t ei = gen.get_edge(23 + i * 2, 0);
+		gen.move_edge(ei, v3(0.0f, 0.1f, 0.0f));
+	}
+	for (int i = 0; i < 5; ++i) {
+		uint16_t ei = gen.get_edge(32 + i * 2, 0);
+		gen.move_edge(ei, v3(0.0f, -0.1f, 0.0f));
+	}
+	for (int i = 0; i < 3; ++i) {
+		uint16_t ei = gen.get_edge(7 + i * 18, 3);
+		gen.move_edge(ei, v3(-0.05f, 0.0f, 0.0f));
+	}
+	for (int i = 0; i < 3; ++i) {
+		uint16_t ei = gen.get_edge(7 + i * 18, 1);
+		gen.move_edge(ei, v3(0.05f, 0.0f, 0.0f));
+	}
+	for (int i = 0; i < 3; ++i) {
+		uint16_t ei = gen.get_edge(11 + i * 18, 3);
+		gen.move_edge(ei, v3(-0.05f, 0.0f, 0.0f));
+	}
+	for (int i = 0; i < 3; ++i) {
+		uint16_t ei = gen.get_edge(11 + i * 18, 1);
+		gen.move_edge(ei, v3(0.05f, 0.0f, 0.0f));
+	}
+	for (int i = 0; i < num + 5; ++i) {
+		gen.set_color(i, ds::Color(255, 252, 234, 255));
+	}
+	uint16_t roof = gen.add_cube(v3(0.0f, 1.05f, 0.0f), v3(1.2f, 0.1f, 1.2f));
+	ds::gen::IndexList il;
+	gen.find_adjacent_faces(roof, il);
+	for (int i = 0; i < il.indices.size(); ++i) {
+		gen.set_color(il.indices[i], ds::Color(58, 58, 58, 255));
+	}
+	//uint16_t re = gen.get_edge_index(il.indices[5], 3);
+	uint16_t srf = gen.vsplit_edge(219);
+	uint16_t sre = gen.get_edge_index(srf, 0);
+	LOG << " SRF: " << srf << " SRE: " << sre;
+	gen.move_edge(sre, v3(0.0f, 1.0f, 0.0f));
+	gen.save_bin("House_base");
+	gen.clear();
+	gen.load_bin("House_base");
+	TileMapReader colorDefs;
+	if (colorDefs.parse("content\\house_colors.txt")) {
+		int tiles = colorDefs.height() / 5;
+		for (int i = 0; i < tiles; ++i) {
+			sprintf_s(buffer, 32, "house_%d", i);
+			int offset = i * 45;
+			int t = 4;
+			for (int j = 0; j < 45; ++j) {
+				if (j == 0) {
+					t = 4;
+				}
+				else {
+					t = 5 + j;
+				}
+				if (colorDefs.get(offset + j) == 0) {
+					gen.set_color(t, ds::Color(255, 252, 234, 255));
+				}
+				else if (colorDefs.get(offset + j) == 1) {
+					gen.set_color(t, ds::Color(157, 98, 66, 255));
+				}
+				else if (colorDefs.get(offset + j) == 2) {
+					gen.set_color(t, ds::Color(153, 217, 234, 255));
+				}
+				else if (colorDefs.get(offset + j) == 3) {
+					gen.set_color(t, ds::Color(58, 58, 58, 255));
+				}
+			}
+			gen.save_mesh(buffer);
+		}
+	}
+	/*
 	gen.move_edge(25, v3(-0.1f, 0.0f, 0.0f));
 	gen.move_edge(65, v3(-0.1f, 0.0f, 0.0f));
 	gen.move_edge(105, v3(-0.1f, 0.0f, 0.0f));
@@ -49,37 +126,30 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	gen.move_edge(62, v3(0.0f, 0.0f, -0.1f));
 	gen.move_edge(70, v3(0.0f, 0.0f, -0.1f));
 	gen.move_edge(78, v3(0.0f, 0.0f, -0.1f));
+
+	gen.recalculate_normals();
 	
-	int colors[] = {
-		0, 1, 2, 1, 0,
-		0, 1, 2, 1, 0,
-		0, 1, 2, 1, 0,
-		0, 1, 2, 1, 0,
-		0, 1, 2, 1, 0
-	};
-	
-	// crossing
-	/*
-	int colors[] = {
-		0, 1, 2, 1, 0,
-		1, 1, 2, 1, 1,
-		2, 2, 2, 2, 2,
-		1, 1, 2, 1, 1,
-		0, 1, 2, 1, 0
-	};
-	*/
-	for (int i = 0; i < num; ++i) {
-		if (colors[i] == 0) {
-			gen.set_color(slices[i], ds::Color(184, 203, 98, 255));
-		}
-		else if (colors[i] == 1) {
-			gen.set_color(slices[i], ds::Color(223, 215, 204, 255));
-		}
-		if (colors[i] == 2) {
-			gen.set_color(slices[i], ds::Color(151, 144, 138, 255));
+	TileMapReader colorDefs;
+	if (colorDefs.parse("content\\tile_colors.txt")) {
+		int tiles = colorDefs.height() / 5;
+		for (int i = 0; i < tiles; ++i) {
+			sprintf_s(buffer, 32, "tile_%d", i);
+			int offset = i * 25;
+			for (int j = 0; j < num; ++j) {
+				if (colorDefs.get(offset+j) == 0) {
+					gen.set_color(slices[j], ds::Color(184, 203, 98, 255));
+				}
+				else if (colorDefs.get(offset + j) == 1) {
+					gen.set_color(slices[j], ds::Color(223, 215, 204, 255));
+				}
+				if (colorDefs.get(offset + j) == 2) {
+					gen.set_color(slices[j], ds::Color(151, 144, 138, 255));
+				}
+			}
+			gen.save_mesh(buffer);
 		}
 	}
-
+	*/
 	//for (int i = 0; i < 1024; ++i) {
 		//gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
 	//}
@@ -232,22 +302,16 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	//for (int i = 0; i < 16; ++i) {
 		//gen.set_color(i, ds::Color(math::random(0,255), math::random(0, 255), math::random(0, 255), 255));
 	//}
-	gen.recalculate_normals();
-	//gen.debug();
-	//gen.build(_mesh);
-	//gen.save_mesh("street_1");
-	//_mesh->load("street_1");
-	//ID id = _scene->add(_mesh, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
+	
+	//gen.recalculate_normals();
+	gen.build(_mesh);
+	ID id = _scene->add(_mesh, v3(0, 0, 0));
 	//_scene->add(_mesh, v3(0, 0, 2), ds::DrawMode::IMMEDIATE);
 	//_scene->add(_mesh, v3(0, 0, -2), ds::DrawMode::IMMEDIATE);
-	ds::Mesh* m1 = new ds::Mesh();
-	m1->load("street_1");
-	_scene->add(m1, v3(0, 0, 0), ds::DrawMode::IMMEDIATE);
-	_objects.push_back(m1);
-	ds::Mesh* m2 = new ds::Mesh();
-	m2->load("street_2");
-	_scene->add(m2, v3(0, 0, 1), ds::DrawMode::IMMEDIATE);
-	_objects.push_back(m2);
+
+	//buildTerrain();
+
+	
 }
 
 
@@ -256,6 +320,34 @@ GeoTestState::~GeoTestState() {
 	_objects.destroy_all();
 	delete _gui;
 	delete _mesh;
+}
+
+// ------------------------------------------
+// build terrain
+// ------------------------------------------
+void GeoTestState::buildTerrain() {
+	char buffer[32];
+	for (int i = 0; i < 12; ++i) {
+		sprintf_s(buffer, 32, "tile_%d", i);
+		ds::Mesh* m = new ds::Mesh();
+		m->load(buffer);
+		_objects.push_back(m);
+	}
+	for (int i = 0; i < 3; ++i) {
+		sprintf_s(buffer, 32, "house_%d", i);
+		ds::Mesh* m = new ds::Mesh();
+		m->load(buffer);
+		_objects.push_back(m);
+	}
+	TileMapReader reader;
+	reader.parse("content\\field.txt");
+	float sx = reader.width() * 0.5f - 0.5f;
+	float sy = reader.height() * 0.5f + 2;
+	for (int y = reader.height() - 1; y >= 0; --y) {
+		for (int x = 0; x < reader.width(); ++x) {
+			_scene->add(_objects[reader.get(x, y)], v3(-sx + x, -3, sy - y));
+		}
+	}
 }
 
 void GeoTestState::createHandrail(float length, float griderSize, int segments, float height) {
