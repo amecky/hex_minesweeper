@@ -12,7 +12,7 @@
 const int SIZE_X = 8;
 const int SIZE_Y = 8;
 
-GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
+GeoTestState::GeoTestState() : ds::GameState("GeoTestState") , _name("window_0") {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
 	//_camera->setPosition(v3(0, -8, -21), v3(0, 0, 1));
@@ -50,7 +50,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	gen.clear();
 	*/
 	//gen.load_text("roof_0");
-	gen.load_text("roof_1");
+	//gen.load_text(_name);
 	//gen.scale_face(6, 0.5f);
 	/*
 	uint16_t slices[45];
@@ -127,208 +127,17 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 		}
 	}
 	*/
-	/*
-	gen.move_edge(25, v3(-0.1f, 0.0f, 0.0f));
-	gen.move_edge(65, v3(-0.1f, 0.0f, 0.0f));
-	gen.move_edge(105, v3(-0.1f, 0.0f, 0.0f));
-
-	gen.move_edge(35, v3(0.1f, 0.0f, 0.0f));
-	gen.move_edge(75, v3(0.1f, 0.0f, 0.0f));
-	gen.move_edge(115, v3(0.1f, 0.0f, 0.0f));
-
-	gen.move_edge(42, v3(0.0f, 0.0f, 0.1f));
-	gen.move_edge(50, v3(0.0f, 0.0f, 0.1f));
-	gen.move_edge(58, v3(0.0f, 0.0f, 0.1f));
-
-	gen.move_edge(62, v3(0.0f, 0.0f, -0.1f));
-	gen.move_edge(70, v3(0.0f, 0.0f, -0.1f));
-	gen.move_edge(78, v3(0.0f, 0.0f, -0.1f));
-
-	gen.recalculate_normals();
 	
-	TileMapReader colorDefs;
-	if (colorDefs.parse("content\\tile_colors.txt")) {
-		int tiles = colorDefs.height() / 5;
-		for (int i = 0; i < tiles; ++i) {
-			sprintf_s(buffer, 32, "tile_%d", i);
-			int offset = i * 25;
-			for (int j = 0; j < num; ++j) {
-				if (colorDefs.get(offset+j) == 0) {
-					gen.set_color(slices[j], ds::Color(184, 203, 98, 255));
-				}
-				else if (colorDefs.get(offset + j) == 1) {
-					gen.set_color(slices[j], ds::Color(223, 215, 204, 255));
-				}
-				if (colorDefs.get(offset + j) == 2) {
-					gen.set_color(slices[j], ds::Color(151, 144, 138, 255));
-				}
-			}
-			gen.save_mesh(buffer);
-		}
-	}
-	*/
-	for (int i = 0; i < 1024; ++i) {
-		gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
-	}
-
-	//gen.create_cylinder(1.0f, 1.0f, 12);
-	
-	/*
-	gen.move_edge(2, v3(0.0f, 0.5f, 0.0f));	
-	gen.move_edge(10, v3(0.0f,0.5f, 0.0f));
-	gen.move_edge(24, v3(0.0f, -0.5f, 0.0f));
-	gen.move_edge(32, v3(0.0f, -0.5f, 0.0f));
-	gen.move_edge(11, v3(0.5f, 0.0f, 0.0f));
-	gen.move_edge(35, v3(0.5f, 0.0f, 0.0f));
-	gen.move_edge(1, v3(-0.5f, 0.0f, 0.0f));
-	gen.move_edge(25, v3(-0.5f, 0.0f, 0.0f));
-	*/
-	//gen.scale_face(4, 1.5f);
-	/*
-	ds::Quaternion q = ds::quat::euler2quat(0.0f,0.0f,DEGTORAD(45.0f));
-	ds::mat4 m = ds::quat::quat2matrix(q);
-	v3 v(1, 0, 0);
-	v3 n = m * v;
-	LOG << "===> N: " << DBG_V3(n);
-	*/
-	/*
-	gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
-	ds::gen::IndexList il;
-	for (int i = 0; i < 3; ++i) {
-		il.clear();
-		gen.find_adjacent_faces(0, il);
-		for (int i = 0; i < il.indices.size(); ++i) {
-			gen.subdivide(i);
-		}
-	}
-	il.clear();
-	gen.find_adjacent_faces(0, il);
-	LOG << "faces: " << il.indices.size();
-	gen.debug_face(242);
-	gen.smooth(il,1.0f);
-	gen.debug_face(242);
-	*/
-	// triangle
-	//uint16_t faces[6];
-	//uint16_t f = gen.add_cube(v3(-5, 0, 0), v3(1.0f, 2.0f, 0.5f));
-	
-	//gen.move_edge(16, v3(-0.4f, 0.0f, 0.0f));
-	//gen.move_edge(18, v3( 0.4f, 0.0f, 0.0f));
-	//gen.parse("triangle.def");
-	//gen.parse("gem_stone.def");
-	//gen.create_torus(5.0f, 0.5f, 32);
-	/*
-	gen.create_grid(v2(1, 1), 3, 3);
-	ds::gen::IndexList il;
-	gen.find_adjacent_faces(4, il);
-	for (int i = 0; i < il.indices.size(); ++i) {
-		LOG << i << " = " << il.indices[i];
-	}
-	*/
-	/*
-	gen.move_edge(28, v3(0.0f, 0.2f, 0.0f));
-	gen.split_edge(104, 0.25f);
-	gen.move_face(18, v3(0.0f, 0.0f, -0.2f));
-	gen.scale_face(19, 0.8f);
-	gen.extrude_edge(41, v3(0, 0, 1));
-
-	uint16_t torus = gen.create_torus(v3(4,0,0),1.0f, 0.2f, 0.4f, 12);
-	uint16_t torus_faces[128];
-	int num_torus = gen.get_connected_faces(torus, torus_faces, 128);
-	*/
-	//
-	//
-	//uint16_t faces[20];
-	//v3 p[] = { v3(-1,1,-1),v3(1,1,-1),v3(1,-1,-1),v3(-1,-1,-1) };
-	//faces[0] = gen.add_face(p);
-	//gen.hsplit_edge(0, 0.2f);
-	//gen.hsplit_edge(4, 0.5f);
-	//gen.move_face(1, v3(0.0f, 0.0f, -0.1f));
-	//gen.vsplit_edge(3, 0.2f);
-	//gen.subdivide(0);
-	/*
-	LOG << "creating grider";
-	ds::gen::MeshGen g2;// = new ds::gen::MeshGen;
-	createGriderBox(&g2, 0.75f, 0.08f);
-	float a = 0.0f;
-	for (int i = 0; i < 8; ++i) {
-		float yp = static_cast<float>(i)* 0.75f;
-		gen.add(g2, v3(-2.0f, -3.0f + yp, 0.0f),v3(1,1,1),v3(a,0.0f,0.0f));
-		a += DEGTORAD(20.0f);
-	}
-	*/
-	//delete g2;
-	//gen.transform(v3(0, 0, 0), v3(0.5f,0.5f,0.5f), v3(DEGTORAD(45.0f), 0.0f, 0.0f));
-	/*
-	v3 pn[] = { v3(1,1,1), v3(-1,1,1),v3(-1,-1,1),v3(1,-1,1) };
-	faces[1] = gen.add_face(pn);
-	// left
-	faces[2] = gen.v_combine(1, 7);
-	// right
-	faces[3] = gen.v_combine(5,3);
-	// top
-	faces[4] = gen.h_combine(12,8);
-	// bottom
-	faces[5] = gen.h_combine(14, 10);
-	//gen.scale_face(0, 1.5f);
-	faces[6] = gen.extrude_face(faces[4], 2.0f);
-	faces[6] = gen.extrude_face(faces[3], 2.0f);
-	//gen.verify(10);
-	//v3 tp[] = { v3(-1,0,0),v3(0,-1,0),v3(1,0,0),v3(0,-1,0) };
-	//gen.verify(tp);
-	*/
-	/*
-	gen.texture_face(faces[0], math::buildTexture(650, 260, 64, 64));
-	faces[1] = gen.extrude_edge(1, v3(0, 0, 2));
-	gen.texture_face(faces[1], math::buildTexture(714, 324, 64, 64));
-	faces[2] = gen.combine(5, 3);
-	gen.move_edge(5, v3(-0.5f, 0.0f, 0.0f));
-	gen.texture_face(faces[2], math::buildTexture(714, 324, 64, 64));
-	*/
-	//gen.create_cube_ring(1.0f, 0.5f, 4);
-	//gen.add_cube(v3(0, 0, 0), v3(2, 2, 2));
-	
-	//for (int i = 0; i < 1024; ++i) {
-		//gen.texture_face(i, math::buildTexture(682, 260, 32, 32));
-		//gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
-	//}
-	/*
-	v2 uv[] = { v2(286,650),v2(298,650),v2(324,714),v2(260,714) };
-	gen.texture_face(0, math::buildTexture(uv));
-	gen.texture_face(2, math::buildTexture(uv));
-	*/
-	//gen.split_edge(3, 0.2f);
-	//gen.extrude_edge(7, v3(-0.8f, 0.0f, 0.0f));
-	//gen.create_ring(1.0f, 0.2f, 4);
-	//uint16_t fe[] = {7,3,13,9};
-	//uint16_t fi = gen.make_face(fe);
-	//gen.move_face(fi, v3(0.0f, 0.0f, -0.1f));
-	/*	
-	faces[1] = gen.extrude_edge(1, v3(0, 0, 2));
-	faces[2] = gen.split_edge(0);
-	gen.split_edge(4);
-	gen.extrude_edge(13, v3(-2, 0, 0));
-	gen.split_edge(16);
-	gen.extrude_edge(21, v3(0, 0, -2));
-	gen.split_edge(24);
-	gen.move_edge(1, v3(0.0f, 0.0f, -0.5f));
-	gen.move_edge(5, v3(0.5f, 0.0f, 0.0f));
-	gen.move_edge(17, v3(0.0f, 0.0f, 0.5f));
-	gen.move_edge(25, v3(-0.5f, 0.0f, 0.0f));
-	*/
-	//for (int i = 0; i < 16; ++i) {
-		//gen.set_color(i, ds::Color(math::random(0,255), math::random(0, 255), math::random(0, 255), 255));
-	//}
-	
-	//gen.recalculate_normals();
+	//gen.load_text("window_0");
+	gen.add_cube(v3(0, 0, 0), v3(1, 1, 1));
+	createWindow(v3(-0.25f,0.0f,-0.55f));
+	createWindow(v3(0.25f, 0.0f, -0.55f));
 	gen.build(_mesh);
 	ID id = _scene->add(_mesh, v3(0, 0, 0));
 	_mesh->buildBoundingBox();
-	//_scene->add(_mesh, v3(0, 0, 2), ds::DrawMode::IMMEDIATE);
-	//_scene->add(_mesh, v3(0, 0, -2), ds::DrawMode::IMMEDIATE);
+	gen.save_mesh(_name);
 
-	//buildTerrain();
-
+	//buildTestTerrain();
 	
 }
 
@@ -351,12 +160,14 @@ void GeoTestState::buildTerrain() {
 		m->load(buffer);
 		_objects.push_back(m);
 	}
+	/*
 	for (int i = 0; i < 3; ++i) {
 		sprintf_s(buffer, 32, "house_%d", i);
 		ds::Mesh* m = new ds::Mesh();
 		m->load(buffer);
 		_objects.push_back(m);
 	}
+	*/
 	ds::TileMapReader reader;
 	reader.parse("content\\field.txt");
 	float sx = reader.width() * 0.5f - 0.5f;
@@ -364,6 +175,22 @@ void GeoTestState::buildTerrain() {
 	for (int y = reader.height() - 1; y >= 0; --y) {
 		for (int x = 0; x < reader.width(); ++x) {
 			_scene->add(_objects[reader.get(x, y)], v3(-sx + x, -3, sy - y));
+		}
+	}
+}
+
+// ------------------------------------------
+// build TEST terrain
+// ------------------------------------------
+void GeoTestState::buildTestTerrain() {
+	ds::Mesh* m = new ds::Mesh();
+	m->load("tile_0");
+	_objects.push_back(m);
+	float sx = 3.0f * 0.5f - 0.5f;
+	float sy = 3.0f * 0.5f + 2;
+	for (int y = 3 - 1; y >= 0; --y) {
+		for (int x = 0; x < 3; ++x) {
+			_scene->add(m, v3(-sx + x, -3, sy - y));
 		}
 	}
 }
@@ -443,8 +270,8 @@ void GeoTestState::render() {
 
 int GeoTestState::onChar(int ascii) {
 	if (ascii == 'r') {
-		gen.load_text("gem_stone");
-		gen.debug();
+		gen.load_text(_name);
+		//gen.debug();
 		_mesh->clear();
 		gen.build(_mesh);
 	}
@@ -468,4 +295,77 @@ void GeoTestState::drawGUI() {
 		_camera->resetYAngle();
 	}
 	gui::end();
+}
+
+// -------------------------------------------
+// Create street tiles
+// -------------------------------------------
+void GeoTestState::createStreets() {
+	char buffer[32];
+	ds::TileMapReader colorDefs;
+	if (colorDefs.parse("content\\tile_colors.txt")) {
+		int tiles = colorDefs.height() / 5;
+		for (int i = 0; i < tiles; ++i) {
+			gen.clear();
+			uint16_t f = gen.add_cube(v3(0.0f, 0.0f, 0.0f), v3(1.0f, 0.1f, 1.0f));
+			uint16_t slices[45];
+			int num = gen.slice(4, 5, slices, 32);
+			gen.move_edge(25, v3(-0.1f, 0.0f, 0.0f));
+			gen.move_edge(65, v3(-0.1f, 0.0f, 0.0f));
+			gen.move_edge(105, v3(-0.1f, 0.0f, 0.0f));
+
+			gen.move_edge(35, v3(0.1f, 0.0f, 0.0f));
+			gen.move_edge(75, v3(0.1f, 0.0f, 0.0f));
+			gen.move_edge(115, v3(0.1f, 0.0f, 0.0f));
+
+			gen.move_edge(42, v3(0.0f, 0.0f, 0.1f));
+			gen.move_edge(50, v3(0.0f, 0.0f, 0.1f));
+			gen.move_edge(58, v3(0.0f, 0.0f, 0.1f));
+
+			gen.move_edge(62, v3(0.0f, 0.0f, -0.1f));
+			gen.move_edge(70, v3(0.0f, 0.0f, -0.1f));
+			gen.move_edge(78, v3(0.0f, 0.0f, -0.1f));
+
+			gen.set_color(0, ds::Color(157, 98, 66, 255));
+			gen.set_color(1, ds::Color(157, 98, 66, 255));
+			gen.set_color(2, ds::Color(157, 98, 66, 255));
+			gen.set_color(3, ds::Color(157, 98, 66, 255));
+			gen.set_color(5, ds::Color(157, 98, 66, 255));
+			gen.recalculate_normals();
+
+			sprintf_s(buffer, 32, "tile_%d", i);
+			int offset = i * 25;
+			for (int j = 0; j < num; ++j) {
+				if (colorDefs.get(offset + j) == 0) {
+					gen.set_color(slices[j], ds::Color(184, 203, 98, 255));
+				}
+				else if (colorDefs.get(offset + j) == 1) {
+					gen.set_color(slices[j], ds::Color(223, 215, 204, 255));
+				}
+				if (colorDefs.get(offset + j) == 2) {
+					gen.set_color(slices[j], ds::Color(151, 144, 138, 255));
+				}
+			}
+			gen.save_text(buffer);
+			gen.save_mesh(buffer);
+		}
+	}
+}
+
+void GeoTestState::createWindow(const v3& center) {
+	float size = 0.4f;
+	float hs = size * 0.5f;
+	float w = 0.04f;
+	float hw = w * 0.5f;
+	gen.add_cube(v3(center.x - hs + hw, 0.0f, center.z), v3(w, size, w));
+	gen.add_cube(v3(center.x + hs - hw, 0.0f, center.z), v3(w, size, w));
+	gen.add_cube(v3(center.x, hs - hw, center.z), v3(size - 2.0f * w, w, w));
+	gen.add_cube(v3(center.x, -hs + hw, center.z), v3(size - 2.0f * w, w, w));
+	v3 p[] = {
+		v3(center.x - hs + hw * 2.0f,hs -hw,center.z + hw),
+		v3(center.x + hs - hw * 2.0f,hs - hw,center.z + hw),
+		v3(center.x + hs - hw * 2.0f,-hs +hw,center.z + hw),
+		v3(center.x - hs + hw * 2.0f,-hs + hw,center.z + hw) };
+	gen.add_face(p);
+	gen.debug_colors();
 }

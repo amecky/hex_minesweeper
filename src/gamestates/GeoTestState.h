@@ -15,9 +15,12 @@ public:
 	void render();
 	int onChar(int ascii);
 private:
+	void createWindow(const v3& center);
 	void buildTerrain();
+	void buildTestTerrain();
 	void drawGUI();
 	void createCoords();
+	void createStreets();
 	void createHandrail(float length, float griderSize, int segments, float height);
 	void createGriderBox(ds::gen::MeshGen* gen,float dim, float griderSize);
 	ds::gen::MeshGen gen;
@@ -29,5 +32,6 @@ private:
 	ds::OrthoCamera* _orthoCamera;
 	ds::gen::CommandContext _ctx;
 	ds::gen::MeshGenGUI* _gui;
+	const char* _name;
 };
 

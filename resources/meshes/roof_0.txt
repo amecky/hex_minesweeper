@@ -1,0 +1,16 @@
+add_cube 0,0,0 1,0.1,1 
+v_split 19 0.4 
+v_split 27 0.33 
+move_edge 24 0,0.4,0 
+move_edge 26 0,0.4,0 
+make_face 25 29 4 17 
+make_face 27 19 12 31 
+set_color 0 58,58,58,255
+set_color 1 58,58,58,255
+set_color 2 58,58,58,255
+set_color 3 58,58,58,255
+set_color 4 58,58,58,255
+set_color 5 58,58,58,255
+set_color 6 58,58,58,255
+set_color 7 58,58,58,255
+set_color 8 58,58,58,255

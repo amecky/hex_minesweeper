@@ -1,7 +1,0 @@
-add_cube 0,0,0 1,0.1,1 
-v_split 19 0.4 
-v_split 27 0.33 
-move_edge 24 0,0.4,0 
-move_edge 26 0,0.4,0 
-make_face 25 29 4 17 
-make_face 27 19 12 31 
