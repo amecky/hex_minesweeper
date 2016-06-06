@@ -7,7 +7,7 @@
 #include <utils\ObjLoader.h>
 #include "..\objects.h"
 #include <renderer\graphics.h>
-#include "..\TileMapReader.h"
+#include <utils\TileMapReader.h>
 
 const int SIZE_X = 8;
 const int SIZE_Y = 8;
@@ -35,8 +35,24 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	//createCoords();
 	//v3 p[] = {v3(-6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,-6.0f),v3(-6.0f,-0.6f,-6.0f)};
 	//v3 p[] = { v3(-1,1,0), v3(1,1,0),v3(1,-1,0),v3(-1,-1,0) };
-	
-	uint16_t f = gen.add_cube(v3(0.0f, 0.5f, 0.0f), v3(1.0f, 1.0f, 1.0f));	
+	/*
+	uint16_t f = gen.add_cube(v3(0.0f, 0.0f, 0.0f), v3(1.0f, 0.1f, 1.0f));	
+	gen.vsplit_edge(19, 0.4f);
+	gen.vsplit_edge(27, 0.33f);
+	gen.move_edge(24, v3(0.0f, 0.4f, 0.0f));
+	gen.move_edge(26, v3(0.0f, 0.4f, 0.0f));
+	uint16_t edges[] = { 25, 29, 4, 17 };
+	gen.make_face(edges);
+	uint16_t edges2[] = { 27, 19, 12, 31};
+	gen.make_face(edges2);
+	gen.save_text("roof_0");
+	gen.save_bin("roof_0");
+	gen.clear();
+	*/
+	//gen.load_text("roof_0");
+	gen.load_text("roof_1");
+	//gen.scale_face(6, 0.5f);
+	/*
 	uint16_t slices[45];
 	int num = gen.slice(0, 9, 5, slices, 32);
 	for (int i = 0; i < 5; ++i) {
@@ -80,7 +96,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	gen.save_bin("House_base");
 	gen.clear();
 	gen.load_bin("House_base");
-	TileMapReader colorDefs;
+	ds::TileMapReader colorDefs;
 	if (colorDefs.parse("content\\house_colors.txt")) {
 		int tiles = colorDefs.height() / 5;
 		for (int i = 0; i < tiles; ++i) {
@@ -110,6 +126,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 			gen.save_mesh(buffer);
 		}
 	}
+	*/
 	/*
 	gen.move_edge(25, v3(-0.1f, 0.0f, 0.0f));
 	gen.move_edge(65, v3(-0.1f, 0.0f, 0.0f));
@@ -150,9 +167,9 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 		}
 	}
 	*/
-	//for (int i = 0; i < 1024; ++i) {
-		//gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
-	//}
+	for (int i = 0; i < 1024; ++i) {
+		gen.set_color(i, ds::Color(math::random(0, 255), math::random(0, 255), math::random(0, 255), 255));
+	}
 
 	//gen.create_cylinder(1.0f, 1.0f, 12);
 	
@@ -306,6 +323,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") {
 	//gen.recalculate_normals();
 	gen.build(_mesh);
 	ID id = _scene->add(_mesh, v3(0, 0, 0));
+	_mesh->buildBoundingBox();
 	//_scene->add(_mesh, v3(0, 0, 2), ds::DrawMode::IMMEDIATE);
 	//_scene->add(_mesh, v3(0, 0, -2), ds::DrawMode::IMMEDIATE);
 
@@ -339,7 +357,7 @@ void GeoTestState::buildTerrain() {
 		m->load(buffer);
 		_objects.push_back(m);
 	}
-	TileMapReader reader;
+	ds::TileMapReader reader;
 	reader.parse("content\\field.txt");
 	float sx = reader.width() * 0.5f - 0.5f;
 	float sy = reader.height() * 0.5f + 2;
@@ -425,7 +443,7 @@ void GeoTestState::render() {
 
 int GeoTestState::onChar(int ascii) {
 	if (ascii == 'r') {
-		gen.parse("gem_stone.def");
+		gen.load_text("gem_stone");
 		gen.debug();
 		_mesh->clear();
 		gen.build(_mesh);
