@@ -33,5 +33,7 @@ private:
 	ds::gen::CommandContext _ctx;
 	ds::gen::MeshGenGUI* _gui;
 	const char* _name;
+	bool _pressed;
+	ds::Array<ID> _ids;
 };
 

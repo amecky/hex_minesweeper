@@ -1,0 +1,7 @@
+add_cube 0,0,0 1.0,0.1,1.0
+add_cube 0.0,0.1,0.0 1.0,0.6,1.0
+h_split 16 0.45
+h_split 24 0.05
+move_edge 25 0.0,0.4,0.0
+move_edge 27 0.0,0.4,0.0
+debug_colors

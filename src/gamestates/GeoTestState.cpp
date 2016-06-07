@@ -12,9 +12,10 @@
 const int SIZE_X = 8;
 const int SIZE_Y = 8;
 
-GeoTestState::GeoTestState() : ds::GameState("GeoTestState") , _name("window_0") {
+GeoTestState::GeoTestState() : ds::GameState("GeoTestState") , _name("base_house") {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
+	_pressed = false;
 	//_camera->setPosition(v3(0, -8, -21), v3(0, 0, 1));
 	//_camera->resetPitch(DEGTORAD(355.0f));
 	//_camera->resetYAngle();
@@ -127,18 +128,39 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") , _name("window_0")
 		}
 	}
 	*/
-	
+	//gen.load_text("roof_0");
+	//gen.save_mesh("roof_0");
+	//gen.clear();
 	//gen.load_text("window_0");
-	gen.add_cube(v3(0, 0, 0), v3(1, 1, 1));
-	createWindow(v3(-0.25f,0.0f,-0.55f));
-	createWindow(v3(0.25f, 0.0f, -0.55f));
+	//createWindow(v3(0,0,0));
+	/*
+	gen.add_cube(v3(0, 0, 0), v3(1.0f,0.6f,1.0f));
 	gen.build(_mesh);
+	_mesh->load("window_1", v3(-0.25f, 0.0f, -0.54f));
+	_mesh->load("window_1", v3(0.25f, 0.0f, -0.54f));
+	_mesh->load("roof_0", v3(0.0f, 0.35f, 0.0f));
 	ID id = _scene->add(_mesh, v3(0, 0, 0));
 	_mesh->buildBoundingBox();
-	gen.save_mesh(_name);
-
+	_mesh->save("house_0");
+	*/
 	//buildTestTerrain();
-	
+	//buildTerrain();
+	gen.add_cube(v3(0, 0, 0), v3(1.0f, 0.1f, 1.0f));
+	gen.add_cube(v3(0.0f, 0.35f, 0.0f), v3(1.0f, 0.6f, 1.0f));
+	//gen.slice(0, 3);
+	gen.scale_face(10, 0.1f);
+	gen.add_cube(v3(0.0f, 0.70f, 0.0f), v3(1.2f, 0.1f, 1.2f));
+	gen.hsplit_edge(64, 0.45f);
+	gen.hsplit_edge(72, 0.05f);
+	gen.move_edge(65, v3(0.0f, 0.4f, 0.0f));
+	gen.move_edge(79, v3(0.0f, 0.4f, 0.0f));
+	gen.hsplit_edge(68, 0.45f);
+	//gen.move_edge(81, v3(0.0f, 0.4f, 0.0f));
+	gen.debug_colors();
+	//gen.load_text(_name);
+	gen.build(_mesh);
+	ID id = _scene->add(_mesh, v3(0, 0, 0));
+	_mesh->save(_name);
 }
 
 
@@ -160,21 +182,28 @@ void GeoTestState::buildTerrain() {
 		m->load(buffer);
 		_objects.push_back(m);
 	}
-	/*
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 1; ++i) {
 		sprintf_s(buffer, 32, "house_%d", i);
 		ds::Mesh* m = new ds::Mesh();
 		m->load(buffer);
 		_objects.push_back(m);
 	}
-	*/
 	ds::TileMapReader reader;
 	reader.parse("content\\field.txt");
 	float sx = reader.width() * 0.5f - 0.5f;
-	float sy = reader.height() * 0.5f + 2;
+	float sy = -3.0f;
+	float sz = reader.height() * 0.5f + 2;
 	for (int y = reader.height() - 1; y >= 0; --y) {
 		for (int x = 0; x < reader.width(); ++x) {
-			_scene->add(_objects[reader.get(x, y)], v3(-sx + x, -3, sy - y));
+			int index = reader.get(x, y);
+			if (index > 11) {
+				sy = -2.65f;
+			}
+			else {
+				sy = -3.0f;
+			}
+			ID id = _scene->add(_objects[index], v3(-sx + x, sy, sz - y));
+			_ids.push_back(id);
 		}
 	}
 }
@@ -256,6 +285,16 @@ void GeoTestState::createGriderBox(ds::gen::MeshGen* gen, float dim, float gride
 int GeoTestState::update(float dt) {
 	_camera->update(dt);	
 	_gui->handleClick(_camera);
+	/*
+	if (ds::input::isMouseButtonPressed(0) && !_pressed) {
+		_pressed = true;
+		ds::Ray r = graphics::getCameraRay(_camera);
+		ID id = _scene->intersects(r);
+	}
+	if (!ds::input::isMouseButtonPressed(0) && _pressed) {
+		_pressed = false;
+	}
+	*/
 	return 0;
 }
 
@@ -353,19 +392,24 @@ void GeoTestState::createStreets() {
 }
 
 void GeoTestState::createWindow(const v3& center) {
+	ds::gen::MeshGen wgen;
 	float size = 0.4f;
 	float hs = size * 0.5f;
 	float w = 0.04f;
 	float hw = w * 0.5f;
-	gen.add_cube(v3(center.x - hs + hw, 0.0f, center.z), v3(w, size, w));
-	gen.add_cube(v3(center.x + hs - hw, 0.0f, center.z), v3(w, size, w));
-	gen.add_cube(v3(center.x, hs - hw, center.z), v3(size - 2.0f * w, w, w));
-	gen.add_cube(v3(center.x, -hs + hw, center.z), v3(size - 2.0f * w, w, w));
+	wgen.add_cube(v3(center.x - hs + hw, 0.0f, center.z), v3(w, size, w));
+	wgen.add_cube(v3(center.x + hs - hw, 0.0f, center.z), v3(w, size, w));
+	wgen.add_cube(v3(center.x, hs - hw, center.z), v3(size - 2.0f * w, w, w));
+	wgen.add_cube(v3(center.x, -hs + hw, center.z), v3(size - 2.0f * w, w, w));
 	v3 p[] = {
 		v3(center.x - hs + hw * 2.0f,hs -hw,center.z + hw),
 		v3(center.x + hs - hw * 2.0f,hs - hw,center.z + hw),
 		v3(center.x + hs - hw * 2.0f,-hs +hw,center.z + hw),
 		v3(center.x - hs + hw * 2.0f,-hs + hw,center.z + hw) };
-	gen.add_face(p);
-	gen.debug_colors();
+	uint16_t window = wgen.add_face(p);
+	for (int i = 0; i < wgen.num_faces(); ++i) {
+		wgen.set_color(i, ds::Color(157, 98, 66, 255));
+	}
+	wgen.set_color(window, ds::Color(196, 215, 213, 255));
+	wgen.save_mesh("window_1");
 }
