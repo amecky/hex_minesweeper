@@ -10,6 +10,8 @@
 #include "gamestates\RunState.h"
 #include "GameSettings.h"
 #include "gamestates\GeoTestState.h"
+#include "gamestates\MeshGenTestState.h"
+#include "gamestates\WorldState.h"
 
 ds::BaseApp *app = new Minesweeper(); 
 
@@ -37,6 +39,8 @@ bool Minesweeper::loadContent() {
 	//addGameState(new HighscoreState(_context));
 	addGameState(new TestState(_context));
 	addGameState(new GeoTestState());
+	addGameState(new MeshGenTestState("tile_0"));
+	addGameState(new WorldState());
 	/*
 	addGameState(new RunState(_context));
 	connectGameStates("GameOver", 1, "MainGame");
@@ -64,7 +68,8 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	//_context->reset();
-	activate("GeoTestState");
+	activate("MeshGenTestState");
+	//activate("WorldState");
 }
 
 void Minesweeper::render() {

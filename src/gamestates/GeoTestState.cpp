@@ -12,13 +12,16 @@
 const int SIZE_X = 8;
 const int SIZE_Y = 8;
 
-GeoTestState::GeoTestState() : ds::GameState("GeoTestState") , _name("base_house") {
+GeoTestState::GeoTestState() : ds::GameState("GeoTestState"), _name("base_house") , _gui(0) , _mesh(0) {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
 	_pressed = false;
-	//_camera->setPosition(v3(0, -8, -21), v3(0, 0, 1));
-	//_camera->resetPitch(DEGTORAD(355.0f));
-	//_camera->resetYAngle();
+}
+
+void GeoTestState::init() {
+	_camera->setPosition(v3(12, 6, -9), v3(0, 0, 1));
+	_camera->resetPitch(DEGTORAD(12.0f));
+	_camera->setYAngle(DEGTORAD(-45.0f));
 	_mesh = new ds::Mesh();
 
 	_ctx.gen = &gen;
@@ -145,7 +148,11 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") , _name("base_house
 	*/
 	//buildTestTerrain();
 	//buildTerrain();
-	gen.add_cube(v3(0, 0, 0), v3(1.0f, 0.1f, 1.0f));
+	//gen.add_cube(v3(0, 0, 0), v3(1.0f, 0.1f, 1.0f));
+	//gen.extrude_face(4, 0.5f);
+	//gen.scale_face(6, 0.2f);
+	//gen.extrude_face(6, 0.3f);
+	/*
 	gen.add_cube(v3(0.0f, 0.35f, 0.0f), v3(1.0f, 0.6f, 1.0f));
 	//gen.slice(0, 3);
 	gen.scale_face(10, 0.1f);
@@ -155,20 +162,26 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState") , _name("base_house
 	gen.move_edge(65, v3(0.0f, 0.4f, 0.0f));
 	gen.move_edge(79, v3(0.0f, 0.4f, 0.0f));
 	gen.hsplit_edge(68, 0.45f);
+	*/
 	//gen.move_edge(81, v3(0.0f, 0.4f, 0.0f));
-	gen.debug_colors();
+	//gen.debug_colors();
 	//gen.load_text(_name);
-	gen.build(_mesh);
-	ID id = _scene->add(_mesh, v3(0, 0, 0));
-	_mesh->save(_name);
+	//gen.build(_mesh);
+	//ID id = _scene->add(_mesh, v3(0, 0, 0));
+	//_mesh->save("house_0");
+	buildTerrain();
 }
 
 
 
 GeoTestState::~GeoTestState() {
 	_objects.destroy_all();
-	delete _gui;
-	delete _mesh;
+	if (_gui != 0) {
+		delete _gui;
+	}
+	if (_mesh != 0) {
+		delete _mesh;
+	}
 }
 
 // ------------------------------------------
@@ -188,6 +201,12 @@ void GeoTestState::buildTerrain() {
 		m->load(buffer);
 		_objects.push_back(m);
 	}
+	for (int i = 0; i < 2; ++i) {
+		sprintf_s(buffer, 32, "tree_%d", i);
+		ds::Mesh* m = new ds::Mesh();
+		m->load(buffer);
+		_objects.push_back(m);
+	}
 	ds::TileMapReader reader;
 	reader.parse("content\\field.txt");
 	float sx = reader.width() * 0.5f - 0.5f;
@@ -196,12 +215,6 @@ void GeoTestState::buildTerrain() {
 	for (int y = reader.height() - 1; y >= 0; --y) {
 		for (int x = 0; x < reader.width(); ++x) {
 			int index = reader.get(x, y);
-			if (index > 11) {
-				sy = -2.65f;
-			}
-			else {
-				sy = -3.0f;
-			}
 			ID id = _scene->add(_objects[index], v3(-sx + x, sy, sz - y));
 			_ids.push_back(id);
 		}
@@ -339,6 +352,44 @@ void GeoTestState::drawGUI() {
 // -------------------------------------------
 // Create street tiles
 // -------------------------------------------
+void GeoTestState::createTile(int index, int directions) {
+	assert(index > 0);
+	ds::gen::MeshGen g;
+	g.load_text("tile_0");
+	int colors[25];
+	for (int i = 0; i < 25; ++i) {
+		colors[i] = 0;
+	}
+	if (directions & 1 == 1) {
+
+	}
+	if (directions & 2 == 2) {
+
+	}
+	if (directions & 4 == 4) {
+
+	}
+	if (directions & 8 == 8) {
+
+	}
+	for (int j = 0; j < 25; ++j) {
+		if (colors[j] == 0) {
+			gen.set_color(j, ds::Color(184, 203, 98, 255));
+		}
+		else if (colors[j] == 1) {
+			gen.set_color(j, ds::Color(223, 215, 204, 255));
+		}
+		if (colors[j] == 2) {
+			gen.set_color(j, ds::Color(151, 144, 138, 255));
+		}
+	}
+	_mesh->clear();
+	g.build(_mesh);
+	char fileName[32];
+	sprintf_s(fileName, 32, "tile_%d", index);
+	_mesh->save(fileName);
+}
+
 void GeoTestState::createStreets() {
 	char buffer[32];
 	ds::TileMapReader colorDefs;

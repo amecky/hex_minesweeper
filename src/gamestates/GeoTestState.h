@@ -11,10 +11,12 @@ class GeoTestState : public ds::GameState {
 public:
 	GeoTestState();
 	~GeoTestState();
+	void init();
 	int update(float dt);
 	void render();
 	int onChar(int ascii);
 private:
+	void createTile(int index, int directions);
 	void createWindow(const v3& center);
 	void buildTerrain();
 	void buildTestTerrain();
