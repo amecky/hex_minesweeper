@@ -8,6 +8,7 @@
 #include "..\objects.h"
 #include <renderer\graphics.h>
 #include <utils\TileMapReader.h>
+#include "..\Constants.h"
 
 const int SIZE_X = 8;
 const int SIZE_Y = 8;
@@ -19,9 +20,10 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState"), _name("base_house"
 }
 
 void GeoTestState::init() {
-	_camera->setPosition(v3(12, 6, -9), v3(0, 0, 1));
-	_camera->resetPitch(DEGTORAD(12.0f));
-	_camera->setYAngle(DEGTORAD(-45.0f));
+	_camera->setPosition(v3(0, 3, -9), v3(0, 0, 0));
+	//_camera->setPosition(v3(12, 6, -9), v3(0, 0, 1));
+	//_camera->resetPitch(DEGTORAD(12.0f));
+	//_camera->setYAngle(DEGTORAD(-45.0f));
 	_mesh = new ds::Mesh();
 
 	_ctx.gen = &gen;
@@ -169,7 +171,23 @@ void GeoTestState::init() {
 	//gen.build(_mesh);
 	//ID id = _scene->add(_mesh, v3(0, 0, 0));
 	//_mesh->save("house_0");
-	buildTerrain();
+	//buildTerrain();
+	for (int i = 0; i < 16; ++i) {
+		createTile(i, i);
+		sprintf_s(buffer, 32, "tile_%d", i );
+		ds::Mesh* m = new ds::Mesh();
+		m->load(buffer);
+		_objects.push_back(m);
+	}
+	float sx = -2.5f;
+	float sy = 0.0f;
+	float sz = 0.0f;
+	int cnt = 0;
+	for (int z = 0; z < 3; ++z) {
+		for (int x = 0; x < 5; ++x) {
+			_scene->add(_objects[cnt++], v3(sx + x, sy, sz + z));
+		}
+	}
 }
 
 
@@ -353,41 +371,73 @@ void GeoTestState::drawGUI() {
 // Create street tiles
 // -------------------------------------------
 void GeoTestState::createTile(int index, int directions) {
-	assert(index > 0);
 	ds::gen::MeshGen g;
-	g.load_text("tile_0");
+	g.load_text("base_tile");
 	int colors[25];
 	for (int i = 0; i < 25; ++i) {
 		colors[i] = 0;
 	}
-	if (directions & 1 == 1) {
+	if (directions != 0) {
+		colors[7] = 1;
+		colors[11] = 1;
+		colors[6] = 1;
+		colors[8] = 1;
+		colors[12] = 2;
+		colors[13] = 1;		
+		colors[17] = 1;
+		colors[16] = 1;
+		colors[18] = 1;
+	}
+	if ((directions & 1) != 0) {
+		colors[1] = 1;
+		colors[2] = 2;
+		colors[3] = 1;
+		colors[6] = 1;
+		colors[7] = 2;
+		colors[8] = 1;
 
 	}
-	if (directions & 2 == 2) {
-
+	if ((directions & 2) != 0) {
+		colors[8] = 1;
+		colors[9] = 1;
+		colors[13] = 2;
+		colors[14] = 2;
+		colors[18] = 1;
+		colors[19] = 1;
 	}
-	if (directions & 4 == 4) {
-
+	if ((directions & 4) != 0) {
+		colors[16] = 1;
+		colors[17] = 2;
+		colors[18] = 1;
+		colors[21] = 1;
+		colors[22] = 2;
+		colors[23] = 1;
 	}
-	if (directions & 8 == 8) {
-
+	if ((directions & 8) != 0) {
+		colors[6] = 1;
+		colors[11] = 2;
+		colors[16] = 1;
+		colors[5] = 1;
+		colors[10] = 2;
+		colors[15] = 1;
+	}
+	if (directions != 0) {
+		colors[12] = 2;
 	}
 	for (int j = 0; j < 25; ++j) {
 		if (colors[j] == 0) {
-			gen.set_color(j, ds::Color(184, 203, 98, 255));
+			g.set_color(j, GRASS);
 		}
 		else if (colors[j] == 1) {
-			gen.set_color(j, ds::Color(223, 215, 204, 255));
+			g.set_color(j, CURBS);
 		}
 		if (colors[j] == 2) {
-			gen.set_color(j, ds::Color(151, 144, 138, 255));
+			g.set_color(j, STREET);
 		}
 	}
-	_mesh->clear();
-	g.build(_mesh);
 	char fileName[32];
 	sprintf_s(fileName, 32, "tile_%d", index);
-	_mesh->save(fileName);
+	g.save_mesh(fileName);
 }
 
 void GeoTestState::createStreets() {

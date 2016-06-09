@@ -29,4 +29,6 @@ enum GameEvents {
 	GE_TOGGLE_SETTINGS
 };
 
-
+const ds::Color GRASS = ds::Color(184, 203, 98, 255);
+const ds::Color CURBS = ds::Color(223, 215, 204, 255);
+const ds::Color STREET = ds::Color(151, 144, 138, 255);

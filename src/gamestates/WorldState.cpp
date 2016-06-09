@@ -7,6 +7,7 @@
 WorldState::WorldState() : ds::GameState("WorldState"), _mesh(0) {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_pressed = false;
+	_world = new TinyWorld(16);
 }
 
 void WorldState::init() {
@@ -15,13 +16,18 @@ void WorldState::init() {
 	_camera->setYAngle(DEGTORAD(-45.0f));
 	_mesh = new ds::Mesh();
 	_scene = ds::res::getScene("TestObjects");
-	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
+	loadObjects();	
+	_world->addHouse(1, 1);
+	_world->addHouse(10, 7);
+	_world->addHouse(12, 12);
+	_world->addForrest(4, 4, 3);
 	buildTerrain();
 }
 
 
 
 WorldState::~WorldState() {
+	delete _world;
 	_objects.destroy_all();
 	if (_mesh != 0) {
 		delete _mesh;
@@ -31,9 +37,9 @@ WorldState::~WorldState() {
 // ------------------------------------------
 // build terrain
 // ------------------------------------------
-void WorldState::buildTerrain() {
+void WorldState::loadObjects() {
 	char buffer[32];
-	for (int i = 0; i < 12; ++i) {
+	for (int i = 0; i < 16; ++i) {
 		sprintf_s(buffer, 32, "tile_%d", i);
 		ds::Mesh* m = new ds::Mesh();
 		m->load(buffer);
@@ -51,15 +57,19 @@ void WorldState::buildTerrain() {
 		m->load(buffer);
 		_objects.push_back(m);
 	}
-	ds::TileMapReader reader;
-	reader.parse("content\\field.txt");
-	float sx = reader.width() * 0.5f - 0.5f;
-	float sy = -3.0f;
-	float sz = reader.height() * 0.5f + 2;
-	for (int y = reader.height() - 1; y >= 0; --y) {
-		for (int x = 0; x < reader.width(); ++x) {
-			int index = reader.get(x, y);
-			ID id = _scene->add(_objects[index], v3(-sx + x, sy, sz - y));
+}
+
+void WorldState::buildTerrain() {
+	float sx = -8.0f;
+	float sz = -8.0f;
+	for (int z = 0; z < 16; ++z) {
+		for (int x = 0; x < 16; ++x) {
+			const Tile& t = _world->get(x, z);
+			switch (t.type) {
+				case WT_EMPTY: _scene->addStatic(_objects[0], v3(sx + x, -3.0f, sz + z)); break;
+				case WT_HOUSE: _scene->addStatic(_objects[16], v3(sx + x, -3.0f, sz + z)); break;
+				case WT_TREE: _scene->addStatic(_objects[18], v3(sx + x, -3.0f, sz + z)); break;
+			}
 		}
 	}
 }
@@ -85,6 +95,7 @@ int WorldState::update(float dt) {
 // -------------------------------------------------------
 void WorldState::render() {
 	// scene
+	ZoneTracker("WSR");
 	_scene->draw();
 }
 

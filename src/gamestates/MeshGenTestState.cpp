@@ -35,7 +35,7 @@ void MeshGenTestState::init() {
 	_scene = ds::res::getScene("TestObjects");
 	gen.load_text(_name);
 	gen.build(_mesh);
-	_grid_id = _scene->add(_grid, v3(0.0f, -0.05f, 0.0f));
+	_grid_id = _scene->add(_grid, v3(0.0f, -0.01f, 0.0f));
 	ds::Entity& e = _scene->get(_grid_id);
 	e.active = false;
 	ID id = _scene->add(_mesh, v3(0, 0, 0));

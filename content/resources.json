@@ -1,7 +1,7 @@
 quad_index_buffer {
 	id : 0
 	name : "SpriteQuadBuffer"
-	size : 12288
+	size : 24576
 }
 sampler_state {
 	id : 10
@@ -78,7 +78,7 @@ vertex_buffer {
 	id : 2
 	name : "SpriteVertexBuffer"
 	layout : "Sprite_Layout"
-	size : 147456
+	size : 4096
 	dynamic : true
 }
 blendstate {

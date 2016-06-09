@@ -68,8 +68,9 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	//_context->reset();
-	activate("MeshGenTestState");
-	//activate("WorldState");
+	//activate("MeshGenTestState");
+	//activate("GeoTestState");
+	activate("WorldState");
 }
 
 void Minesweeper::render() {

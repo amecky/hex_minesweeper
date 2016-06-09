@@ -5,6 +5,7 @@
 #include <gen\MeshGen.h>
 #include <gen\MeshGenCommand.h>
 #include <gen\MeshGenGUI.h>
+#include "..\TinyWorld.h"
 
 class WorldState : public ds::GameState {
 
@@ -16,12 +17,14 @@ public:
 	void render();
 	int onChar(int ascii);
 private:
+	void loadObjects();
 	void buildTerrain();
 	ds::FPSCamera* _camera;
 	ds::MeshBuffer* _buffer;
 	ds::Mesh* _mesh;
 	ds::Array<ds::Mesh*> _objects;
 	ds::Scene* _scene;
+	TinyWorld* _world;
 	bool _pressed;
 };
 
