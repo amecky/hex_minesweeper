@@ -4,10 +4,12 @@
 #include <renderer\graphics.h>
 #include <utils\TileMapReader.h>
 
+const int WORLD_SIZE = 6;
+
 WorldState::WorldState() : ds::GameState("WorldState"), _mesh(0) {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_pressed = false;
-	_world = new TinyWorld(16);
+	_world = new TinyWorld(WORLD_SIZE);
 }
 
 void WorldState::init() {
@@ -17,10 +19,19 @@ void WorldState::init() {
 	_mesh = new ds::Mesh();
 	_scene = ds::res::getScene("TestObjects");
 	loadObjects();	
-	_world->addHouse(1, 1);
-	_world->addHouse(10, 7);
-	_world->addHouse(12, 12);
-	_world->addForrest(4, 4, 3);
+	_world->addHouse(2, 5);
+	
+	//_world->addHouse(10, 7);
+	//_world->addHouse(12, 12);
+	//_world->addForrest(3, 3, 3);
+	v2 wp[36];
+	int num = _world->connect(0, 1, 5, 4, wp, 36);
+	for (int i = 1; i < num - 1; ++i) {
+		v2 p = wp[i];
+		_world->addStreet(p.x, p.y);
+	}
+	_world->addHouse(0, 1);
+	_world->addHouse(5, 4);
 	buildTerrain();
 }
 
@@ -60,14 +71,15 @@ void WorldState::loadObjects() {
 }
 
 void WorldState::buildTerrain() {
-	float sx = -8.0f;
-	float sz = -8.0f;
-	for (int z = 0; z < 16; ++z) {
-		for (int x = 0; x < 16; ++x) {
+	float sx = WORLD_SIZE / 2.0f;// -8.0f;
+	float sz = WORLD_SIZE / 2.0f;// -8.0f;
+	for (int z = 0; z < WORLD_SIZE; ++z) {
+		for (int x = 0; x < WORLD_SIZE; ++x) {
 			const Tile& t = _world->get(x, z);
 			switch (t.type) {
 				case WT_EMPTY: _scene->addStatic(_objects[0], v3(sx + x, -3.0f, sz + z)); break;
 				case WT_HOUSE: _scene->addStatic(_objects[16], v3(sx + x, -3.0f, sz + z)); break;
+				case WT_STREET: _scene->addStatic(_objects[1], v3(sx + x, -3.0f, sz + z)); break;
 				case WT_TREE: _scene->addStatic(_objects[18], v3(sx + x, -3.0f, sz + z)); break;
 			}
 		}

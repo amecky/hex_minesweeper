@@ -25,10 +25,13 @@ public:
 	~TinyWorld();
 	void clear();
 	void addHouse(uint16_t x, uint16_t y);
+	void addStreet(uint16_t x, uint16_t y);
 	void addForrest(uint16_t x, uint16_t y, uint16_t radius);
 	const Tile& get(uint16_t x, uint16_t y) const;
+	int connect(uint16_t fx, uint16_t fy, uint16_t sx, uint16_t sy, v2* ret, int max);
 private:
 	uint16_t _size;
+	uint16_t _total;
 	Tile* _tiles;
 };
 
