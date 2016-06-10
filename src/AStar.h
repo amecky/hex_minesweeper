@@ -1,5 +1,5 @@
 #pragma once
-#include <Vector.h>
+#include <Point.h>
 #include <lib\collection_types.h>
 // http://www.policyalmanac.org/games/aStarTutorial.htm
 
@@ -12,20 +12,24 @@ struct Node {
 	float f;
 	float g;
 	float h;
-
+	bool available;
 };
 
 public:
 	AStar(int width,int height);
 	~AStar();
-	void set(int x, int y, bool available);
-	int find(int sx, int sy, int ex, int ey, v2* ret, int max);
+	void set(const p2i& p, bool available);
+	int find(const p2i& start, const p2i& goal, p2i* ret, int max);
 private:
-	bool isAvailable(int x, int y);
-	int find_adjacent(int x, int y, int* ret);
+	p2i _start;
+	p2i _goal;
+	bool isValid(const p2i& p) const;
+	int to_index(const p2i& p) const;
+	bool isAvailable(const p2i& p) const;
+	int find_adjacent(const p2i& p, p2i* ret);
 	int _width;
 	int _height;
-	int* _tiles;
+	Node* _tiles;
 	ds::Array<Node> _openList;
 	ds::Array<Node> _closedList;
 };

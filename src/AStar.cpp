@@ -25,7 +25,7 @@ Fail to find the target square, and the open list is empty. In this case, there 
 */
 
 AStar::AStar(int width, int height) : _width(width) , _height(height) {
-	_tiles = new int[_width * _height];
+	_tiles = new Node[_width * _height];
 }
 
 
@@ -33,56 +33,55 @@ AStar::~AStar() {
 	delete[] _tiles;
 }
 
-void AStar::set(int x, int y, bool available) {
-	if (available) {
-		_tiles[x + y * _width] = 1;
-	}
-	else {
-		_tiles[x + y * _width] = 0;
-	}
+bool AStar::isValid(const p2i& p) const {
+	return (p.x >= 0 && p.x < _width && p.y >= 0 && p.y < _height);
 }
 
-bool AStar::isAvailable(int x, int y) {
-	if (x >= 0 && x < _width && y >= 0 && y < _height) {
-		return _tiles[x + y * _width] > 0;
-	}
-	return false;
+int AStar::to_index(const p2i& p) const {
+	assert(isValid(p));
+	return p.x + p.y * _width;
 }
 
-int AStar::find_adjacent(int x, int y, int* ret) {
+void AStar::set(const p2i& p, bool available) {
+	_tiles[to_index(p)].available = available;
+}
+
+bool AStar::isAvailable(const p2i& p) const {
+	if (!isValid(p)) {
+		return false;
+	}
+	return _tiles[to_index(p)].available;	
+}
+
+int AStar::find_adjacent(const p2i& p, p2i* ret) {
 	int cnt = 0;
-	if (isAvailable(x - 1, y)) {
-		ret[cnt++] = (x - 1) + y * _width;
-	}
-	if (isAvailable(x + 1, y)) {
-		ret[cnt++] = (x + 1) + y * _width;
-	}
-	if (isAvailable(x, y - 1)) {
-		ret[cnt++] = x + ( y - 1) * _width;
-	}
-	if (isAvailable(x, y + 1)) {
-		ret[cnt++] = x + (y + 1) * _width;
-	}
+	static p2i directions[] = { p2i(0, 1), p2i(1, 0), p2i(0, -1), p2i(-1, 0) };
+	for (int i = 0; i < 4; ++i) {
+		p2i current = p + directions[i];
+		if (isAvailable(current)) {
+			ret[cnt++] = current;
+		}
+	}	
 	return cnt;
 }
 
-int AStar::find(int sx, int sy, int ex, int ey, v2* ret, int max) {
-	_tiles[sx + sy * _width] = 2;
-	_tiles[ex + ey * _width] = 3;
-	Node n;
-	n.x = sx;
-	n.y = sy;
-	n.parent = -1;
-	_openList.push_back(n);
-	int neighbours[4];
-	int num = find_adjacent(sx, sy, neighbours);
+int AStar::find(const p2i& start, const p2i& goal, p2i* ret, int max) {
+	_tiles[to_index(start)].available = true;
+	_tiles[to_index(goal)].available = true;
+	//Node n;
+	//n.x = sx;
+	//n.y = sy;
+	//n.parent = -1;
+	//_openList.push_back(n);
+	p2i n[4];
+	int num = find_adjacent(start, n);
 	for (int i = 0; i < num; ++i) {
-		Node n;
-		n.x = sx;
-		n.y = sy;
-		n.parent = 0;
+		//Node n;
+		//n.x = sx;
+		//n.y = sy;
+		//n.parent = 0;
 		// calculate costs
-		_openList.push_back(n);
+		//_openList.push_back(n);
 	}
 	// remove start from open list and move it to closed list
 
@@ -98,4 +97,5 @@ int AStar::find(int sx, int sy, int ex, int ey, v2* ret, int max) {
 
 
 	// We repeat this process until we add the target square to the closed list, at which point it looks something like the illustration below.
+	return 0;
 }

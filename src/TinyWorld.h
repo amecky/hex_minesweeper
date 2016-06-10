@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <renderer\Scene.h>
 #include <gen\MeshGen.h>
+#include <Point.h>
 
 enum TileType {
 	WT_EMPTY,
@@ -24,12 +25,17 @@ public:
 	TinyWorld(uint16_t size);
 	~TinyWorld();
 	void clear();
-	void addHouse(uint16_t x, uint16_t y);
+	void addHouse(const p2i& p);
 	void addStreet(uint16_t x, uint16_t y);
 	void addForrest(uint16_t x, uint16_t y, uint16_t radius);
 	const Tile& get(uint16_t x, uint16_t y) const;
-	int connect(uint16_t fx, uint16_t fy, uint16_t sx, uint16_t sy, v2* ret, int max);
+	const Tile& get(const p2i& p) const;
+	void connect(const p2i& start, const p2i& goal);
+	void rebuildStreets();
 private:
+	int to_index(const p2i& p) const;
+	bool isValid(const p2i& p) const;
+	int find_free_neighbours(const p2i& pos, const p2i& start, const p2i& goal, p2i* p);
 	uint16_t _size;
 	uint16_t _total;
 	Tile* _tiles;

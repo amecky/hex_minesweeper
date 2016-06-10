@@ -1,5 +1,6 @@
 #include "TinyWorld.h"
 #include <resources\ResourceContainer.h>
+#include "AStar.h"
 
 TinyWorld::TinyWorld(uint16_t size) : _size(size) {
 	_total = _size * _size;
@@ -18,9 +19,9 @@ void TinyWorld::clear() {
 	}
 }
 
-void TinyWorld::addHouse(uint16_t x, uint16_t y) {
-	int idx = x + y * _size;
-	_tiles[idx].type = WT_HOUSE;
+void TinyWorld::addHouse(const p2i& p) {
+	assert(isValid(p));
+	_tiles[to_index(p)].type = WT_HOUSE;
 }
 
 void TinyWorld::addStreet(uint16_t x, uint16_t y) {
@@ -28,9 +29,20 @@ void TinyWorld::addStreet(uint16_t x, uint16_t y) {
 	_tiles[idx].type = WT_STREET;
 }
 
+// ---------------------------------------------------
+// get
+// ---------------------------------------------------
 const Tile& TinyWorld::get(uint16_t x, uint16_t y) const {
 	int idx = x + y * _size;
 	return _tiles[idx];
+}
+
+// ---------------------------------------------------
+// get
+// ---------------------------------------------------
+const Tile& TinyWorld::get(const p2i& p) const {
+	assert(isValid(p));
+	return _tiles[to_index(p)];
 }
 
 void TinyWorld::addForrest(uint16_t x, uint16_t y, uint16_t radius) {
@@ -51,79 +63,110 @@ void TinyWorld::addForrest(uint16_t x, uint16_t y, uint16_t radius) {
 	}
 }
 
-int TinyWorld::connect(uint16_t fx, uint16_t fy, uint16_t sx, uint16_t sy, v2* ret, int max) {
-	v2 start = v2(fx,fy);
-	v2* came_from = new v2[_total];
-	for (int i = 0; i < _total; ++i) {
-		came_from[i] = v2(-1,-1);
-	}
-	
-	v2 dirs[] = { v2(-1,0) , v2(0,-1), v2(1,0), v2(0,1) };
-
-	ds::Stack<v2> frontier;
-	frontier.push(v2(fx,fy));	
-	v2 n[4];
-	int cnt = 0;
-	while (!frontier.empty()) {
-		cnt = 0;
-		v2 current = frontier.top();
-		frontier.pop();
-		// get neighbours
-		for (int i = 0; i < 4; ++i) {
-			v2 nep = current + dirs[i];
-			if (nep.x >= 0 && nep.x < _size && nep.y >= 0 && nep.y < _size) {				
-				if (get(nep.x,nep.y).type == WT_EMPTY) {
-					n[cnt++] = nep;
-				}
-			}
-		}
-		//LOG << "current: " << DBG_V2(current) << " cnt: " << cnt;
-		// for next in graph.neighbors(current):
-		for (int k = 0; k < cnt; ++k) {
-			bool found = false;
-			int idx = n[k].x + n[k].y * _size;
-			for (int j = 0; j < _total; ++j) {
-				if (came_from[j].x == n[k].x && came_from[j].y == n[k].y) {
-					found = true;
-				}
-			}
-			if (!found) {
-				frontier.push(n[k]);
-				int idx = n[k].x + n[k].y * _size;
-				came_from[idx] = current;
-			}
-		}
-	}
-	char buffer[32];
-	LOG << "---------------------- Map ------------------------";
-	for (int y = _size - 1; y >= 0; --y) {
-		std::string line;
+// ---------------------------------------------------
+// rebuild streets
+// ---------------------------------------------------
+void TinyWorld::rebuildStreets() {
+	for (int y = 0; y < _size; ++y) {
 		for (int x = 0; x < _size; ++x) {
-			sprintf(buffer, " (%g,%g) ", came_from[x + y * _size].x, came_from[x + y * _size].y);
-			line += buffer;
+			Tile& t = _tiles[x + y * _size];
+			p2i p(x, y);
+			if (t.type == WT_STREET) {
+				p = p2i(x - 1, y);
+				if (isValid(p) && get(p).type == WT_STREET) {
+					t.index |= 8;
+				}
+				p = p2i(x + 1, y);
+				if (isValid(p) && get(p).type == WT_STREET) {
+					t.index |= 2;
+				}
+				p = p2i(x, y + 1);
+				if (isValid(p) && get(p).type == WT_STREET) {
+					t.index |= 1;
+				}
+				p = p2i(x, y - 1);
+				if (isValid(p) && get(p).type == WT_STREET) {
+					t.index |= 4;
+				}
+			}
 		}
-		LOG << line;
 	}
-	int r = 0;
-	v2 current = v2(sx,sy);
-	start = v2(fx, fy);
-	//ds::Array<v2> path;
-	ret[r++] = current;
-	//path.push_back(current);
-	bool running = true;
-	while (running) {
-		int idx = current.x + current.y * _size;		
-		current = came_from[idx];
-		//path.push_back(current);
-		ret[r++] = current;
-		if (current.x == start.x && current.y == start.y) {
-			running = false;
+}
+
+// ---------------------------------------------------
+// is point valid
+// ---------------------------------------------------
+bool TinyWorld::isValid(const p2i& p) const {
+	return p.x >= 0 && p.x < _size && p.y >= 0 && p.y < _size;
+}
+
+// ---------------------------------------------------
+// find free neighbours
+// ---------------------------------------------------
+int TinyWorld::find_free_neighbours(const p2i& current, const p2i& start, const p2i& goal, p2i* p) {
+	static Point2i directions[] = { Point2i(-1, 0), Point2i(0, 1), Point2i(1, 0), Point2i(0, -1) };
+	int cnt = 0;
+	for (int i = 0; i < 4; ++i) {
+		Point2i nep = current + directions[i];
+		if (isValid(nep)) {
+			const Tile& t = get(nep);
+			if (t.type == WT_EMPTY || t.type == WT_STREET || nep == start || nep == goal) {
+				p[cnt++] = nep;
+			}
 		}
 	}
-	//LOG << "PATH: " << path.size();
-	//for (int i = 0; i < path.size(); ++i) {
-		//LOG << "current: " << DBG_V2(path[i]);
-	//}
-	delete[] came_from;
-	return r;
+	return cnt;
+}
+
+// ---------------------------------------------------
+// p2i to index
+// ---------------------------------------------------
+int TinyWorld::to_index(const p2i& p) const {
+	assert(isValid(p));
+	return p.x + p.y * _size;
+}
+
+// ---------------------------------------------------
+// Find path from Breadth First Search
+// ---------------------------------------------------
+void TinyWorld::connect(const p2i& start, const p2i& goal) {
+
+
+	AStar as(_size,_size);
+	for (int y = 0; y < _size; ++y) {
+		for (int x = 0; x < _size; ++x) {
+			const Tile& t = _tiles[x + y * _size];
+			as.set(p2i(x, y), t.type == WT_EMPTY);
+		}
+	}
+	p2i result[32];
+	int nr = as.find(start, goal, result, 32);
+
+
+	ds::Array<p2i> came_from(_total);
+	for (int i = 0; i < _total; ++i) {
+		came_from[i] = p2i(-1, -1);
+	}
+	ds::Stack<p2i> frontier;
+	frontier.push(start);
+	p2i n[4];
+	while (!frontier.empty()) {
+		p2i current = frontier.top();
+		frontier.pop();
+		int cnt = find_free_neighbours(current, start, goal, n);
+		for (int k = 0; k < cnt; ++k) {
+			const p2i& next = n[k];
+			if (!came_from.contains(next)) {
+				frontier.push(next);
+				came_from[to_index(next)] = current;
+			}
+		}
+	}
+	p2i current = goal;
+	while (current != start) {
+		if (current != start && current != goal) {
+			addStreet(current.x, current.y);
+		}
+		current = came_from[to_index(current)];		
+	}
 }

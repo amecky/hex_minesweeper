@@ -4,7 +4,7 @@
 #include <renderer\graphics.h>
 #include <utils\TileMapReader.h>
 
-const int WORLD_SIZE = 6;
+const int WORLD_SIZE = 12;
 
 WorldState::WorldState() : ds::GameState("WorldState"), _mesh(0) {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
@@ -19,19 +19,14 @@ void WorldState::init() {
 	_mesh = new ds::Mesh();
 	_scene = ds::res::getScene("TestObjects");
 	loadObjects();	
-	_world->addHouse(2, 5);
-	
-	//_world->addHouse(10, 7);
-	//_world->addHouse(12, 12);
-	//_world->addForrest(3, 3, 3);
-	v2 wp[36];
-	int num = _world->connect(0, 1, 5, 4, wp, 36);
-	for (int i = 1; i < num - 1; ++i) {
-		v2 p = wp[i];
-		_world->addStreet(p.x, p.y);
-	}
-	_world->addHouse(0, 1);
-	_world->addHouse(5, 4);
+	p2i hp[] = { p2i(2, 5), p2i(0, 1), p2i(10, 10) };
+	for (int i = 0; i < 3; ++i) {
+		_world->addHouse(hp[i]);
+	}	
+	_world->addForrest(3, 8, 3);
+	_world->connect(hp[0], hp[2]);
+	_world->connect(hp[1], hp[2]);
+	_world->rebuildStreets();
 	buildTerrain();
 }
 
@@ -79,7 +74,7 @@ void WorldState::buildTerrain() {
 			switch (t.type) {
 				case WT_EMPTY: _scene->addStatic(_objects[0], v3(sx + x, -3.0f, sz + z)); break;
 				case WT_HOUSE: _scene->addStatic(_objects[16], v3(sx + x, -3.0f, sz + z)); break;
-				case WT_STREET: _scene->addStatic(_objects[1], v3(sx + x, -3.0f, sz + z)); break;
+				case WT_STREET: _scene->addStatic(_objects[t.index], v3(sx + x, -3.0f, sz + z)); break;
 				case WT_TREE: _scene->addStatic(_objects[18], v3(sx + x, -3.0f, sz + z)); break;
 			}
 		}
