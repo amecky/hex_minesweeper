@@ -6,8 +6,7 @@
 class AStar {
 
 struct Node {
-	int x;
-	int y;
+	p2i pos;
 	int parent;
 	float f;
 	float g;

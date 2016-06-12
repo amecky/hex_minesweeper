@@ -68,11 +68,10 @@ int AStar::find_adjacent(const p2i& p, p2i* ret) {
 int AStar::find(const p2i& start, const p2i& goal, p2i* ret, int max) {
 	_tiles[to_index(start)].available = true;
 	_tiles[to_index(goal)].available = true;
-	//Node n;
-	//n.x = sx;
-	//n.y = sy;
-	//n.parent = -1;
-	//_openList.push_back(n);
+	Node nd;
+	nd.pos = start;
+	nd.parent = -1;
+	_openList.push_back(nd);
 	p2i n[4];
 	int num = find_adjacent(start, n);
 	for (int i = 0; i < num; ++i) {

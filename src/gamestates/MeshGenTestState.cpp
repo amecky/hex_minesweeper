@@ -28,11 +28,25 @@ void MeshGenTestState::init() {
 	_camera->setPosition(v3(0, 3, -6), v3(0.0f, 0.0f, 0.1f));
 	_camera->resetPitch(DEGTORAD(25.0f));
 	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
+	_scene = ds::res::getScene("TestObjects");
 	_pressed = false;
 	_mesh = new ds::Mesh();
 	_grid = new ds::Mesh();
 	_grid->load("grid");
-	_scene = ds::res::getScene("TestObjects");
+	// build squares to show vertices of the selected face
+	ds::gen::MeshGen g;
+	g.add_cube(v3(0, 0, 0), v3(0.1f, 0.1f, 0.1f));
+	ds::Color clrs[] = { ds::Color(255,0,0,255),ds::Color(0,255,0,255),ds::Color(0,0,255,255),ds::Color(255,0,255,255) };
+	for (int i = 0; i < 4; ++i) {
+		_squares[i] = new ds::Mesh;
+		for (int j = 0; j < 6; ++j) {
+			g.set_color(j, clrs[i]);
+		}
+		g.build(_squares[i]);
+		_square_ids[i] = _scene->add(_squares[i], v3(i * 1, 0, 0));
+		ds::Entity& sqe = _scene->get(_square_ids[i]);
+		sqe.active = false;
+	}	
 	gen.load_text(_name);
 	gen.build(_mesh);
 	_grid_id = _scene->add(_grid, v3(0.0f, -0.01f, 0.0f));
@@ -57,10 +71,18 @@ int MeshGenTestState::update(float dt) {
 		ds::Ray r = graphics::getCameraRay(_camera);
 		int selection = gen.intersects(r);
 		if (selection != -1) {
-			gen.select_face(selection);
+			bool selected = gen.select_face(selection);
 			_mesh->clear();
 			gen.build(_mesh);
 			gen.debug_face(selection);
+			v3 p[4];
+			const ds::gen::Face& f = gen.get_face(selection);
+			gen.get_vertices(f, p);
+			for (int i = 0; i < 4; ++i) {
+				ds::Entity& sqe = _scene->get(_square_ids[i]);
+				sqe.position = p[i];
+				sqe.active = selected;
+			}
 		}
 	}
 	if (!ds::input::isMouseButtonPressed(0) && _pressed) {
@@ -73,6 +95,7 @@ int MeshGenTestState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MeshGenTestState::render() {
+	_scene->transform();
 	_scene->draw();
 }
 

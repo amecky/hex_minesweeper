@@ -20,6 +20,8 @@ private:
 	ds::FPSCamera* _camera;
 	ds::Mesh* _mesh;
 	ds::Mesh* _grid;
+	ds::Mesh* _squares[4];
+	ID _square_ids[4];
 	ds::Scene* _scene;
 	ds::OrthoCamera* _orthoCamera;
 	const char* _name;
