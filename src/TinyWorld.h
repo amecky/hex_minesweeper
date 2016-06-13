@@ -9,7 +9,8 @@ enum TileType {
 	WT_EMPTY,
 	WT_HOUSE,
 	WT_TREE,
-	WT_STREET
+	WT_STREET,
+	WM_POWER_PLANT
 };
 
 struct Tile {
@@ -26,6 +27,7 @@ public:
 	~TinyWorld();
 	void clear();
 	void addHouse(const p2i& p);
+	void addPowerPlant(const p2i& p);
 	void addStreet(uint16_t x, uint16_t y);
 	void addForrest(uint16_t x, uint16_t y, uint16_t radius);
 	const Tile& get(uint16_t x, uint16_t y) const;

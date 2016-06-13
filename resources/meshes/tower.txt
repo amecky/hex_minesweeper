@@ -1,8 +1,8 @@
 select_color 113,208,229,255
-add_cube 0,0.5,0 0.8,1.0,0.8
+add_cube 0,0.475,0 0.8,0.95,0.8
 select_color 222,231,211,255
 start_group
-add_cube 0.025,0.21,-0.45 0.85,0.05,0.1
+add_cube 0.05,0.21,-0.45 0.9,0.05,0.1
 add_cube -0.425,0.09,-0.425 0.05,0.2,0.05
 add_cube -0.215,0.09,-0.425 0.05,0.2,0.05
 add_cube 0.215,0.09,-0.425 0.05,0.2,0.05
@@ -19,4 +19,21 @@ rotate_group 1 0,90,0
 copy_group 1 0,0.24,0
 copy_group 1 0,0.48,0
 copy_group 1 0,0.72,0
-
+start_group
+copy_group 0 0,0,0
+end_group
+rotate_group 2 0,180,0
+copy_group 2 0,0.24,0
+copy_group 2 0,0.48,0
+copy_group 2 0,0.72,0
+start_group
+copy_group 0 0,0,0
+end_group
+rotate_group 3 0,270,0
+copy_group 3 0,0.24,0
+copy_group 3 0,0.48,0
+copy_group 3 0,0.72,0
+select_color 54,48,44,255
+add_cube 0,1.005,0 1.2,0.1,1.2
+select_color 151,144,138,255
+add_face -0.5,0.0,0.5 0.5,0.0,0.5 0.5,0.0,-0.5 -0.5,0.0,-0.5

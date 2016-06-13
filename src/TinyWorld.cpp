@@ -24,6 +24,11 @@ void TinyWorld::addHouse(const p2i& p) {
 	_tiles[to_index(p)].type = WT_HOUSE;
 }
 
+void TinyWorld::addPowerPlant(const p2i& p) {
+	assert(isValid(p));
+	_tiles[to_index(p)].type = WM_POWER_PLANT;
+}
+
 void TinyWorld::addStreet(uint16_t x, uint16_t y) {
 	int idx = x + y * _size;
 	_tiles[idx].type = WT_STREET;
