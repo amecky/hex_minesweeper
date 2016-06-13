@@ -1,2 +1,12 @@
-add_hexagon 0.5
-debug_colors
+start_group
+select_color 122,138,57,255
+add_ring 0.48 0.02 6
+select_color 166,185,78,255
+combine_edges 11 3
+combine_edges 15 23
+end_group
+rotate_group 0 45,0,0
+move_group 0 2,0,0
+//move_face 6 0,0.02,0
+//move_face 7 0,0.02,0
+

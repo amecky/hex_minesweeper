@@ -1,0 +1,22 @@
+select_color 113,208,229,255
+add_cube 0,0.5,0 0.8,1.0,0.8
+select_color 222,231,211,255
+start_group
+add_cube 0.025,0.21,-0.45 0.85,0.05,0.1
+add_cube -0.425,0.09,-0.425 0.05,0.2,0.05
+add_cube -0.215,0.09,-0.425 0.05,0.2,0.05
+add_cube 0.215,0.09,-0.425 0.05,0.2,0.05
+add_cube 0.0,0.09,-0.425 0.05,0.2,0.05
+end_group
+copy_group 0 0,0.24,0
+copy_group 0 0,0.48,0
+copy_group 0 0,0.72,0
+//extrude_face 56 0.9
+start_group
+copy_group 0 0,0,0
+end_group
+rotate_group 1 0,90,0
+copy_group 1 0,0.24,0
+copy_group 1 0,0.48,0
+copy_group 1 0,0.72,0
+
