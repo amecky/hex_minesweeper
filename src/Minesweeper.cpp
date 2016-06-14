@@ -74,13 +74,8 @@ void Minesweeper::init() {
 }
 
 void Minesweeper::render() {
-	/*
-	_sprites->begin();
-	for (int y = 0; y < 3; ++y) {
-		for (int i = 0; i < 4; ++i) {
-			_sprites->draw(v2(150 + i * 300, 150 + y * 300), math::buildTexture(510, 700, 300, 300));
-		}
-	}
-	_sprites->end();
-	*/
+}
+
+void Minesweeper::OnChar(uint8_t ascii) {
+	
 }

@@ -5,6 +5,7 @@
 #include <gen\MeshGen.h>
 #include <gen\MeshGenCommand.h>
 #include <gen\MeshGenGUI.h>
+#include <imgui\IMGUI.h>
 
 class MeshGenTestState : public ds::GameState {
 
@@ -16,6 +17,7 @@ public:
 	void render();
 	int onChar(int ascii);
 private:
+	void drawGUI();
 	ds::gen::MeshGen gen;
 	ds::FPSCamera* _camera;
 	ds::Mesh* _mesh;
@@ -27,5 +29,7 @@ private:
 	const char* _name;
 	bool _pressed;
 	ID _grid_id;
+	gui::ComponentModel<int> _model;
+	int _offset;
 };
 

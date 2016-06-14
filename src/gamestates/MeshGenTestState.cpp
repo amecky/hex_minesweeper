@@ -8,13 +8,24 @@
 #include "..\objects.h"
 #include <renderer\graphics.h>
 #include <utils\TileMapReader.h>
+#include <utils\FileUtils.h>
 
-
-MeshGenTestState::MeshGenTestState(const char* meshName) : ds::GameState("MeshGenTestState"), _name(meshName) , _mesh(0) {
+MeshGenTestState::MeshGenTestState(const char* meshName) : ds::GameState("MeshGenTestState"), _name(meshName) , _mesh(0) , _grid(0) , _offset(0) {
+	for (int i = 0; i < 4; ++i) {
+		_squares[i] = 0;
+	}
 }
 
 
 MeshGenTestState::~MeshGenTestState() {
+	if (_grid != 0) {
+		delete _grid;
+	}
+	for (int i = 0; i < 4; ++i) {
+		if (_squares[i] != 0) {
+			delete _squares[i];
+		}
+	}
 	if (_mesh != 0) {
 		delete _mesh;
 	}
@@ -59,6 +70,16 @@ void MeshGenTestState::init() {
 	LOG << "'2' : debug";
 	LOG << "'3' : toggle grid";
 	LOG << "'4' : save mesh";
+
+	std::vector<std::string> files;
+	ds::file::listDirectory("resources\\meshes", files);
+	for (size_t i = 0; i < files.size(); ++i) {
+		LOG << "file: " << files[i];
+		std::string shortName = files[i];
+		size_t idx = shortName.find('.');
+		shortName = shortName.substr(0, idx);
+		_model.add(shortName.c_str(),i);
+	}
 }
 
 // -------------------------------------------------------
@@ -97,6 +118,48 @@ int MeshGenTestState::update(float dt) {
 void MeshGenTestState::render() {
 	_scene->transform();
 	_scene->draw();
+	drawGUI();
+}
+
+void MeshGenTestState::drawGUI() {
+	graphics::setCamera(_orthoCamera);
+	graphics::turnOffZBuffer();
+	v2 pos(10, 760);
+	int state = 1;
+	gui::start(1, &pos, true);
+	gui::begin("Editor", &state);
+	gui::beginGroup();
+	if (gui::Button("Reload")) {
+		LOG << "reloading " << _name;
+		gen.load_text(_name);
+		_mesh->clear();
+		gen.build(_mesh);
+	}
+	if (gui::Button("Debug")) {
+		gen.debug();
+	}
+	if (gui::Button("Grid")) {
+		ds::Entity& e = _scene->get(_grid_id);
+		e.active = !e.active;
+	}
+	if (gui::Button("Save")) {
+		_mesh->save(_name);
+		LOG << "Mesh saved";
+	}
+	gui::endGroup();
+	gui::end();
+	gui::begin("Models", &state);
+	gui::ComboBox(&_model, &_offset, 5);
+	if (gui::Button("Load")) {
+		if (_model.hasSelection()) {
+			_name = _model.getLabel(_model.getSelection());
+			LOG << "loading " << _name;
+			gen.load_text(_name);
+			_mesh->clear();
+			gen.build(_mesh);
+		}
+	}	
+	gui::end();
 }
 
 // -------------------------------------------------------

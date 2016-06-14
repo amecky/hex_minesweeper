@@ -18,6 +18,7 @@ public:
 	int onChar(int ascii);
 private:
 	void loadObjects();
+	void loadObject(const char* name);
 	void buildTerrain();
 	ds::FPSCamera* _camera;
 	ds::MeshBuffer* _buffer;

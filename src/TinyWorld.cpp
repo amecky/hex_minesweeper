@@ -24,6 +24,11 @@ void TinyWorld::addHouse(const p2i& p) {
 	_tiles[to_index(p)].type = WT_HOUSE;
 }
 
+void TinyWorld::add(const p2i& p, TileType type) {
+	assert(isValid(p));
+	_tiles[to_index(p)].type = type;
+}
+
 void TinyWorld::addPowerPlant(const p2i& p) {
 	assert(isValid(p));
 	_tiles[to_index(p)].type = WM_POWER_PLANT;

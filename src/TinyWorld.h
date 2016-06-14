@@ -10,7 +10,9 @@ enum TileType {
 	WT_HOUSE,
 	WT_TREE,
 	WT_STREET,
-	WM_POWER_PLANT
+	WM_POWER_PLANT,
+	WM_WOOD_PLANT,
+	WM_WAREHOUSE
 };
 
 struct Tile {
@@ -28,6 +30,7 @@ public:
 	void clear();
 	void addHouse(const p2i& p);
 	void addPowerPlant(const p2i& p);
+	void add(const p2i& p,TileType type);
 	void addStreet(uint16_t x, uint16_t y);
 	void addForrest(uint16_t x, uint16_t y, uint16_t radius);
 	const Tile& get(uint16_t x, uint16_t y) const;

@@ -27,8 +27,14 @@ void WorldState::init() {
 	_world->addPowerPlant(p2i(0, 2));
 	_world->addPowerPlant(p2i(3, 5));
 	_world->addPowerPlant(p2i(1, 5));
+	_world->add(p2i(6, 5),TileType::WM_WOOD_PLANT);
+	_world->add(p2i(5, 5), TileType::WM_WAREHOUSE);
+	_world->add(p2i(0, 2), TileType::WT_TREE);
+	_world->add(p2i(0, 3), TileType::WT_TREE);
+	_world->add(p2i(0, 4), TileType::WT_TREE);
 	_world->connect(hp[0], hp[2]);
 	_world->connect(hp[1], hp[2]);
+	_world->connect(hp[3], hp[4]);
 	_world->rebuildStreets();
 	buildTerrain();
 }
@@ -54,20 +60,21 @@ void WorldState::loadObjects() {
 		m->load(buffer);
 		_objects.push_back(m);
 	}
-	for (int i = 0; i < 1; ++i) {
-		sprintf_s(buffer, 32, "house_%d", i);
-		ds::Mesh* m = new ds::Mesh();
-		m->load("tower");
-		_objects.push_back(m);
-	}
+	loadObject("tower");
 	for (int i = 0; i < 2; ++i) {
 		sprintf_s(buffer, 32, "tree_%d", i);
 		ds::Mesh* m = new ds::Mesh();
 		m->load(buffer);
 		_objects.push_back(m);
 	}
+	loadObject("power_plant");
+	loadObject("wood_plant");
+	loadObject("warehouse");
+}
+
+void WorldState::loadObject(const char* name) {
 	ds::Mesh* mp = new ds::Mesh();
-	mp->load("power_plant");
+	mp->load(name);
 	_objects.push_back(mp);
 }
 
@@ -81,6 +88,8 @@ void WorldState::buildTerrain() {
 				case WT_EMPTY: _scene->addStatic(_objects[0], v3(-sx + x, -3.0f, sz + z)); break;
 				case WT_HOUSE: _scene->addStatic(_objects[16], v3(-sx + x, -3.0f, sz + z)); break;
 				case WM_POWER_PLANT: _scene->addStatic(_objects[19], v3(-sx + x, -3.0f, sz + z)); break;
+				case WM_WOOD_PLANT: _scene->addStatic(_objects[20], v3(-sx + x, -3.0f, sz + z)); break;
+				case WM_WAREHOUSE: _scene->addStatic(_objects[21], v3(-sx + x, -3.0f, sz + z)); break;
 				case WT_STREET: _scene->addStatic(_objects[t.index], v3(-sx + x, -3.0f, sz + z)); break;
 				case WT_TREE: _scene->addStatic(_objects[18], v3(-sx + x, -3.0f, sz + z)); break;
 			}
