@@ -1,0 +1,19 @@
+select_color 162,132,101,255
+start_group
+add_tube 0,0,0 0.4 0.4 0.7 0.1 16
+end_group
+rotate_group 0 90,0,0
+cut 0,0,0 0,1,0
+remove_face 66
+remove_face 68
+remove_face 70
+remove_face 72
+remove_face 74
+remove_face 76
+remove_face 78
+remove_face 80
+remove_face 82
+remove_face 84
+remove_face 86
+add_cube 0.25,0.35,0.15 0.1,0.2,0.1
+//debug_colors

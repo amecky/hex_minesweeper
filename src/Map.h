@@ -6,8 +6,8 @@ namespace grid {
 
 	v3 convert(int gx,int gy);
 
-	v3 convert(const ds::Point& p);
+	v3 convert(const p2i& p);
 
-	ds::Point convert(const v2& pos);
+	p2i convert(const v2& pos);
 }
 

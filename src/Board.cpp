@@ -158,7 +158,7 @@ int SelectCellState::activate() {
 						ctx->grid->findMatchingNeighbours(x, y, ctx->points);
 						if (ctx->points.size() > 1) {
 							for (size_t i = 0; i < ctx->points.size(); ++i) {
-								const ds::Point& gp = ctx->points[i];
+								const p2i& gp = ctx->points[i];
 								MyEntry& c = ctx->grid->get(gp.x, gp.y);
 								c.state = TS_SHRINKING;
 								c.timer = 0.0f;
@@ -207,7 +207,7 @@ int ShrinkState::deactivate() {
 			if (!ctx->grid->isFree(x, y)) {
 				MyEntry& e = ctx->grid->get(x, y);
 				if (e.state == TS_SHRINKING) {
-					ctx->points.push_back(ds::Point(x, y));
+					ctx->points.push_back(p2i(x, y));
 				}
 			}
 		}

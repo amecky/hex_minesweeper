@@ -20,7 +20,7 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState"), _name("base_house"
 }
 
 void GeoTestState::init() {
-	_camera->setPosition(v3(0, 3, -9), v3(0, 0, 0));
+	_camera->setPosition(v3(0, 0, -3), v3(0, 0, 0));
 	//_camera->setPosition(v3(12, 6, -9), v3(0, 0, 1));
 	//_camera->resetPitch(DEGTORAD(12.0f));
 	//_camera->setYAngle(DEGTORAD(-45.0f));
@@ -36,7 +36,21 @@ void GeoTestState::init() {
 	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
 	
 	char buffer[32];
-
+	//uint16_t f = gen.add_cube(v3(0.0f, 0.0f, 0.0f), v3(1.0f, 1.0f, 1.0f));
+	/*
+	gen.startGroup();
+	gen.create_cylinder(v3(0, 0, 0), 0.5f, 0.5f, 1.0f, 16);
+	gen.endGroup();
+	gen.rotateGroup(0, v3(DEGTORAD(90.0f), 0.0f, 0.0f));
+	gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0));
+	*/
+	gen.set_color_selection(ds::Color(162, 132, 101, 255));
+	gen.startGroup();
+	gen.create_tube(v3(0, 0, 0), 1.0f, 1.0f, 1.0f, 0.2f, 16);
+	gen.endGroup();
+	gen.rotateGroup(0, v3(DEGTORAD(90.0f), 0.0f, 0.0f));
+	gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0));
+	//gen.debug_colors();
 	//createHandrail(6.0f, 0.1f, 7 , 0.6f);
 	//createCoords();
 	//v3 p[] = {v3(-6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,6.0f),v3(6.0f,-0.6f,-6.0f),v3(-6.0f,-0.6f,-6.0f)};
@@ -168,10 +182,11 @@ void GeoTestState::init() {
 	//gen.move_edge(81, v3(0.0f, 0.4f, 0.0f));
 	//gen.debug_colors();
 	//gen.load_text(_name);
-	//gen.build(_mesh);
-	//ID id = _scene->add(_mesh, v3(0, 0, 0));
+	gen.build(_mesh);
+	ID id = _scene->add(_mesh, v3(0, 0, 0));
 	//_mesh->save("house_0");
 	//buildTerrain();
+	/*
 	for (int i = 0; i < 16; ++i) {
 		createTile(i, i);
 		sprintf_s(buffer, 32, "tile_%d", i );
@@ -188,6 +203,7 @@ void GeoTestState::init() {
 			_scene->add(_objects[cnt++], v3(sx + x, sy, sz + z));
 		}
 	}
+	*/
 }
 
 
