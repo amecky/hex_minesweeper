@@ -1,0 +1,20 @@
+select_color 231,229,234,255
+add_cube 0,0.25,0 0.7,0.5,0.4
+select_color 153,166,183,255
+add_cube 0,0.525,0 0.8,0.05,0.5
+slice 0 5 3
+select_color 231,229,234,255
+extrude_face 17 -0.05
+remove_face 17
+set_color 26 136,144,157,255
+select_color 231,229,234,255
+extrude_face 19 -0.05
+remove_face 19
+remove_face 34
+extrude_face 24 -0.05
+remove_face 24
+remove_face 39
+set_color 31 136,144,157,255
+set_color 36 136,144,157,255
+select_color 151,144,138,255
+add_face -0.5,0.0,0.5 0.5,0.0,0.5 0.5,0.0,-0.5 -0.5,0.0,-0.5

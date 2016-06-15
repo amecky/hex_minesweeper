@@ -44,12 +44,18 @@ void GeoTestState::init() {
 	gen.rotateGroup(0, v3(DEGTORAD(90.0f), 0.0f, 0.0f));
 	gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0));
 	*/
+	/*
 	gen.set_color_selection(ds::Color(162, 132, 101, 255));
 	gen.startGroup();
 	gen.create_tube(v3(0, 0, 0), 1.0f, 1.0f, 1.0f, 0.2f, 16);
 	gen.endGroup();
 	gen.rotateGroup(0, v3(DEGTORAD(90.0f), 0.0f, 0.0f));
 	gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0));
+	*/
+	gen.set_color_selection(ds::Color(221, 207, 190, 255));
+	gen.create_sphere(v3(0, 0, 0), 0.4f, 9, 9);
+	gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0), false);
+	//gen.debug_colors();
 	//gen.debug_colors();
 	//createHandrail(6.0f, 0.1f, 7 , 0.6f);
 	//createCoords();

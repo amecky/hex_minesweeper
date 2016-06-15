@@ -33,6 +33,8 @@ private:
 	ds::OrthoCamera* _orthoCamera;
 	ds::MeshBuffer* _buffer;
 	ds::Mesh* _mesh;
+	ds::Mesh* _selectionMesh;
+	ID _selectionID;
 	ds::Array<ds::Mesh*> _objects;
 	ds::Scene* _scene;
 	TinyWorld* _world;

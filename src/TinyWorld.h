@@ -12,7 +12,8 @@ enum TileType {
 	WT_STREET,
 	WM_POWER_PLANT,
 	WM_WOOD_PLANT,
-	WM_WAREHOUSE
+	WM_WAREHOUSE,
+	WM_CITY_HALL
 };
 
 struct Tile {

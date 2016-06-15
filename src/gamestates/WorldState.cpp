@@ -4,7 +4,7 @@
 #include <renderer\graphics.h>
 #include <utils\TileMapReader.h>
 
-WorldState::WorldState() : ds::GameState("WorldState"), _mesh(0) {
+WorldState::WorldState() : ds::GameState("WorldState"), _mesh(0) , _selectionMesh(0) {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_pressed = false;
 	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
@@ -20,6 +20,13 @@ void WorldState::init() {
 	_camera->setYAngle(DEGTORAD(-45.0f));
 	_mesh = new ds::Mesh();
 	_scene = ds::res::getScene("World");
+	_selectionMesh = new ds::Mesh;
+	ds::gen::MeshGen gn;
+	v3 p[] = { v3(-0.5f,0.0f,0.5f),v3(0.5f,0.0f,0.5f),v3(0.5f,0.0f,-0.5f),v3(-0.5f,0.0f,-0.5f) };
+	gn.add_face(p);
+	gn.set_color(0, ds::Color(128, 128, 128, 255));
+	gn.build(_selectionMesh);
+	_selectionID = _scene->add(_selectionMesh, v3(0, 0, 0),ds::DrawMode::IMMEDIATE);
 	loadObjects();	
 	p2i hp[] = { p2i(2, 5), p2i(0, 1), p2i(10, 10), p2i(4,5),p2i(8,5) };
 	for (int i = 0; i < 5; ++i) {
@@ -34,9 +41,10 @@ void WorldState::init() {
 	_world->add(p2i(0, 2), TileType::WT_TREE);
 	_world->add(p2i(0, 3), TileType::WT_TREE);
 	_world->add(p2i(0, 4), TileType::WT_TREE);
+	_world->add(p2i(8, 8), TileType::WM_CITY_HALL);
 	_world->connect(hp[0], hp[2]);
 	_world->connect(hp[1], hp[2]);
-	_world->connect(hp[3], hp[4]);
+	//_world->connect(hp[3], hp[4]);
 	_world->rebuildStreets();
 	buildTerrain();
 }
@@ -45,6 +53,9 @@ void WorldState::init() {
 
 WorldState::~WorldState() {
 	delete _world;
+	if (_selectionMesh != 0) {
+		delete _selectionMesh;
+	}
 	_objects.destroy_all();
 	if (_mesh != 0) {
 		delete _mesh;
@@ -77,6 +88,7 @@ void WorldState::loadObjects() {
 	loadObject("power_plant");
 	loadObject("wood_plant");
 	loadObject("warehouse");
+	loadObject("city_hall");
 }
 
 // ------------------------------------------
@@ -105,6 +117,7 @@ void WorldState::buildTerrain() {
 				case WM_POWER_PLANT: wt.id = _scene->addStatic(_objects[19], v3(-sx + x, -3.0f, sz + z)); break;
 				case WM_WOOD_PLANT: wt.id = _scene->addStatic(_objects[20], v3(-sx + x, -3.0f, sz + z)); break;
 				case WM_WAREHOUSE: wt.id = _scene->addStatic(_objects[21], v3(-sx + x, -3.0f, sz + z)); break;
+				case WM_CITY_HALL: wt.id = _scene->addStatic(_objects[22], v3(-sx + x, -3.0f, sz + z)); break;
 				case WT_STREET: wt.id = _scene->addStatic(_objects[t.index], v3(-sx + x, -3.0f, sz + z)); break;
 				case WT_TREE: wt.id = _scene->addStatic(_objects[18], v3(-sx + x, -3.0f, sz + z)); break;
 			}			
@@ -132,6 +145,10 @@ int WorldState::update(float dt) {
 					const Tile& t = _world->get(_tiles[i].coord);
 					LOG << "Building: " << t.type;
 					_selectedCell = _tiles[i].coord;
+					float sx = WORLD_SIZE / 2.0f;
+					float sz = WORLD_SIZE / 2.0f;
+					ds::Entity& e = _scene->get(_selectionID);
+					e.position = v3(-sx + _selectedCell.x, -2.99f, sz + _selectedCell.y);
 				}
 			}
 		}
@@ -151,6 +168,7 @@ int WorldState::update(float dt) {
 // -------------------------------------------------------
 void WorldState::render() {
 	ZoneTracker("WSR");
+	_scene->transform();
 	_scene->draw();
 	drawGUI();
 }
