@@ -16,6 +16,7 @@ public:
 	int update(float dt);
 	void render();
 	int onChar(int ascii);
+	void activate();
 private:
 	void drawGUI();
 	ds::gen::MeshGen gen;
@@ -31,5 +32,6 @@ private:
 	ID _grid_id;
 	gui::ComponentModel<int> _model;
 	int _offset;
+	bool _switch;
 };
 

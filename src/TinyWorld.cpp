@@ -55,6 +55,14 @@ const Tile& TinyWorld::get(const p2i& p) const {
 	return _tiles[to_index(p)];
 }
 
+// ---------------------------------------------------
+// get
+// ---------------------------------------------------
+Tile& TinyWorld::get(const p2i& p) {
+	assert(isValid(p));
+	return _tiles[to_index(p)];
+}
+
 void TinyWorld::addForrest(uint16_t x, uint16_t y, uint16_t radius) {
 	v2 c = v2(x, y);
 	for (int sy = -radius; sy <= radius; ++sy) {

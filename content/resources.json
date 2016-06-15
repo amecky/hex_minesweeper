@@ -309,3 +309,11 @@ scene {
 	camera : "fps"
 	depth_enabled : true
 }
+scene {
+	id : 46
+	name : "World"
+	mesh_buffer : "ColouredBuffer"
+	size : 1024
+	camera : "fps"
+	depth_enabled : true
+}

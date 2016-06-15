@@ -10,7 +10,7 @@
 #include <utils\TileMapReader.h>
 #include <utils\FileUtils.h>
 
-MeshGenTestState::MeshGenTestState(const char* meshName) : ds::GameState("MeshGenTestState"), _name(meshName) , _mesh(0) , _grid(0) , _offset(0) {
+MeshGenTestState::MeshGenTestState(const char* meshName) : ds::GameState("MeshGenTestState"), _name(meshName) , _mesh(0) , _grid(0) , _offset(0) , _switch(false) {
 	for (int i = 0; i < 4; ++i) {
 		_squares[i] = 0;
 	}
@@ -82,6 +82,11 @@ void MeshGenTestState::init() {
 	}
 }
 
+void MeshGenTestState::activate() {
+	_camera->setPosition(v3(0, 3, -6), v3(0.0f, 0.0f, 0.1f));
+	_camera->resetPitch(DEGTORAD(25.0f));
+	_camera->resetYaw(0.0f);
+}
 // -------------------------------------------------------
 // update
 // -------------------------------------------------------
@@ -108,6 +113,10 @@ int MeshGenTestState::update(float dt) {
 	}
 	if (!ds::input::isMouseButtonPressed(0) && _pressed) {
 		_pressed = false;
+	}
+	if (_switch) {
+		_switch = false;
+		return 1;
 	}
 	return 0;
 }
@@ -145,6 +154,9 @@ void MeshGenTestState::drawGUI() {
 	if (gui::Button("Save")) {
 		_mesh->save(_name);
 		LOG << "Mesh saved";
+	}
+	if (gui::Button("World")) {
+		_switch = true;
 	}
 	gui::endGroup();
 	gui::end();

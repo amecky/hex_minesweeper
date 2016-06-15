@@ -35,6 +35,7 @@ public:
 	void addForrest(uint16_t x, uint16_t y, uint16_t radius);
 	const Tile& get(uint16_t x, uint16_t y) const;
 	const Tile& get(const p2i& p) const;
+	Tile& get(const p2i& p);
 	void connect(const p2i& start, const p2i& goal);
 	void rebuildStreets();
 private:

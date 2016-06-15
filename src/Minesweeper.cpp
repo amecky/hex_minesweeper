@@ -43,7 +43,10 @@ bool Minesweeper::loadContent() {
 	addGameState(new WorldState());
 	/*
 	addGameState(new RunState(_context));
-	connectGameStates("GameOver", 1, "MainGame");
+	*/
+	connectGameStates("MeshGenTestState", 1, "WorldState");
+	connectGameStates("WorldState", 1, "MeshGenTestState");
+	/*
 	connectGameStates("GameOver", 2, "MainMenu");
 	connectGameStates("MainGame", 1, "GameOver");
 	connectGameStates("MainMenu", 1, "MainGame");
