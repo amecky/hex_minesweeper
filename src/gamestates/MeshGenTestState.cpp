@@ -110,6 +110,9 @@ int MeshGenTestState::update(float dt) {
 				sqe.active = selected;
 			}
 		}
+		else {
+			showSelectionCubes(false);
+		}
 	}
 	if (!ds::input::isMouseButtonPressed(0) && _pressed) {
 		_pressed = false;
@@ -119,6 +122,16 @@ int MeshGenTestState::update(float dt) {
 		return 1;
 	}
 	return 0;
+}
+
+// -------------------------------------------------------
+// show or hide selection cubes
+// -------------------------------------------------------
+void MeshGenTestState::showSelectionCubes(bool active) {
+	for (int i = 0; i < 4; ++i) {
+		ds::Entity& sqe = _scene->get(_square_ids[i]);
+		sqe.active = active;
+	}
 }
 
 // -------------------------------------------------------
@@ -143,6 +156,7 @@ void MeshGenTestState::drawGUI() {
 		gen.load_text(_name);
 		_mesh->clear();
 		gen.build(_mesh);
+		showSelectionCubes(false);
 	}
 	if (gui::Button("Debug")) {
 		gen.debug();
@@ -183,6 +197,7 @@ int MeshGenTestState::onChar(int ascii) {
 		gen.load_text(_name);
 		_mesh->clear();
 		gen.build(_mesh);
+		showSelectionCubes(false);
 	}
 	if (ascii == '2') {
 		gen.debug();

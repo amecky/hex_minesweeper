@@ -18,6 +18,7 @@ public:
 	int onChar(int ascii);
 	void activate();
 private:
+	void showSelectionCubes(bool active);
 	void drawGUI();
 	ds::gen::MeshGen gen;
 	ds::FPSCamera* _camera;

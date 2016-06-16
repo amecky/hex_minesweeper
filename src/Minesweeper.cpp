@@ -39,7 +39,7 @@ bool Minesweeper::loadContent() {
 	//addGameState(new HighscoreState(_context));
 	addGameState(new TestState(_context));
 	addGameState(new GeoTestState());
-	addGameState(new MeshGenTestState("house_1"));
+	addGameState(new MeshGenTestState("house_2"));
 	addGameState(new WorldState());
 	/*
 	addGameState(new RunState(_context));
@@ -71,8 +71,8 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	//_context->reset();
-	activate("MeshGenTestState");
-	//activate("GeoTestState");
+	//activate("MeshGenTestState");
+	activate("GeoTestState");
 	//activate("WorldState");
 }
 

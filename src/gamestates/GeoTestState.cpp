@@ -36,6 +36,16 @@ void GeoTestState::init() {
 	_buffer = ds::res::getMeshBuffer("TexturedBuffer");
 	
 	char buffer[32];
+	// ----------------------------------------
+	// scale test
+	// ----------------------------------------
+	v3 p[] = { v3(-0.5f, 0.5f, 0.0f), v3(0.5f, 0.5f, 0.0f), v3(0.5f, -0.5f, 0.0f), v3(-0.5f, -0.5f, 0.0f) };
+	gen.add_face(p);
+	gen.slice(0, 3);
+	uint16_t adjacents[] = { 0, 2, 8, 6 };
+	gen.expand_face(4, adjacents, 0.2f);
+	gen.debug_colors();
+
 	//uint16_t f = gen.add_cube(v3(0.0f, 0.0f, 0.0f), v3(1.0f, 1.0f, 1.0f));
 	/*
 	gen.startGroup();
@@ -52,9 +62,9 @@ void GeoTestState::init() {
 	gen.rotateGroup(0, v3(DEGTORAD(90.0f), 0.0f, 0.0f));
 	gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0));
 	*/
-	gen.set_color_selection(ds::Color(221, 207, 190, 255));
-	gen.create_sphere(v3(0, 0, 0), 0.4f, 9, 9);
-	gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0), false);
+	//gen.set_color_selection(ds::Color(221, 207, 190, 255));
+	//gen.create_sphere(v3(0, 0, 0), 0.4f, 9, 9);
+	//gen.cut(v3(0.0f, 0.0f, 0.0f), v3(0, 1, 0), false);
 	//gen.debug_colors();
 	//gen.debug_colors();
 	//createHandrail(6.0f, 0.1f, 7 , 0.6f);
