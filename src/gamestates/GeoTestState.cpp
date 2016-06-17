@@ -43,7 +43,7 @@ void GeoTestState::init() {
 	gen.add_face(p);
 	gen.slice(0, 3);
 	uint16_t adjacents[] = { 0, 2, 8, 6 };
-	gen.expand_face(4, adjacents, 0.2f);
+	gen.expand_face(4, adjacents, 0.2f, 0.2f);
 	gen.debug_colors();
 
 	//uint16_t f = gen.add_cube(v3(0.0f, 0.0f, 0.0f), v3(1.0f, 1.0f, 1.0f));
