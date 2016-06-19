@@ -225,46 +225,6 @@ mesh_buffer {
 	color_map : 5
 	input_layout : "PNTC_Layout"
 }
-mesh {
-	id : 28
-	name : "PlayerMesh"
-	fileName : "player.obj"
-	rotation : 90,0,0
-	scale : 1,1,1
-	position : 0,0,0
-}
-mesh {
-	id : 30
-	name : "HexagonMesh"
-	fileName : "hexagon.obj"
-	rotation : 90,0,0
-	scale : 1,1,1
-	position : 0,0,0
-}
-mesh {
-	id : 35
-	name : "RingMesh"
-	fileName : "ring.obj"
-	rotation : 90,0,0
-	scale : 1,1,1
-	position : 0,0,0
-}
-mesh {
-	id : 36
-	name : "CubeMesh"
-	fileName : "cube.obj"
-	rotation : 90,0,0
-	scale : 1,1,1
-	position : 0,0,0
-}
-mesh {
-	id : 43
-	name : "IcoSphereMesh"
-	fileName : "ico_sphere.obj"
-	rotation : 90,0,0
-	scale : 1,1,1
-	position : 0,0,0
-}
 camera {
 	id : 39
 	name : "ortho"
@@ -316,4 +276,7 @@ scene {
 	size : 1024
 	camera : "fps"
 	depth_enabled : true
+}
+import {
+	file: "meshes.json"
 }

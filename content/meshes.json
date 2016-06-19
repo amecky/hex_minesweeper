@@ -1,0 +1,91 @@
+mesh {
+    id : 100
+    name : "house_2"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 101
+    name : "roof_0"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 102
+    name : "roof_1"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 103
+    name : "house_0"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 104
+    name : "house_1"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 105
+    name : "house_2"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 106
+    name : "delimiter_0"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 107
+    name : "house_3"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 200
+    name : "grass"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 201
+    name : "street_1"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 202
+    name : "street_2"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 300
+    name : "tree_0"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}
+mesh {
+    id : 301
+    name : "tree_1"
+    position : 0,0,0
+    scale : 1,1,1
+    rotation: 0,90,0
+}

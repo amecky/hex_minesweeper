@@ -15,28 +15,13 @@ TinyWorld::~TinyWorld() {
 
 void TinyWorld::clear() {
 	for (int i = 0; i < _size; ++i) {
-		_tiles[i].type = WT_EMPTY;
+		_tiles[i].height = -3.0f;
 	}
 }
 
-void TinyWorld::addHouse(const p2i& p) {
+void TinyWorld::add(const p2i& p, ID id) {
 	assert(isValid(p));
-	_tiles[to_index(p)].type = WT_HOUSE;
-}
-
-void TinyWorld::add(const p2i& p, TileType type) {
-	assert(isValid(p));
-	_tiles[to_index(p)].type = type;
-}
-
-void TinyWorld::addPowerPlant(const p2i& p) {
-	assert(isValid(p));
-	_tiles[to_index(p)].type = WM_POWER_PLANT;
-}
-
-void TinyWorld::addStreet(uint16_t x, uint16_t y) {
-	int idx = x + y * _size;
-	_tiles[idx].type = WT_STREET;
+	//_tiles[to_index(p)].type = type;
 }
 
 // ---------------------------------------------------
@@ -62,7 +47,7 @@ Tile& TinyWorld::get(const p2i& p) {
 	assert(isValid(p));
 	return _tiles[to_index(p)];
 }
-
+/*
 void TinyWorld::addForrest(uint16_t x, uint16_t y, uint16_t radius) {
 	v2 c = v2(x, y);
 	for (int sy = -radius; sy <= radius; ++sy) {
@@ -110,7 +95,7 @@ void TinyWorld::rebuildStreets() {
 		}
 	}
 }
-
+*/
 // ---------------------------------------------------
 // is point valid
 // ---------------------------------------------------
@@ -121,6 +106,7 @@ bool TinyWorld::isValid(const p2i& p) const {
 // ---------------------------------------------------
 // find free neighbours
 // ---------------------------------------------------
+/*
 int TinyWorld::find_free_neighbours(const p2i& current, const p2i& start, const p2i& goal, p2i* p) {
 	static Point2i directions[] = { Point2i(-1, 0), Point2i(0, 1), Point2i(1, 0), Point2i(0, -1) };
 	int cnt = 0;
@@ -135,7 +121,7 @@ int TinyWorld::find_free_neighbours(const p2i& current, const p2i& start, const 
 	}
 	return cnt;
 }
-
+*/
 // ---------------------------------------------------
 // p2i to index
 // ---------------------------------------------------
@@ -147,6 +133,7 @@ int TinyWorld::to_index(const p2i& p) const {
 // ---------------------------------------------------
 // Find path from Breadth First Search
 // ---------------------------------------------------
+/*
 void TinyWorld::connect(const p2i& start, const p2i& goal) {
 
 
@@ -188,3 +175,4 @@ void TinyWorld::connect(const p2i& start, const p2i& goal) {
 		current = came_from[to_index(current)];		
 	}
 }
+*/

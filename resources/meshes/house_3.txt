@@ -1,4 +1,4 @@
-select_color 206,122,106,255
+select_color 215,208,181,255
 add_cube 0,0.3,0 0.8,0.6,0.8
 //remove_face 23
 slice 0 7 3
@@ -8,7 +8,14 @@ extrude_face 15 -0.05
 remove_face 15
 extrude_face 17 -0.05
 remove_face 17
+extrude_face 24 -0.05
+remove_face 24
+//remove_face 29
+remove_face 39
+remove_face 44
+remove_face 42
 set_color 26 190,210,214,255
 set_color 31 190,210,214,255
 set_color 36 190,210,214,255
+set_color 41 190,210,214,255
 //debug_colors

@@ -7,13 +7,23 @@
 #include <gen\MeshGenGUI.h>
 #include "..\TinyWorld.h"
 
-const int WORLD_SIZE = 16;
+const int WORLD_SIZE = 6;
 
 class WorldState : public ds::GameState {
 
+	struct TileCommand {
+
+		p2i coord;
+		ID id;
+
+	};
+
 	struct WorldTile {
+
 		ID id;
 		p2i coord;
+		float height;
+
 	};
 
 public:
@@ -25,8 +35,10 @@ public:
 	int onChar(int ascii);
 	void activate();
 private:
-	void loadObjects();
-	void loadObject(const char* name);
+	void save();
+	void load();
+	void process(const TileCommand& command);
+	void parseFile();
 	void buildTerrain();
 	void drawGUI();
 	ds::FPSCamera* _camera;
@@ -42,5 +54,8 @@ private:
 	WorldTile _tiles[WORLD_SIZE * WORLD_SIZE];
 	bool _switch;
 	p2i _selectedCell;
+	int _meshID;
+	p2i _gridPos;
+	ds::Array<TileCommand> _commands;
 };
 

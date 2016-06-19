@@ -16,6 +16,9 @@ public:
 	void render();
 	int onChar(int ascii);
 private:
+	void buildHouse(const p2i& gridPos);
+	void buildWall(ds::gen::MeshGen& gen,int face_idx);
+	void buildStreet(const p2i& gridPos);
 	void createTile(int index, int directions);
 	void createWindow(const v3& center);
 	void buildTerrain();

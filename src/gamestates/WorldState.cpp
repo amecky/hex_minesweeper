@@ -3,6 +3,8 @@
 #include <base\InputSystem.h>
 #include <renderer\graphics.h>
 #include <utils\TileMapReader.h>
+#include <io\FileRepository.h>
+#include <io\BinaryFile.h>
 
 WorldState::WorldState() : ds::GameState("WorldState"), _mesh(0) , _selectionMesh(0) {
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
@@ -12,6 +14,12 @@ WorldState::WorldState() : ds::GameState("WorldState"), _mesh(0) , _selectionMes
 	_switch = false;
 	_selectedCell = p2i(-1, -1);
 	_buffer = ds::res::getMeshBuffer("ColouredBuffer");
+	_meshID = 200;
+	_gridPos = p2i(WORLD_SIZE / 2, WORLD_SIZE / 2);
+	int total = WORLD_SIZE * WORLD_SIZE;
+	for (int i = 0; i < total; ++i) {
+		_tiles[i].height = 0.0f;		
+	}
 }
 
 void WorldState::init() {
@@ -27,26 +35,8 @@ void WorldState::init() {
 	gn.set_color(0, ds::Color(128, 128, 128, 255));
 	gn.build(_selectionMesh);
 	_selectionID = _scene->add(_selectionMesh, v3(0, 0, 0),ds::DrawMode::IMMEDIATE);
-	loadObjects();	
-	p2i hp[] = { p2i(2, 5), p2i(0, 1), p2i(10, 10), p2i(4,5),p2i(8,5) };
-	for (int i = 0; i < 5; ++i) {
-		_world->addHouse(hp[i]);
-	}	
-	_world->addForrest(3, 8, 3);
-	_world->addPowerPlant(p2i(0, 2));
-	_world->addPowerPlant(p2i(3, 5));
-	_world->addPowerPlant(p2i(1, 5));
-	_world->add(p2i(6, 5),TileType::WM_WOOD_PLANT);
-	_world->add(p2i(5, 5), TileType::WM_WAREHOUSE);
-	_world->add(p2i(0, 2), TileType::WT_TREE);
-	_world->add(p2i(0, 3), TileType::WT_TREE);
-	_world->add(p2i(0, 4), TileType::WT_TREE);
-	_world->add(p2i(8, 8), TileType::WM_CITY_HALL);
-	_world->connect(hp[0], hp[2]);
-	_world->connect(hp[1], hp[2]);
-	//_world->connect(hp[3], hp[4]);
-	_world->rebuildStreets();
-	buildTerrain();
+	//parseFile();
+
 }
 
 
@@ -62,6 +52,34 @@ WorldState::~WorldState() {
 	}
 }
 
+void WorldState::parseFile() {
+	int size = -1;
+	const char* txt = ds::repository::load("content\\world.txt", &size);
+	if (size != -1) {
+		ds::Tokenizer t;
+		t.parse(txt);
+		//assert(t.size() % 4 == 0);
+		int total = t.size() / 4;
+		for ( int i = 0; i < total; ++i ) {
+			const ds::Token& td = t.get(i * 4);
+			const ds::Token& tx = t.get(i * 4 + 1);
+			const ds::Token& ty = t.get(i * 4 + 2);
+			LOG << i << " td: " << td.value << " tx: " << tx.value << " ty: " << ty.value;
+			float sx = WORLD_SIZE / 2.0f;
+			float sz = WORLD_SIZE / 2.0f;
+			ds::Mesh* m = ds::res::getMesh(td.value);
+			ds::AABBox box = m->boundingBox;
+			float h = box.extent.y * 0.5f;
+			int idx = tx.value + ty.value * WORLD_SIZE;
+			WorldTile& t = _tiles[idx];
+			h = t.height;
+			t.id = _scene->addStatic(m, v3(-sx + tx.value, h, sz + ty.value));
+			t.height += box.extent.y * 2.0f;
+			LOG << "t.height: " << t.height << " h: " << h;
+		}
+	}
+}
+
 // ------------------------------------------
 // activate
 // ------------------------------------------
@@ -72,38 +90,10 @@ void WorldState::activate() {
 }
 
 // ------------------------------------------
-// load objects
-// ------------------------------------------
-void WorldState::loadObjects() {
-	char buffer[32];
-	for (int i = 0; i < 16; ++i) {
-		sprintf_s(buffer, 32, "tile_%d", i);
-		loadObject(buffer);
-	}
-	loadObject("tower");
-	for (int i = 0; i < 2; ++i) {
-		sprintf_s(buffer, 32, "tree_%d", i);
-		loadObject(buffer);
-	}
-	loadObject("power_plant");
-	loadObject("wood_plant");
-	loadObject("warehouse");
-	loadObject("city_hall");
-}
-
-// ------------------------------------------
-// load object
-// ------------------------------------------
-void WorldState::loadObject(const char* name) {
-	ds::Mesh* mp = new ds::Mesh();
-	mp->load(name);
-	_objects.push_back(mp);
-}
-
-// ------------------------------------------
 // build terrain
 // ------------------------------------------
 void WorldState::buildTerrain() {
+	/*
 	float sx = WORLD_SIZE / 2.0f;// -8.0f;
 	float sz = WORLD_SIZE / 2.0f;// -8.0f;
 	for (int z = 0; z < WORLD_SIZE; ++z) {
@@ -123,6 +113,7 @@ void WorldState::buildTerrain() {
 			}			
 		}
 	}
+	*/
 }
 
 // -------------------------------------------------------
@@ -143,7 +134,6 @@ int WorldState::update(float dt) {
 				if (_tiles[i].id == id) {
 					LOG << "selected at " << _tiles[i].coord.x << " / " << _tiles[i].coord.y;
 					const Tile& t = _world->get(_tiles[i].coord);
-					LOG << "Building: " << t.type;
 					_selectedCell = _tiles[i].coord;
 					float sx = WORLD_SIZE / 2.0f;
 					float sz = WORLD_SIZE / 2.0f;
@@ -188,38 +178,80 @@ void WorldState::drawGUI() {
 	if (gui::Button("Editor")) {
 		_switch = true;
 	}
-	if (gui::Button("House")) {
-		if (_selectedCell.x != -1 && _selectedCell.y != -1) {
-			const Tile& t = _world->get(_selectedCell);
-			if (t.type == TileType::WT_EMPTY) {
-				float sx = WORLD_SIZE / 2.0f;// -8.0f;
-				float sz = WORLD_SIZE / 2.0f;// -8.0f;
-				WorldTile& wt = _tiles[_selectedCell.x + _selectedCell.y * WORLD_SIZE];
-				_scene->remove(wt.id);
-				wt.id = _scene->addStatic(_objects[16], v3(-sx + _selectedCell.x, -3.0f, sz + _selectedCell.y));
-			}
-		}
+	gui::endGroup();
+	gui::InputInt("ID", &_meshID);
+	gui::Input("Pos", &_gridPos);
+	if (gui::Button("Add")) {
+		TileCommand tc;
+		tc.id = _meshID;
+		tc.coord = _gridPos;
+		process(tc);
+		_commands.push_back(tc);
+	}
+	gui::beginGroup();
+	if (gui::Button("Save")) {
+		save();
+	}
+	if (gui::Button("Load")) {
+		load();
 	}
 	gui::endGroup();
 	gui::end();
 }
 
 // ------------------------------------------
+// save
+// ------------------------------------------
+void WorldState::save() {
+	ds::BinaryFile bf;
+	bf.open("world", ds::FileMode::WRITE);
+	bf.write(_commands.size());
+	for (uint32_t i = 0; i < _commands.size(); ++i) {
+		const TileCommand& tc = _commands[i];
+		bf.write(tc.id);
+		bf.write(tc.coord.x);
+		bf.write(tc.coord.y);
+	}
+}
+
+// ------------------------------------------
+// load
+// ------------------------------------------
+void WorldState::load() {
+	ds::BinaryFile bf;
+	bf.open("world", ds::FileMode::READ);
+	int size = 0;
+	bf.read(&size);
+	for (int i = 0; i < size; ++i) {
+		TileCommand tc;
+		bf.read(&tc.id);
+		bf.read(&tc.coord.x);
+		bf.read(&tc.coord.y);
+		_commands.push_back(tc);
+		process(tc);
+	}
+}
+
+// ------------------------------------------
+// process TileCommand
+// ------------------------------------------
+void WorldState::process(const TileCommand& command) {
+	float sx = WORLD_SIZE / 2.0f;
+	float sz = WORLD_SIZE / 2.0f;
+	ds::Mesh* m = ds::res::getMesh(command.id);
+	ds::AABBox box = m->boundingBox;
+	float h = box.extent.y * 0.5f;
+	int idx = command.coord.x + command.coord.y * WORLD_SIZE;
+	WorldTile& t = _tiles[idx];
+	h = t.height;
+	t.id = _scene->addStatic(m, v3(-sx + command.coord.x, h, sz + command.coord.y));
+	t.height += box.extent.y * 2.0f;
+	LOG << "t.height: " << t.height << " h: " << h;
+}
+
+// ------------------------------------------
 // onChar
 // ------------------------------------------
-int WorldState::onChar(int ascii) {
-	if (ascii == '1') {
-		if (_selectedCell.x != -1 && _selectedCell.y != -1) {
-			Tile& t = _world->get(_selectedCell);
-			if (t.type == TileType::WT_EMPTY) {
-				float sx = WORLD_SIZE / 2.0f;// -8.0f;
-				float sz = WORLD_SIZE / 2.0f;// -8.0f;
-				WorldTile& wt = _tiles[_selectedCell.x + _selectedCell.y * WORLD_SIZE];
-				_scene->remove(wt.id);
-				wt.id = _scene->addStatic(_objects[16], v3(-sx + _selectedCell.x, -3.0f, sz + _selectedCell.y));
-				t.type = TileType::WT_HOUSE;
-			}
-		}
-	}
+int WorldState::onChar(int ascii) {	
 	return 0;
 }

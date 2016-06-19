@@ -1,0 +1,51 @@
+add_face -0.5,0.0,0.5 0.5,0.0,0.5 0.5,0.0,-0.5 -0.5,0.0,-0.5
+set_color 0 166,185,78,255
+slice 0 5 5
+move_edge 22 0,0,0.1
+move_edge 30 0,0,0.1
+move_edge 38 0,0,0.1
+move_edge 42 0,0,-0.1
+move_edge 50 0,0,-0.1
+move_edge 58 0,0,-0.1
+move_edge 11 -0.1,0,0
+move_edge 51 -0.1,0,0
+move_edge 91 -0.1,0,0
+move_edge 9 0.1,0,0
+move_edge 49 0.1,0,0
+move_edge 89 0.1,0,0
+set_color 5 223,215,204,255
+set_color 6 223,215,204,255
+set_color 7 223,215,204,255
+set_color 8 223,215,204,255
+set_color 9 223,215,204,255
+set_color 15 223,215,204,255
+set_color 16 223,215,204,255
+set_color 17 223,215,204,255
+set_color 18 223,215,204,255
+set_color 19 223,215,204,255
+extrude_face 10 -0.04
+remove_face 10
+extrude_face 11 -0.04
+remove_face 11
+remove_face 27
+extrude_face 12 -0.04
+remove_face 12
+extrude_face 13 -0.04
+remove_face 13
+extrude_face 14 -0.04
+remove_face 14
+remove_face 32
+remove_face 37
+remove_face 42
+remove_face 47
+remove_face 29
+remove_face 34
+remove_face 39
+remove_face 44
+remove_face 49
+set_color 25 151,144,138,255
+set_color 30 151,144,138,255
+set_color 35 151,144,138,255
+set_color 40 151,144,138,255
+set_color 45 151,144,138,255
+//debug_colors

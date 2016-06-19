@@ -9,6 +9,7 @@
 #include <renderer\graphics.h>
 #include <utils\TileMapReader.h>
 #include "..\Constants.h"
+#include "..\gen\HouseGenerator.h"
 
 const int SIZE_X = 8;
 const int SIZE_Y = 8;
@@ -19,11 +20,23 @@ GeoTestState::GeoTestState() : ds::GameState("GeoTestState"), _name("base_house"
 	_pressed = false;
 }
 
+GeoTestState::~GeoTestState() {
+	_objects.destroy_all();
+	if (_gui != 0) {
+		delete _gui;
+	}
+	if (_mesh != 0) {
+		delete _mesh;
+	}
+}
+
 void GeoTestState::init() {
-	_camera->setPosition(v3(0, 0, -3), v3(0, 0, 0));
+	//_camera->setPosition(v3(0, 2, -3), v3(0, 0, 0));
 	//_camera->setPosition(v3(12, 6, -9), v3(0, 0, 1));
 	//_camera->resetPitch(DEGTORAD(12.0f));
 	//_camera->setYAngle(DEGTORAD(-45.0f));
+	_camera->setPosition(v3(0.0f, 1.5f, -3.0f), v3(0.0f, 0.0f, 0.1f));
+	_camera->resetPitch(DEGTORAD(25.0f));
 	_mesh = new ds::Mesh();
 
 	_ctx.gen = &gen;
@@ -37,15 +50,26 @@ void GeoTestState::init() {
 	
 	char buffer[32];
 	// ----------------------------------------
+	// house building test
+	// ----------------------------------------
+	for (int i = 0; i < 6; ++i) {
+		buildHouse(p2i(-4+i, 0));
+		buildStreet(p2i(-4+i, -1));
+		buildHouse(p2i(-4 + i, -2));
+	}
+	//buildStreet(p2i(0, 0));
+
+	// ----------------------------------------
 	// scale test
 	// ----------------------------------------
+	/*
 	v3 p[] = { v3(-0.5f, 0.5f, 0.0f), v3(0.5f, 0.5f, 0.0f), v3(0.5f, -0.5f, 0.0f), v3(-0.5f, -0.5f, 0.0f) };
 	gen.add_face(p);
 	gen.slice(0, 3);
 	uint16_t adjacents[] = { 0, 2, 8, 6 };
 	gen.expand_face(4, adjacents, 0.2f, 0.2f);
 	gen.debug_colors();
-
+	*/
 	//uint16_t f = gen.add_cube(v3(0.0f, 0.0f, 0.0f), v3(1.0f, 1.0f, 1.0f));
 	/*
 	gen.startGroup();
@@ -198,8 +222,8 @@ void GeoTestState::init() {
 	//gen.move_edge(81, v3(0.0f, 0.4f, 0.0f));
 	//gen.debug_colors();
 	//gen.load_text(_name);
-	gen.build(_mesh);
-	ID id = _scene->add(_mesh, v3(0, 0, 0));
+	//gen.build(_mesh);
+	//ID id = _scene->add(_mesh, v3(0, 0, 0));
 	//_mesh->save("house_0");
 	//buildTerrain();
 	/*
@@ -224,15 +248,7 @@ void GeoTestState::init() {
 
 
 
-GeoTestState::~GeoTestState() {
-	_objects.destroy_all();
-	if (_gui != 0) {
-		delete _gui;
-	}
-	if (_mesh != 0) {
-		delete _mesh;
-	}
-}
+
 
 // ------------------------------------------
 // build terrain
@@ -367,7 +383,7 @@ int GeoTestState::update(float dt) {
 void GeoTestState::render() {
 	// scene
 	_scene->draw();
-	_gui->drawGUI();
+	//_gui->drawGUI();
 }
 
 int GeoTestState::onChar(int ascii) {
@@ -545,4 +561,115 @@ void GeoTestState::createWindow(const v3& center) {
 	}
 	wgen.set_color(window, ds::Color(196, 215, 213, 255));
 	wgen.save_mesh("window_1");
+}
+
+// ----------------------------------------------------------
+// build house
+// ----------------------------------------------------------
+void GeoTestState::buildHouse(const p2i& gridPos) {
+	ds::Mesh* m = new ds::Mesh;
+	gen.clear();
+	static ds::Color house_colors[] = { ds::Color(206, 122, 106, 255) , ds::Color(201,165,109,255), ds::Color(160,149,120,255) };
+	int floors = math::random(1.0f, 4.9f);
+	float h = 0.0f;
+	int cnr = math::random(0.0f, 2.9f);
+	gen.set_color_selection(ds::Color(169, 160, 156));
+	v3 gp[] = { v3(-0.5f,0.0f,0.5f),v3(0.5f,0.0f,0.5f),v3(0.5f,0.0f,-0.5f),v3(-0.5f,0.0f,-0.5f) };
+	gen.add_face(gp);
+	for (int i = 0; i < floors; ++i) {		
+		gen.set_color_selection(house_colors[cnr]);
+		uint16_t wf[6];
+		uint16_t num = gen.add_cube(v3(0.0f, h + 0.3f, 0.0f), v3(0.8f, 0.6f, 0.8f), wf);
+		buildWall(gen, wf[0]);
+		buildWall(gen, wf[1]);
+		h += 0.6f;
+		// roof
+		gen.set_color_selection(ds::Color(213, 207, 197, 255));
+		uint16_t rf = gen.add_cube(v3(0.0f, h + 0.05f, 0.0f), v3(0.8f, 0.1f, 0.8f));
+		uint16_t roof_faces[9];
+		uint16_t rsf = gen.slice(rf + 4, 3, 3, roof_faces, 9);
+		uint16_t af[] = { roof_faces[0],roof_faces[2],roof_faces[8],roof_faces[6] };
+		gen.expand_face(roof_faces[4], af, 0.2f, 0.2f);
+		gen.extrude_face(roof_faces[4], -0.09f);
+		gen.remove_face(roof_faces[4]);
+		h += 0.1f;
+	}
+	//gen.debug_colors();
+	gen.recalculate_normals();
+	gen.build(m);
+	float sx = gridPos.x;// *0.5f;
+	float sz = gridPos.y;// *0.5f;
+	_scene->addStatic(m, v3(sx, 0.0f, sz));
+	_objects.push_back(m);
+}
+
+// ----------------------------------------------------------
+// build wall
+// ----------------------------------------------------------
+void GeoTestState::buildWall(ds::gen::MeshGen& gen, int face_idx) {
+	int wi_nr = math::random(1.0f, 3.9f);
+	uint16_t wsf[32];
+	uint16_t ewf[6];
+	if (wi_nr == 1) {
+		uint16_t nrs = gen.slice(face_idx, 3, 3, wsf, 32);
+		uint16_t af[] = { wsf[0],wsf[2],wsf[8],wsf[6] };
+		gen.expand_face(wsf[4], af, 0.2f, 0.1f);
+		uint16_t nw = gen.extrude_face(wsf[4], -0.05f, ewf);
+		gen.set_color(ewf[0], ds::Color(190, 210, 214, 255));
+		gen.remove_face(wsf[4]);
+	}
+	else {
+		int sl = (wi_nr - 1) * 2 + 1;
+		uint16_t nrs = gen.slice(face_idx, sl, 3, wsf, 32);
+		for (int j = 0; j < wi_nr - 1; ++j) {
+			uint16_t nw = gen.extrude_face(wsf[sl + 1 + j * 2], -0.05f, ewf);
+			gen.set_color(ewf[0], ds::Color(190, 210, 214, 255));
+			gen.remove_face(wsf[sl + 1 + j * 2]);
+		}
+	}
+}
+
+// ----------------------------------------------------------
+// build street
+// ----------------------------------------------------------
+void GeoTestState::buildStreet(const p2i& gridPos) {
+	ds::Mesh* m = new ds::Mesh;
+	gen.clear();
+	int cnr = math::random(0.0f, 2.9f);
+	gen.set_color_selection(ds::Color(169, 160, 156));
+	v3 gp[] = { v3(-0.5f,0.0f,0.5f),v3(0.5f,0.0f,0.5f),v3(0.5f,0.0f,-0.5f),v3(-0.5f,0.0f,-0.5f) };
+	gen.add_face(gp);
+	gen.set_color(0, ds::Color(166, 185, 78, 255));
+	uint16_t faces[25];
+	gen.slice(0, 5, 5, faces, 25);
+	v3 dir[] = { v3(0.0f,0.0f,0.1f),v3(0.0f,0.0f,-0.1f),v3(-0.1f,0.0f,0.0f),v3(0.1f,0.0f,0.0f) };
+	for (int i = 0; i < 3; ++i) {
+		uint16_t ei = gen.get_edge(faces[10 + i * 2], 0);
+		gen.move_edge(ei, dir[0]);
+		ei = gen.get_edge(faces[15 + i * 2], 0);
+		gen.move_edge(ei, dir[1]);
+		ei = gen.get_edge(faces[2 + i * 10], 3);
+		gen.move_edge(ei, dir[2]);
+		ei = gen.get_edge(faces[2 + i * 10], 1);
+		gen.move_edge(ei, dir[3]);
+	}
+	for (int i = 0; i < 5; ++i) {
+		gen.set_color(faces[5 + i], ds::Color(223, 215, 204, 255));
+		gen.set_color(faces[15 + i], ds::Color(223, 215, 204, 255));
+	}
+	uint16_t ef[6];
+	for (int i = 0; i < 5; ++i) {
+		gen.extrude_face(faces[10 + i], -0.04f, ef);
+		gen.remove_face(faces[10 + i]);
+		gen.remove_face(ef[2]);
+		gen.remove_face(ef[4]);
+		gen.set_color(ef[0], ds::Color(169, 160, 156));
+	}
+	//gen.debug_colors();
+	gen.recalculate_normals();
+	gen.build(m);
+	float sx = gridPos.x;// *0.5f;
+	float sz = gridPos.y;// *0.5f;
+	_scene->addStatic(m, v3(sx, 0.0f, sz));
+	_objects.push_back(m);
 }
