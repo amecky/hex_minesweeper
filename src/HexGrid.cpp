@@ -3,7 +3,7 @@
 #include <renderer\graphics.h>
 #include <base\InputSystem.h>
 
-HexGrid::HexGrid() : _qMax(0), _rMax(0), _items(0), _layout(layout_pointy, v2(1.1f, 1.1f), v2(0, 0)) {
+HexGrid::HexGrid() : _qMax(0), _rMax(0), _items(0), _layout(layout_flat, v2(0.5f, 0.5f), v2(0, 0)) {
 }
 
 HexGrid::~HexGrid() {

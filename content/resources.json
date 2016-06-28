@@ -81,6 +81,13 @@ vertex_buffer {
 	size : 4096
 	dynamic : true
 }
+vertex_buffer {
+	id : 47
+	name : "BasicVertexBuffer"
+	layout : "PNTC_Layout"
+	size : 8192
+	dynamic : true
+}
 blendstate {
 	id : 4
 	name : "regular_blendstate"
@@ -115,10 +122,32 @@ texture {
 	name : "gui" 
 	file : "gui.png"
 }
+//texture_cube {
+//	id : 50
+//	name : "skybox_texture"
+//	file : "SkyBoxTex.dds"
+//}
 font {
 	id : 7
 	name : "xscale"
 	file : "xscale.json"
+}
+material {
+	id : 48
+	name : "MeshMaterial"
+	diffuse : 255,255,255,255
+	ambient : 32,32,32,2555
+	blend_state : "regular_blendstate"
+	shader : "ColouredShader"
+}
+material {
+	id : 49
+	name : "SpriteMaterial"
+	diffuse : 255,255,255,255
+	ambient : 32,32,32,2555
+	blend_state : "regular_blendstate"
+	shader : "SpriteShader"
+	texture: "TextureArray"
 }
 sprite_buffer {
 	id : 8
@@ -127,10 +156,7 @@ sprite_buffer {
 	index_buffer : 0
 	constant_buffer : "Screen_Dimension"
 	vertex_buffer : "SpriteVertexBuffer"
-	shader : 32
-	blend_state : 4
-	color_map : 5
-	input_layout : "Sprite_Layout"
+	material : "SpriteMaterial"
 	font : "xscale"
 }
 font {
@@ -145,10 +171,7 @@ sprite_buffer {
 	index_buffer : 0
 	constant_buffer : "Screen_Dimension"
 	vertex_buffer : "SpriteVertexBuffer"
-	shader : 32
-	blend_state : 4
-	color_map : 11
-	input_layout : "Sprite_Layout"
+	material : "SpriteMaterial"
 	font : "gui_font"
 }
 imgui {
@@ -156,38 +179,6 @@ imgui {
 	name : "IMGUI"
 	font : "gui_font"
 	sprite_buffer : "IMGUI_Buffer"
-}
-dialog {
-    id : 15
-	name : "MainMenu"
-    sprite_buffer : 8
-    font : 7
-	file : "MainMenu"
-}
-dialog {
-	id : 16 
-	name : "GameOver"
-	file : "GameOver" 
-	sprite_buffer : 8
-    font : 7
-}
-dialog {
-	id : 17
-	name : "Highscores"
-	file : "Highscores"
-	sprite_buffer : 8
-    font : 7
-}
-dialog {
-	id : 18
-	name : "HUD"
-	file : "HUD"
-	sprite_buffer : 8
-    font : 7
-}
-particles {
-	id : 19
-	sprite_buffer : 8
 }
 quad_buffer {
 	id : 20
@@ -207,11 +198,8 @@ mesh_buffer {
 	size : 1024
 	index_buffer : "SpriteQuadBuffer"
 	constant_buffer : "MVP_CB_WORLD"
-	vertex_buffer : "SpriteVertexBuffer"
-	shader : "TexturedShader"
-	blend_state : "regular_blendstate"
-	color_map : 5
-	input_layout : "PNTC_Layout"
+	vertex_buffer : "BasicVertexBuffer"
+	material : "MeshMaterial"
 }
 mesh_buffer {
 	id : 26
@@ -219,11 +207,8 @@ mesh_buffer {
 	size : 4096
 	index_buffer : "SpriteQuadBuffer"
 	constant_buffer : "MVP_CB_WORLD"
-	vertex_buffer : "SpriteVertexBuffer"
-	shader : "ColouredShader"
-	blend_state : "regular_blendstate"
-	color_map : 5
-	input_layout : "PNTC_Layout"
+	vertex_buffer : "BasicVertexBuffer"
+	material : "MeshMaterial"
 }
 camera {
 	id : 39
@@ -234,40 +219,8 @@ camera {
 	id : 40
 	name : "fps"
 	type : "fps"
-	position : 0,0,-10
+	position : 0,5,-10
 	target : 0,0,1
-}
-scene {
-	id : 38
-	name : "EnemiesScene"
-	mesh_buffer : "ColouredBuffer"
-	size : 256
-	camera : "fps"
-	depth_enabled : true
-}
-scene {
-	id : 41
-	name : "Stars"
-	mesh_buffer : "ColouredBuffer"
-	size : 256
-	camera : "fps"
-	depth_enabled : true
-}
-scene {
-	id : 42
-	name : "Objects"
-	mesh_buffer : "ColouredBuffer"
-	size : 256
-	camera : "fps"
-	depth_enabled : true
-}
-scene {
-	id : 45
-	name : "TestObjects"
-	mesh_buffer : "ColouredBuffer"
-	size : 256
-	camera : "fps"
-	depth_enabled : true
 }
 scene {
 	id : 46
@@ -277,6 +230,18 @@ scene {
 	camera : "fps"
 	depth_enabled : true
 }
-import {
-	file: "meshes.json"
+dialog {
+	id : 18
+    name : "HUD"
+    file : "HUD"
+    sprite_buffer : "BasicSpriteBuffer"
+    font : "xscale"
+ }
+dialog {
+    id : 15
+    name : "MainMenuDialog"
+    sprite_buffer : "BasicSpriteBuffer"
+    font : "xscale"
+    file : "MainMenu"
 }
+

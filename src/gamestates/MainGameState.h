@@ -29,13 +29,15 @@ private:
 	int _selected;
 	int _width;
 	int _height;
-	ds::SpriteBuffer* _sprites;
 	bool _showBombs;
 	float _endTimer;
 	Hex _current;
 
 	ds::Mesh* _hexagon;
+	ds::Mesh* _border;
+	ds::Scene* _scene;
 	ds::MeshBuffer* _colouredBuffer;
 	ds::FPSCamera* _camera;
+	RID _material;
 };
 

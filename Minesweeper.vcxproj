@@ -223,22 +223,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\gamestates\GameOverState.cpp" />
     <ClCompile Include="src\gamestates\HighscoreState.cpp" />
     <ClCompile Include="src\gamestates\IntroState.cpp" />
     <ClCompile Include="src\gamestates\MainGameState.cpp" />
     <ClCompile Include="src\gamestates\MainMenuState.cpp" />
-    <ClCompile Include="src\gamestates\RunState.cpp" />
-    <ClCompile Include="src\gamestates\TestState.cpp" />
     <ClCompile Include="src\HexGrid.cpp" />
     <ClCompile Include="src\Highscores.cpp" />
-    <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\Minesweeper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\GameSettings.h" />
@@ -247,11 +242,8 @@
     <ClInclude Include="src\gamestates\IntroState.h" />
     <ClInclude Include="src\gamestates\MainGameState.h" />
     <ClInclude Include="src\gamestates\MainMenuState.h" />
-    <ClInclude Include="src\gamestates\RunState.h" />
-    <ClInclude Include="src\gamestates\TestState.h" />
     <ClInclude Include="src\HexGrid.h" />
     <ClInclude Include="src\Highscores.h" />
-    <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\Minesweeper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +257,7 @@
     <None Include="content\particles\inner_explosion.json" />
     <None Include="content\particles\particlesystems.json" />
     <None Include="content\particles\streaks.json" />
+    <None Include="content\path.json" />
     <None Include="content\resources.json" />
     <None Include="content\resources\gui_font.json" />
     <None Include="content\resources\xscale.json" />

@@ -6,12 +6,7 @@
 #include "gamestates\MainMenuState.h"
 #include "gamestates\HighscoreState.h"
 #include "gamestates\IntroState.h"
-#include "gamestates\TestState.h"
-#include "gamestates\RunState.h"
 #include "GameSettings.h"
-#include "gamestates\GeoTestState.h"
-#include "gamestates\MeshGenTestState.h"
-#include "gamestates\WorldState.h"
 
 ds::BaseApp *app = new Minesweeper(); 
 
@@ -31,21 +26,12 @@ Minesweeper::~Minesweeper() {
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
-	_context->hud = ds::res::getGUIDialog(18);
-	_sprites = ds::res::getSpriteBuffer("BasicSpriteBuffer");
-	//addGameState(new MainGameState(_context));
+	
+	addGameState(new MainGameState(_context));
 	//addGameState(new GameOverState(_context));
-	//addGameState(new MainMenuState(_context));
+	addGameState(new MainMenuState(_context));
 	//addGameState(new HighscoreState(_context));
-	addGameState(new TestState(_context));
-	addGameState(new GeoTestState());
-	addGameState(new MeshGenTestState("house_3"));
-	addGameState(new WorldState());
-	/*
-	addGameState(new RunState(_context));
-	*/
-	connectGameStates("MeshGenTestState", 1, "WorldState");
-	connectGameStates("WorldState", 1, "MeshGenTestState");
+	connectGameStates("MainMenu", 1, "MainGame");
 	/*
 	connectGameStates("GameOver", 2, "MainMenu");
 	connectGameStates("MainGame", 1, "GameOver");
@@ -72,7 +58,7 @@ void Minesweeper::init() {
 	// for testing
 	//_context->reset();
 	//activate("MeshGenTestState");
-	activate("GeoTestState");
+	activate("MainGame");
 	//activate("WorldState");
 }
 

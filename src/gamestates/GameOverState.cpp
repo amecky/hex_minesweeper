@@ -1,7 +1,7 @@
 #include "GameOverState.h"
 #include <utils\Log.h>
 
-GameOverState::GameOverState(GameContext* context) : ds::BasicMenuGameState("GameOver", 16), _context(context) {
+GameOverState::GameOverState(GameContext* context) : ds::BasicMenuGameState("GameOver", "GameOverDialog"), _context(context) {
 }
 
 
@@ -16,7 +16,9 @@ void GameOverState::activate() {
 	sprintf_s(buffer, 32, "%d / %d", _context->markedCorrectly, GAME_MODES[_context->mode].maxBombs);
 	_dialog->updateText(12, buffer);
 	std::string str;
-	ds::GameTimer* timer = _context->hud->getTimer(3);
+	ds::GUIDialog* hud = ds::res::getGUIDialog("HUD");
+
+	ds::GameTimer* timer = hud->getTimer(3);
 	ds::string::formatTime(timer->getMinutes(), timer->getSeconds(), str);
 	_dialog->updateText(14, str.c_str());
 	int state = 1;

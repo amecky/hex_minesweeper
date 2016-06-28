@@ -2,7 +2,7 @@
 #include <utils\Log.h>
 #include <base\EventStream.h>
 
-MainMenuState::MainMenuState(GameContext* context) : ds::BasicMenuGameState("MainMenu",15), _context(context) {
+MainMenuState::MainMenuState(GameContext* context) : ds::BasicMenuGameState("MainMenu","MainMenuDialog"), _context(context) {
 }
 
 
