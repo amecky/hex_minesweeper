@@ -5,7 +5,7 @@
 #include <gen\MeshGen.h>
 
 MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
-	_selected = -1;
+	//_selected = -1;
 	_maxBombs = 60;
 	_showBombs = false;
 	_endTimer = 0.0f;
@@ -13,6 +13,7 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_scene = ds::res::getScene("World");
+	_boardScene = ds::res::getScene("Board");
 	//_camera->resetPitch(DEGTORAD(45.0f));
 	//_camera->resetYAngle();
 	//graphics::setCamera(_camera);
@@ -102,8 +103,8 @@ void MainGameState::fillBombs() {
 
 	// FIXME: _scene->clear();
 	for (int i = 0; i < _grid.size(); ++i) {
-		const GridItem& item = _grid.get(i);
-		_scene->add(_hexagon, v3(item.position.x, 0.0f, item.position.y),_material);// , ds::Color(128, 0, 0, 255));// , v
+		GridItem& item = _grid.get(i);
+		item.id = _boardScene->add(_hexagon, v3(item.position.x, 0.0f, item.position.y), _material);
 	}
 	delete[] temp;
 }
@@ -162,61 +163,73 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 int MainGameState::onButtonUp(int button, int x, int y) {
 	
 	ds::Ray r = graphics::getCameraRay(_camera);
-	ID id = _scene->intersects(r);
+	ID id = _boardScene->intersects(r);
 	if (id != INVALID_ID) {
-		LOG << "selected: " << id;
-	}
-
-
-	Hex h = _grid.convertFromMousePos();
-	if (_grid.isValid(h)) {
-		// right button -> mark cell or remove mark
-		if (button == 1) {			
-			GridItem& item = _grid.get(h);
-			if (item.state == 0) {
-				if (_context->marked < _maxBombs) {
-					item.state = 2;
-					++_context->marked;
+		//LOG << "selected: " << id;
+	//}
+		int idx = -1;
+		for (int i = 0; i < _grid.size(); ++i) {
+			const GridItem& item = _grid.get(i);
+			if (item.id == id) {
+				idx = i;
+			}
+		}
+		if (idx != -1) {
+			const GridItem& item = _grid.get(idx);
+			Hex h = item.hex;
+			ds::Entity& e = _boardScene->get(id);
+			e.rotation = v3(0.0f, 0.0f, DEGTORAD(45.0f));
+			//Hex h = _grid.convertFromMousePos();
+			//if (_grid.isValid(h)) {
+			// right button -> mark cell or remove mark
+			if (button == 1) {
+				GridItem& item = _grid.get(h);
+				if (item.state == 0) {
+					if (_context->marked < _maxBombs) {
+						item.state = 2;
+						++_context->marked;
+						if (item.bomb) {
+							++_context->markedCorrectly;
+						}
+					}
+				}
+				else if (item.state == 2) {
 					if (item.bomb) {
-						++_context->markedCorrectly;
+						--_context->markedCorrectly;
+					}
+					item.state = 0;
+					--_context->marked;
+				}
+
+				if (_context->markedCorrectly == _maxBombs) {
+					return 1;
+				}
+				int left = _maxBombs - _context->marked;
+				//_context->hud->setNumber(2, left);
+				char buffer[32];
+				sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
+				//_context->hud->updateText(2, buffer);
+			}
+			// left button
+			else {
+				GridItem& item = _grid.get(h);
+				if (item.state == 0) {
+					if (item.bomb) {
+						//return 1;
+						_endTimer = 0.0f;
+						_showBombs = true;
+						//_context->hud->deactivate();
+
+						// FIXME: game over!!!!
+
+					}
+					item.state = 1;
+					LOG << "adjacents: " << item.adjacentBombs;
+					if (item.adjacentBombs == 0) {
+						openEmptyTiles(h);
 					}
 				}
 			}
-			else if (item.state == 2) {
-				if (item.bomb) {
-					--_context->markedCorrectly;
-				}
-				item.state = 0;
-				--_context->marked;
-			}
-
-			if (_context->markedCorrectly == _maxBombs) {
-				return 1;
-			}
-			int left = _maxBombs - _context->marked;
-			//_context->hud->setNumber(2, left);
-			char buffer[32];
-			sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
-			//_context->hud->updateText(2, buffer);
-		}
-		// left button
-		else {
-			GridItem& item = _grid.get(h);
-			if (item.state == 0) {
-				if (item.bomb) {
-					//return 1;
-					_endTimer = 0.0f;
-					_showBombs = true;
-					//_context->hud->deactivate();
-
-					// FIXME: game over!!!!
-
-				}
-				item.state = 1;
-				if (item.adjacentBombs == 0) {
-					openEmptyTiles(h);
-				}
-			}			
 		}
 	}
 	return 0;
@@ -245,6 +258,8 @@ void MainGameState::render() {
 	//_sprites->begin();
 	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
 	_scene->draw();
+	_boardScene->transform();
+	_boardScene->draw();
 	/*
 	graphics::setCamera(_camera);
 	graphics::turnOnZBuffer();

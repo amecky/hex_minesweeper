@@ -1,6 +1,7 @@
 #pragma once
 #include <Vector.h>
 #include <math\hex.h>
+#include <Common.h>
 
 struct GridItem {
 
@@ -12,6 +13,7 @@ struct GridItem {
 	bool wiggle;
 	float timer;
 	v2 scale;
+	ID id;
 };
 
 class HexGrid {

@@ -219,12 +219,20 @@ camera {
 	id : 40
 	name : "fps"
 	type : "fps"
-	position : 0,5,-10
+	position : -5,5,-10
 	target : 0,0,1
 }
 scene {
 	id : 46
 	name : "World"
+	mesh_buffer : "ColouredBuffer"
+	size : 1024
+	camera : "fps"
+	depth_enabled : true
+}
+scene {
+	id : 51
+	name : "Board"
 	mesh_buffer : "ColouredBuffer"
 	size : 1024
 	camera : "fps"

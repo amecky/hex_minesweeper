@@ -26,16 +26,17 @@ private:
 	int _maxBombs;
 	GameContext* _context;
 	HexGrid _grid;
-	int _selected;
+	//int _selected;
 	int _width;
 	int _height;
 	bool _showBombs;
 	float _endTimer;
 	Hex _current;
-
+	//ID _selected;
 	ds::Mesh* _hexagon;
 	ds::Mesh* _border;
 	ds::Scene* _scene;
+	ds::Scene* _boardScene;
 	ds::MeshBuffer* _colouredBuffer;
 	ds::FPSCamera* _camera;
 	RID _material;
