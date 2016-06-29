@@ -14,6 +14,8 @@ struct GridItem {
 	float timer;
 	v2 scale;
 	ID id;
+	ID numberID;
+	ID marker_id;
 };
 
 class HexGrid {
