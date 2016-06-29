@@ -14,17 +14,42 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_scene = ds::res::getScene("World");
 	_boardScene = ds::res::getScene("Board");
+	_boardTexScene = ds::res::getScene("BoardTex");
 	//_camera->resetPitch(DEGTORAD(45.0f));
 	//_camera->resetYAngle();
 	//graphics::setCamera(_camera);
 	_colouredBuffer = ds::res::getMeshBuffer("ColouredBuffer");
 	ds::gen::MeshGen gen;
-	gen.set_color_selection(ds::Color(192, 0, 0));
-	gen.create_cylinder(v3(0, 0, 0), 0.475f, 0.475f, 0.2f, 6);
+	gen.set_color_selection(ds::Color(235,123,89));
+	gen.create_cylinder(v3(0, 0, 0), 0.45f, 0.45f, 0.2f, 6);
+	gen.set_color(9, ds::Color(64, 64, 64));
+	gen.set_color(10, ds::Color(64, 64, 64));
+	gen.set_color(11, ds::Color(64, 64, 64));
+	gen.set_color(12, ds::Color(64, 64, 64));
 	//gen.debug_colors();
 	_hexagon = new ds::Mesh();
 	gen.build(_hexagon);
+	
+	gen.clear();
+	_bomb = new ds::Mesh();	
+	float pp = 0.4f;
+	v3 p[] = { v3(-pp, 0.0f, pp), v3(pp, 0.0f, pp), v3(pp, 0.0f, -pp), v3(-pp, 0.0f, -pp) };
+	gen.add_face(p);
+	gen.texture_face(0, math::buildTexture(0, 120, 40, 44));
+	gen.build(_bomb);
+
+	// numbers
+	gen.clear();	
+	gen.add_face(p);
+	for (int i = 0; i < 6; ++i) {
+		ds::Mesh* m = new ds::Mesh();		
+		gen.texture_face(0, math::buildTexture(100, i * 20, 20, 20));
+		gen.build(m);
+		_numbers.push_back(m);
+	}
+	
 	_material = ds::res::find("MeshMaterial", ds::ResourceType::MATERIAL);
+	_texMaterial = ds::res::find("TextureMeshMaterial", ds::ResourceType::MATERIAL);
 	//_hud = ds::res::getGUIDialog("HUD");
 	_border = new ds::Mesh;
 	
@@ -32,7 +57,9 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 
 MainGameState::~MainGameState() {
 	delete _border;
+	delete _bomb;
 	delete _hexagon;
+	_numbers.destroy_all();
 }
 
 // -------------------------------------------------------
@@ -86,25 +113,31 @@ void MainGameState::fillBombs() {
 	gen.set_color_selection(ds::Color(192, 192, 192));
 	for (int r = 0; r < _width + 1; ++r) {
 		v3 p = _grid.convert(-_width / 2 + r + 1, _height);
-		gen.create_cylinder(p, 0.475f, 0.475f, 0.2f, 6);
+		gen.create_cylinder(p, 0.475f, 0.475f, 0.4f, 6);
 		p = _grid.convert(r, -1);
-		gen.create_cylinder(p, 0.475f, 0.475f, 0.2f, 6);
+		gen.create_cylinder(p, 0.475f, 0.475f, 0.4f, 6);
 	}
 	for (int r = 0; r < _height + 1; ++r) {
 		int q_offset = r >> 1;
 		v3 p = _grid.convert(-r / 2 - 1,r);
-		gen.create_cylinder(p, 0.475f, 0.475f, 0.2f, 6);
+		gen.create_cylinder(p, 0.475f, 0.475f, 0.4f, 6);
 		p = _grid.convert(-r /2 + _width, r);
-		gen.create_cylinder(p, 0.475f, 0.475f, 0.2f, 6);
+		gen.create_cylinder(p, 0.475f, 0.475f, 0.4f, 6);
 	}
 	gen.build(_border);
 
-	_scene->add(_border, v3(0,0,0), _material);// , ds::Color(128, 0, 0, 255));// , v
+	_scene->add(_border, v3(0,0,0), _material);
 
 	// FIXME: _scene->clear();
 	for (int i = 0; i < _grid.size(); ++i) {
 		GridItem& item = _grid.get(i);
-		item.id = _boardScene->add(_hexagon, v3(item.position.x, 0.0f, item.position.y), _material);
+		item.id = _boardScene->add(_hexagon, v3(item.position.x, 0.0f, item.position.y), _material, ds::DrawMode::TRANSFORM);
+		if (item.bomb) {
+			_boardTexScene->add(_bomb, v3(item.position.x, 0.15f, item.position.y), _texMaterial,ds::DrawMode::TRANSFORM);
+		}
+		else if (item.adjacentBombs > 0) {
+			_boardTexScene->add(_numbers[item.adjacentBombs], v3(item.position.x, 0.15f, item.position.y), _texMaterial, ds::DrawMode::TRANSFORM);
+		}
 	}
 	delete[] temp;
 }
@@ -147,8 +180,10 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 	GridItem& current = _grid.get(h);
 	current.state = 1;
 	for (int i = 0; i < cnt; ++i) {
-		GridItem& item = _grid.get(n[i]);
+		GridItem& item = _grid.get(n[i]);		
 		if (item.state == 0 && item.adjacentBombs == 0) {
+			ds::Entity& e = _boardScene->get(item.id);
+			e.rotation = v3(0.0f, 0.0f, DEGTORAD(180.0f));
 			openEmptyTiles(n[i]);
 		}
 		else if (item.state == 0) {
@@ -178,7 +213,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 			const GridItem& item = _grid.get(idx);
 			Hex h = item.hex;
 			ds::Entity& e = _boardScene->get(id);
-			e.rotation = v3(0.0f, 0.0f, DEGTORAD(45.0f));
+			e.rotation = v3(0.0f, 0.0f, DEGTORAD(180.0f));
 			//Hex h = _grid.convertFromMousePos();
 			//if (_grid.isValid(h)) {
 			// right button -> mark cell or remove mark
@@ -255,27 +290,12 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-	//_sprites->begin();
-	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
 	_scene->draw();
 	_boardScene->transform();
 	_boardScene->draw();
+	_boardTexScene->transform();
+	_boardTexScene->draw();
 	/*
-	graphics::setCamera(_camera);
-	graphics::turnOnZBuffer();
-	_colouredBuffer->begin();
-
-	_colouredBuffer->add(_border);
-
-	if (_context->mode == 0) {
-		//_easyGroup->render();
-	}
-	else if (_context->mode == 1) {
-		//_mediumGroup->render();
-	}
-	if (_context->mode == 2) {
-		//_hardGroup->render();
-	}
 	for (int i = 0; i < _grid.size(); ++i) {
 		const GridItem& item = _grid.get(i);
 		if (_showBombs && item.bomb) {
@@ -299,9 +319,7 @@ void MainGameState::render() {
 		}
 		
 	}
-	_colouredBuffer->end();
 	*/
-	//_sprites->end();
 	//_context->hud->render();
 }
 

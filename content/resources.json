@@ -141,6 +141,15 @@ material {
 	shader : "ColouredShader"
 }
 material {
+	id : 53
+	name : "TextureMeshMaterial"
+	diffuse : 255,255,255,255
+	ambient : 32,32,32,2555
+	blend_state : "regular_blendstate"
+	shader : "TexturedShader"
+	texture : "TextureArray"
+}
+material {
 	id : 49
 	name : "SpriteMaterial"
 	diffuse : 255,255,255,255
@@ -199,7 +208,7 @@ mesh_buffer {
 	index_buffer : "SpriteQuadBuffer"
 	constant_buffer : "MVP_CB_WORLD"
 	vertex_buffer : "BasicVertexBuffer"
-	material : "MeshMaterial"
+	material : "TextureMeshMaterial"
 }
 mesh_buffer {
 	id : 26
@@ -219,7 +228,7 @@ camera {
 	id : 40
 	name : "fps"
 	type : "fps"
-	position : -5,5,-10
+	position : -8,10,-10
 	target : 0,0,1
 }
 scene {
@@ -234,6 +243,14 @@ scene {
 	id : 51
 	name : "Board"
 	mesh_buffer : "ColouredBuffer"
+	size : 1024
+	camera : "fps"
+	depth_enabled : true
+}
+scene {
+	id : 52
+	name : "BoardTex"
+	mesh_buffer : "TexturedBuffer"
 	size : 1024
 	camera : "fps"
 	depth_enabled : true

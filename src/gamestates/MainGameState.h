@@ -37,8 +37,12 @@ private:
 	ds::Mesh* _border;
 	ds::Scene* _scene;
 	ds::Scene* _boardScene;
+	ds::Scene* _boardTexScene;
 	ds::MeshBuffer* _colouredBuffer;
 	ds::FPSCamera* _camera;
+	ds::Mesh* _bomb;
+	ds::Array<ds::Mesh*> _numbers;
 	RID _material;
+	RID _texMaterial;
 };
 
