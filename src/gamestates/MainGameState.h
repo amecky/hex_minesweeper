@@ -21,8 +21,9 @@ public:
 	int onButtonUp(int button, int x, int y);
 private:
 	void fillBombs();
+	void showBombs();
 	void openEmptyTiles(const Hex& h);
-
+	ds::GUIDialog* _hud;
 	int _maxBombs;
 	GameContext* _context;
 	HexGrid _grid;
@@ -40,6 +41,7 @@ private:
 	ds::Scene* _boardTexScene;
 	ds::MeshBuffer* _colouredBuffer;
 	ds::FPSCamera* _camera;
+	ds::OrthoCamera* _orthoCamera;
 	ds::Mesh* _bomb;
 	ds::Array<ds::Mesh*> _numbers;
 	RID _material;

@@ -26,7 +26,7 @@ Minesweeper::~Minesweeper() {
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
-	
+	_context->mode = 2;
 	addGameState(new MainGameState(_context));
 	//addGameState(new GameOverState(_context));
 	addGameState(new MainMenuState(_context));

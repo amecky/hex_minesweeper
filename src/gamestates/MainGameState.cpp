@@ -10,7 +10,7 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 	_showBombs = false;
 	_endTimer = 0.0f;
 	_context->mode = 1;
-
+	_orthoCamera = (ds::OrthoCamera*)ds::res::getCamera("ortho");
 	_camera = (ds::FPSCamera*)ds::res::getCamera("fps");
 	_scene = ds::res::getScene("World");
 	_boardScene = ds::res::getScene("Board");
@@ -24,10 +24,10 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 	ds::gen::MeshGen gen;
 	gen.set_color_selection(ds::Color(235,123,89));
 	gen.create_cylinder(v3(0, 0, 0), 0.45f, 0.45f, 0.2f, 6,DEGTORAD(90.0f));
-	gen.set_color(9, ds::Color(128, 128, 128));
-	gen.set_color(10, ds::Color(128, 128, 128));
-	gen.set_color(11, ds::Color(128, 128, 128));
-	gen.set_color(12, ds::Color(128, 128, 128));
+	//gen.set_color(9, ds::Color(128, 128, 128));
+	//gen.set_color(10, ds::Color(128, 128, 128));
+	//gen.set_color(11, ds::Color(128, 128, 128));
+	//gen.set_color(12, ds::Color(128, 128, 128));
 	//gen.debug_colors();
 	_hexagon = new ds::Mesh();
 	gen.build(_hexagon);
@@ -52,7 +52,7 @@ MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), 
 	
 	_material = ds::res::find("MeshMaterial", ds::ResourceType::MATERIAL);
 	_texMaterial = ds::res::find("TextureMeshMaterial", ds::ResourceType::MATERIAL);
-	//_hud = ds::res::getGUIDialog("HUD");
+	_hud = ds::res::getGUIDialog("HUD");
 	_border = new ds::Mesh;
 	
 }
@@ -136,15 +136,24 @@ void MainGameState::fillBombs() {
 		GridItem& item = _grid.get(i);
 		item.numberID = INVALID_ID;
 		item.id = _boardScene->add(_hexagon, v3(item.position.x, 0.0f, item.position.y), _material, ds::DrawMode::TRANSFORM);
-		if (item.bomb) {
-			_boardTexScene->add(_bomb, v3(item.position.x, 0.15f, item.position.y), _texMaterial,ds::DrawMode::TRANSFORM);
-		}
-		else if (item.adjacentBombs > 0) {
-			item.numberID = _boardTexScene->add(_numbers[item.adjacentBombs], v3(item.position.x, 0.15f, item.position.y), _texMaterial, ds::DrawMode::TRANSFORM);
+		if (!item.bomb && item.adjacentBombs > 0) {
+			item.numberID = _boardTexScene->add(_numbers[item.adjacentBombs - 1], v3(item.position.x, 0.15f, item.position.y), _texMaterial, ds::DrawMode::TRANSFORM);
 			_boardTexScene->deactivate(item.numberID);
 		}
 	}
 	delete[] temp;
+}
+
+// -------------------------------------------------------
+// show bombs
+// -------------------------------------------------------
+void MainGameState::showBombs() {
+	for (int i = 0; i < _grid.size(); ++i) {
+		GridItem& item = _grid.get(i);
+		if (item.bomb) {
+			_boardTexScene->add(_bomb, v3(item.position.x, 0.15f, item.position.y), _texMaterial, ds::DrawMode::TRANSFORM);
+		}
+	}
 }
 
 // -------------------------------------------------------
@@ -157,15 +166,15 @@ void MainGameState::activate() {
 	_width = mode.width;
 	_height = mode.height;
 	_maxBombs = mode.maxBombs;
+	LOG << "activate - mode: " << _context->mode << " width: " << _width << " height: " << _height << " bombs: " << _maxBombs;
 	fillBombs();
 	_context->marked = 0;
 	_context->markedCorrectly = 0;	
-	//_context->hud->resetTimer(3);
-	//_context->hud->startTimer(3);
-	//_context->hud->setNumber(2, _maxBombs);
+	_hud->resetTimer(3);
+	_hud->startTimer(3);
 	char buffer[32];
 	sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
-	//_context->hud->updateText(2, buffer);
+	_hud->updateText(2, buffer);
 	_showBombs = false;
 	_endTimer = 0.0f;
 }
@@ -174,7 +183,7 @@ void MainGameState::activate() {
 // deactivate
 // -------------------------------------------------------
 void MainGameState::deactivate() {
-	//_context->hud->deactivate();
+	_hud->deactivate();
 }
 // -------------------------------------------------------
 // open empty tiles
@@ -190,9 +199,9 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 			_boardScene->rotate(item.id,v3(0.0f, 0.0f, PI));
 			openEmptyTiles(n[i]);
 		}
-		else if (item.state == 0) {
-			item.state = 1;
-		}
+		//else if (item.state == 0) {
+			//item.state = 1;
+		//}
 	}
 }
 
@@ -200,7 +209,7 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 // on button up
 // -------------------------------------------------------
 int MainGameState::onButtonUp(int button, int x, int y) {
-	
+	LOG << "button: " << button << " x: " << x << " y: " << y;
 	ds::Ray r = graphics::getCameraRay(_camera);
 	ID id = _boardScene->intersects(r);
 	if (id != INVALID_ID) {
@@ -213,15 +222,13 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 		}
 		if (idx != -1) {
 			GridItem& item = _grid.get(idx);
-			LOG << "item: " << item.id << " adjacents: " << item.adjacentBombs << " bomb: " << item.bomb;
+			LOG << "item: " << item.id << " adjacents: " << item.adjacentBombs << " bomb: " << item.bomb << " state: " << item.state << " hex q: " << item.hex.q << " r: " << item.hex.r;
 			Hex h = item.hex;
 			// right button -> mark cell or remove mark
 			if (button == 1) {
 				if (item.state == 0) {
 					if (_context->marked < _maxBombs) {
-						
-						// FIXME: place marker
-						
+						item.marker_id = _boardTexScene->add(_bomb, v3(item.position.x, 0.15f, item.position.y), _texMaterial, ds::DrawMode::TRANSFORM);
 						item.state = 2;
 						++_context->marked;
 						if (item.bomb) {
@@ -234,7 +241,11 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 						--_context->markedCorrectly;
 					}
 					item.state = 0;
-					_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI));
+					if (item.marker_id != INVALID_ID) {
+						_boardTexScene->remove(item.marker_id);
+						item.marker_id = INVALID_ID;
+					}
+					
 					--_context->marked;
 				}
 
@@ -242,10 +253,9 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					return 1;
 				}
 				int left = _maxBombs - _context->marked;
-				//_context->hud->setNumber(2, left);
 				char buffer[32];
 				sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
-				//_context->hud->updateText(2, buffer);
+				_hud->updateText(2, buffer);
 			}
 			// left button
 			else {
@@ -254,20 +264,24 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 						//return 1;
 						_endTimer = 0.0f;
 						_showBombs = true;
-						//_context->hud->deactivate();
+						showBombs();
+						_hud->deactivate();
 
 						// FIXME: game over!!!!
 
 					}
 					item.state = 1;
 					_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI));
+					_boardScene->setColor(item.id, ds::Color(128,128,128));
 					if (item.numberID != INVALID_ID) {
 						_boardTexScene->activate(item.numberID);
 					}
-					LOG << "adjacents: " << item.adjacentBombs;
 					if (item.adjacentBombs == 0) {
 						openEmptyTiles(h);
 					}
+				}
+				else {
+					LOG << "item already open";
 				}
 			}
 		}
@@ -280,7 +294,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 int MainGameState::update(float dt) {
 	Hex h = _grid.convertFromMousePos();
 	_grid.update(dt);
-	//_context->hud->tick(dt);
+	_hud->tick(dt);
 	if (_showBombs) {
 		_endTimer += dt;
 		if (_endTimer > 2.0f) {
@@ -295,10 +309,14 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
+	graphics::setCamera(_camera);
 	_scene->draw();
 	_boardScene->draw();
 	_boardTexScene->draw();
-	//_context->hud->render();
+	graphics::setCamera(_orthoCamera);
+	graphics::turnOffZBuffer();
+	_hud->render();
+	graphics::turnOnZBuffer();
 }
 
 // -------------------------------------------------------
