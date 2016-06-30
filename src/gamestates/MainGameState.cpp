@@ -196,7 +196,9 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 	for (int i = 0; i < cnt; ++i) {
 		GridItem& item = _grid.get(n[i]);		
 		if (item.state == 0 && item.adjacentBombs == 0) {
-			_boardScene->rotate(item.id,v3(0.0f, 0.0f, PI));
+			//_boardScene->rotate(item.id,v3(0.0f, 0.0f, PI));
+			item.timer = 0.0f;
+			item.rotating = true;
 			openEmptyTiles(n[i]);
 		}
 		//else if (item.state == 0) {
@@ -271,11 +273,11 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 
 					}
 					item.state = 1;
-					_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI));
+					//_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI));
 					_boardScene->setColor(item.id, ds::Color(128,128,128));
-					if (item.numberID != INVALID_ID) {
-						_boardTexScene->activate(item.numberID);
-					}
+					item.timer = 0.0f;
+					item.rotating = true;
+					
 					if (item.adjacentBombs == 0) {
 						openEmptyTiles(h);
 					}
@@ -292,16 +294,38 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 // Update
 // -------------------------------------------------------
 int MainGameState::update(float dt) {
-	Hex h = _grid.convertFromMousePos();
+	// update grid and HUD
 	_grid.update(dt);
 	_hud->tick(dt);
+
+	// tick timer when showing bombs
 	if (_showBombs) {
 		_endTimer += dt;
 		if (_endTimer > 2.0f) {
 			return 1;
 		}
 	}
+
+	// for debugging purpose only
 	_camera->update(dt);
+
+	// rotate tiles
+	for (int i = 0; i < _grid.size(); ++i) {
+		GridItem& item = _grid.get(i);
+		if (item.rotating) {
+			item.timer += dt;
+			float n = item.timer / 0.2f;
+			_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI * n));
+			if (item.timer > 0.2f) {
+				item.rotating = false;
+				if (item.numberID != INVALID_ID) {
+					_boardTexScene->activate(item.numberID);
+				}
+			}
+		}
+	}
+
+
 	return 0;
 }
 

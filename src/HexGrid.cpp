@@ -47,6 +47,7 @@ void HexGrid::fill() {
 			item.wiggle = false;
 			item.timer = 0.0f;
 			item.scale = v2(1, 1);
+			item.rotating = false;
 			int idx = (q + q_offset) + r * _qMax;
 			_items[idx] = item;
 		}

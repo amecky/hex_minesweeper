@@ -269,4 +269,12 @@ dialog {
     font : "xscale"
     file : "MainMenu"
 }
+dialog {
+    id : 16
+    name : "GameOverDialog"
+    sprite_buffer : "BasicSpriteBuffer"
+    font : "xscale"
+    file : "GameOver"
+}
+
 

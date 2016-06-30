@@ -16,6 +16,7 @@ struct GridItem {
 	ID id;
 	ID numberID;
 	ID marker_id;
+	bool rotating;
 };
 
 class HexGrid {

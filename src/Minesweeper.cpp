@@ -28,14 +28,13 @@ Minesweeper::~Minesweeper() {
 bool Minesweeper::loadContent() {	
 	_context->mode = 2;
 	addGameState(new MainGameState(_context));
-	//addGameState(new GameOverState(_context));
+	addGameState(new GameOverState(_context));
 	addGameState(new MainMenuState(_context));
 	//addGameState(new HighscoreState(_context));
-	connectGameStates("MainMenu", 1, "MainGame");
-	/*
 	connectGameStates("GameOver", 2, "MainMenu");
 	connectGameStates("MainGame", 1, "GameOver");
 	connectGameStates("MainMenu", 1, "MainGame");
+	/*
 	connectGameStates("MainMenu", 5, "Highscores");
 	connectGameStates("Highscores", 1, "MainMenu");
 	if (!_context->highscore_service.load()) {
