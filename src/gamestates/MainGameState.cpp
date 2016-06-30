@@ -110,6 +110,8 @@ void MainGameState::fillBombs() {
 			}
 		}
 	}
+
+	_scene->clear();
 	_border->clear();
 	ds::gen::MeshGen gen;
 	float sz = 0.45f;
@@ -131,11 +133,13 @@ void MainGameState::fillBombs() {
 
 	_scene->add(_border, v3(0,0,0), _material);
 
-	// FIXME: _scene->clear();
+	_boardScene->clear();
+	_boardTexScene->clear();
 	for (int i = 0; i < _grid.size(); ++i) {
 		GridItem& item = _grid.get(i);
 		item.numberID = INVALID_ID;
 		item.id = _boardScene->add(_hexagon, v3(item.position.x, 0.0f, item.position.y), _material, ds::DrawMode::TRANSFORM);
+		_boardScene->setColor(item.id, ds::Color(255,255,255));
 		if (!item.bomb && item.adjacentBombs > 0) {
 			item.numberID = _boardTexScene->add(_numbers[item.adjacentBombs - 1], v3(item.position.x, 0.15f, item.position.y), _texMaterial, ds::DrawMode::TRANSFORM);
 			_boardTexScene->deactivate(item.numberID);
@@ -196,9 +200,10 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 	for (int i = 0; i < cnt; ++i) {
 		GridItem& item = _grid.get(n[i]);		
 		if (item.state == 0 && item.adjacentBombs == 0) {
-			//_boardScene->rotate(item.id,v3(0.0f, 0.0f, PI));
-			item.timer = 0.0f;
-			item.rotating = true;
+			_boardScene->remove(item.id);
+			//_boardScene->setColor(item.id, ds::Color(128, 128, 128));
+			//item.timer = 0.0f;
+			//item.rotating = true;
 			openEmptyTiles(n[i]);
 		}
 		//else if (item.state == 0) {
@@ -273,13 +278,15 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 
 					}
 					item.state = 1;
-					//_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI));
-					_boardScene->setColor(item.id, ds::Color(128,128,128));
-					item.timer = 0.0f;
-					item.rotating = true;
-					
+					//_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI));					
 					if (item.adjacentBombs == 0) {
+						_boardScene->remove(item.id);
 						openEmptyTiles(h);
+					}
+					else {
+						_boardScene->setColor(item.id, ds::Color(128, 128, 128));
+						item.timer = 0.0f;
+						item.rotating = true;
 					}
 				}
 				else {
@@ -347,7 +354,7 @@ void MainGameState::render() {
 // on char
 // -------------------------------------------------------
 int MainGameState::onChar(int ascii) {	
-	if (ascii == 'e') {
+	if (ascii == 'f') {
 		return 1;
 	}
 	if (ascii == 'r') {

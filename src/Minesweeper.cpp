@@ -31,6 +31,7 @@ bool Minesweeper::loadContent() {
 	addGameState(new GameOverState(_context));
 	addGameState(new MainMenuState(_context));
 	//addGameState(new HighscoreState(_context));
+	connectGameStates("GameOver", 1, "MainGame");
 	connectGameStates("GameOver", 2, "MainMenu");
 	connectGameStates("MainGame", 1, "GameOver");
 	connectGameStates("MainMenu", 1, "MainGame");
