@@ -6,13 +6,13 @@
 struct GridItem {
 
 	Hex hex;
-	v2 position;
+	v3 position;
 	bool bomb;
 	int adjacentBombs;
 	int state; // 0 = closed / 1 = open / 2 = marked
 	bool wiggle;
 	float timer;
-	v2 scale;
+	v3 scale;
 	ID id;
 	ID numberID;
 	ID marker_id;
@@ -40,7 +40,13 @@ public:
 	void setOrigin(const v2& origin);
 	void update(float dt);
 	int getIndex(const Hex& h)const;
-	v3 convert(int q, int r);
+	v3 convert(int q, int r) const;
+	int getWidth() const {
+		return _qMax;
+	}
+	int getHeight() const {
+		return _rMax;
+	}
 private:
 	int _qMax;
 	int _rMax;

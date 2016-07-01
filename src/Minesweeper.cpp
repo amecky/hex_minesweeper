@@ -58,7 +58,7 @@ void Minesweeper::init() {
 	// for testing
 	//_context->reset();
 	//activate("MeshGenTestState");
-	activate("MainGame");
+	activate("MainMenu");
 	//activate("WorldState");
 }
 

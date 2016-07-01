@@ -6,6 +6,7 @@
 #include "..\HexGrid.h"
 #include <vector>
 #include <renderer\sprites.h>
+#include "..\utils\GameObjects.h"
 
 class MainGameState : public ds::GameState {
 
@@ -34,16 +35,13 @@ private:
 	float _endTimer;
 	Hex _current;
 	//ID _selected;
-	ds::Mesh* _hexagon;
-	ds::Mesh* _border;
+	GameObjects _objects;
 	ds::Scene* _scene;
 	ds::Scene* _boardScene;
 	ds::Scene* _boardTexScene;
-	ds::MeshBuffer* _colouredBuffer;
+	//ds::MeshBuffer* _colouredBuffer;
 	ds::FPSCamera* _camera;
 	ds::OrthoCamera* _orthoCamera;
-	ds::Mesh* _bomb;
-	ds::Array<ds::Mesh*> _numbers;
 	RID _material;
 	RID _texMaterial;
 };
