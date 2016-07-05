@@ -16,7 +16,7 @@ struct GridItem {
 	ID id;
 	ID numberID;
 	ID marker_id;
-	bool rotating;
+	//bool rotating;
 };
 
 class HexGrid {
@@ -39,7 +39,8 @@ public:
 	Hex convertFromMousePos();
 	void setOrigin(const v2& origin);
 	void update(float dt);
-	int getIndex(const Hex& h)const;
+	int getIndex(const Hex& h) const;
+	int getIndex(ID id) const;
 	v3 convert(int q, int r) const;
 	int getWidth() const {
 		return _qMax;

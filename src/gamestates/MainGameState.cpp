@@ -92,6 +92,7 @@ void MainGameState::fillBombs() {
 		item.numberID = INVALID_ID;
 		item.id = _boardScene->add(_objects.hexagon, v3(item.position.x, 0.0f, item.position.y), _material, ds::DrawMode::TRANSFORM);
 		_boardScene->setColor(item.id, ds::Color(255,255,255));
+		_boardScene->moveTo(item.id, v3(item.position.x, -20.0f - math::random(0.0f,25.0f), item.position.y), v3(item.position.x, 0.0f, item.position.y), 0.5f);
 		if (!item.bomb && item.adjacentBombs > 0) {
 			item.numberID = _boardTexScene->add(_objects.numbers[item.adjacentBombs - 1], v3(item.position.x, 0.15f, item.position.y), _texMaterial, ds::DrawMode::TRANSFORM);
 			_boardTexScene->deactivate(item.numberID);
@@ -238,7 +239,8 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					else {
 						_boardScene->setColor(item.id, ds::Color(128, 128, 128));
 						item.timer = 0.0f;
-						item.rotating = true;
+						//item.rotating = true;
+						_boardScene->rotateTo(item.id, v3(0, 0, 0), v3(0.0f, 0.0f, PI), 0.4f);
 					}
 				}
 				else {
@@ -265,26 +267,21 @@ int MainGameState::update(float dt) {
 		}
 	}
 
-	// for debugging purpose only
-	//_camera->update(dt);
-
-	// rotate tiles
-	for (int i = 0; i < _grid.size(); ++i) {
-		GridItem& item = _grid.get(i);
-		if (item.rotating) {
-			item.timer += dt;
-			float n = item.timer / 0.2f;
-			_boardScene->rotate(item.id, v3(0.0f, 0.0f, PI * n));
-			if (item.timer > 0.2f) {
-				item.rotating = false;
-				if (item.numberID != INVALID_ID) {
-					_boardTexScene->activate(item.numberID);
+	_boardScene->tick(dt);
+	if (_boardScene->hasEvents()) {
+		for (int i = 0; i < _boardScene->numEvents(); ++i) {
+			const ds::ActionEvent& evn = _boardScene->getEvent(i);
+			if (evn.action == ds::AT_ROTATE_TO) {
+				int idx = _grid.getIndex(evn.id);
+				if (idx != -1) {
+					const GridItem& item = _grid.get(idx);
+					if (item.numberID != INVALID_ID) {
+						_boardTexScene->activate(item.numberID);
+					}
 				}
 			}
 		}
 	}
-
-
 	return 0;
 }
 
