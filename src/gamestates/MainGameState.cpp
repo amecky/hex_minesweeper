@@ -240,7 +240,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 						_boardScene->setColor(item.id, ds::Color(128, 128, 128));
 						item.timer = 0.0f;
 						//item.rotating = true;
-						_boardScene->rotateTo(item.id, v3(0, 0, 0), v3(0.0f, 0.0f, PI), 0.4f);
+						_boardScene->rotateTo(item.id, v3(0, 0, 0), v3(0.0f, 0.0f, PI), _context->settings->rotateTTL);
 					}
 				}
 				else {

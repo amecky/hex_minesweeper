@@ -15,6 +15,7 @@ Minesweeper::Minesweeper() : ds::BaseApp() {
 	_context = new GameContext;
 	_context->mode = 0;
 	_context->settings = new GameSettings;
+	_context->settings->load();
 }
 
 Minesweeper::~Minesweeper() {
