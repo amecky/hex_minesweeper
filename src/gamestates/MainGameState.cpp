@@ -22,6 +22,7 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	for (int i = 0; i < 6; ++i ) {
 		_textures[i + 3] = math::buildTexture(ds::Rect(50, i * 40, 40, 44));
 	}
+	_textures[9] = math::buildTexture(ds::Rect(0, 80, 40, 44));
 }
 
 MainGameState::~MainGameState() {
@@ -76,6 +77,21 @@ void MainGameState::fillBombs() {
 			}
 		}
 	}
+
+	for (int r = 0; r < _width + 1; ++r) {
+		v2 p = _grid.convert(-_width / 2 + r + 1, _height);
+		_scene->add(p, _textures[9], _material);		
+		p = _grid.convert(r, -1);
+		_scene->add(p, _textures[9], _material);
+	}
+	for (int r = 0; r < _height + 1; ++r) {
+		int q_offset = r >> 1;
+		v2 p = _grid.convert(-r / 2 - 1, r);
+		_scene->add(p, _textures[9], _material);
+		p = _grid.convert(-r / 2 + _width, r);
+		_scene->add(p, _textures[9], _material);
+	}
+
 	delete[] temp;
 }
 
@@ -92,22 +108,24 @@ void MainGameState::activate() {
 	fillBombs();
 	_context->marked = 0;
 	_context->markedCorrectly = 0;	
-	//_context->hud->resetTimer(3);
-	//_context->hud->startTimer(3);
-	//_context->hud->setNumber(2, _maxBombs);
-	char buffer[32];
-	sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
+	_context->hud->resetTimer(3);
+	_context->hud->startTimer(3);
+	_context->hud->setNumber(2, _maxBombs);
+	//char buffer[32];
+	//sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
 	//_context->hud->updateText(2, buffer);
 	_showBombs = false;
 	_endTimer = 0.0f;
 	_hover = -1;
+	_scene->setActive(true);
 }
 
 // -------------------------------------------------------
 // deactivate
 // -------------------------------------------------------
 void MainGameState::deactivate() {
-	//_context->hud->deactivate();
+	_scene->setActive(false);
+	_context->hud->deactivate();
 }
 // -------------------------------------------------------
 // open empty tiles
@@ -162,10 +180,10 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			//_context->hud->setNumber(2, left);
+			_context->hud->setNumber(2, left);
 			char buffer[32];
 			sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
-			//_context->hud->updateText(2, buffer);
+			_context->hud->updateText(2, buffer);
 		}
 		// left button
 		else {
@@ -175,7 +193,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					//return 1;
 					_endTimer = 0.0f;
 					_showBombs = true;
-					//_context->hud->deactivate();
+					_context->hud->deactivate();
 					for (int i = 0; i < _grid.size(); ++i) {
 						const GridItem& item = _grid.get(i);
 						if (item.bomb) {
@@ -211,7 +229,8 @@ int MainGameState::update(float dt) {
 		}
 	}
 
-	//_context->hud->tick(dt);
+	_context->hud->tick(dt);
+
 	if (_showBombs) {
 		_endTimer += dt;
 		if (_endTimer > 2.0f) {
@@ -225,7 +244,7 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-	//_context->hud->render();
+	_context->hud->render();
 }
 
 // -------------------------------------------------------

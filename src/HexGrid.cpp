@@ -76,6 +76,11 @@ Hex HexGrid::convertFromMousePos() {
 	v2 mp = ds::input::getMousePosition();
 	return hex_math::hex_round(hex_math::pixel_to_hex(_layout, mp));
 }
+
+v2 HexGrid::convert(int q, int r) const {
+	Hex hex = Hex(q, r);
+	return hex_math::hex_to_pixel(_layout, hex);
+}
 // -------------------------------------------------------
 // get
 // -------------------------------------------------------

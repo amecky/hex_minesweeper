@@ -23,3 +23,27 @@ font {
 //particles {
 //	sprite_buffer : 8
 //}
+dialog {
+    name : "MainMenu"
+    font : "xscale"
+    file : "MainMenu"
+}
+dialog {
+    name : "GameOver"
+    file : "GameOver" 
+    font : "xscale"
+}
+dialog {
+    name : "Highscores"
+    file : "Highscores"
+    font : "xscale"
+}
+dialog {
+    name : "HUD"
+    file : "HUD"
+    font : "xscale"
+}
+particle_manager {
+	name : "ParticleManager"
+
+}

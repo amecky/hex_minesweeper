@@ -42,6 +42,7 @@ public:
 	Hex convertFromMousePos();
 	void setOrigin(const v2& origin);
 	int getIndex(const Hex& h)const;
+	v2 convert(int q, int r) const;
 private:
 	int _qMax;
 	int _rMax;
