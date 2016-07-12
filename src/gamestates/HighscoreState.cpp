@@ -1,7 +1,7 @@
 #include "HighscoreState.h"
 #include <utils\Log.h>
 
-HighscoreState::HighscoreState(GameContext* context) : ds::BasicMenuGameState("Highscores", 17) , _context(context) {
+HighscoreState::HighscoreState(GameContext* context, ds::Game* game) : ds::BasicMenuGameState("Highscores", "Highscores", game) , _context(context) {
 }
 
 

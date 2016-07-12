@@ -5,7 +5,7 @@
 class MainMenuState : public ds::BasicMenuGameState {
 
 public:
-	MainMenuState(GameContext* context);
+	MainMenuState(GameContext* context, ds::Game* game);
 	~MainMenuState();
 	int onGUIButton(int button);
 private:

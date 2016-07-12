@@ -6,7 +6,7 @@
 class TestState : public ds::GameState {
 
 public:
-	TestState(GameContext* context);
+	TestState(GameContext* context, ds::Game* game);
 	~TestState();
 	void init();
 	int update(float dt);

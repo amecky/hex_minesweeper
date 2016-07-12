@@ -26,5 +26,4 @@ public:
 	void render();
 private:
 	GameContext* _context;
-	ds::SpriteBuffer* _sprites;
 };

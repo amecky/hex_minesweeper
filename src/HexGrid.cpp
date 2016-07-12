@@ -1,6 +1,7 @@
 #include "HexGrid.h"
 #include <assert.h>
 #include <renderer\graphics.h>
+#include <base\InputSystem.h>
 
 HexGrid::HexGrid() : _qMax(0), _rMax(0), _items(0), _layout(layout_pointy, v2(24.0f, 24.0f), v2(100, 130)) {
 }
@@ -35,7 +36,7 @@ void HexGrid::fill() {
 			GridItem item;
 			item.hex = Hex(q, r);
 			item.position = hex_math::hex_to_pixel(_layout, item.hex);
-			item.state = 0;
+			item.state = GIS_CLOSED;
 			item.bomb = false;
 			item.adjacentBombs = 0;
 			item.wiggle = false;
@@ -72,8 +73,7 @@ int HexGrid::neighbors(const Hex& hex, Hex* ret) {
 }
 
 Hex HexGrid::convertFromMousePos() {
-	v2 mp;
-	graphics::getMousePosition(&mp);
+	v2 mp = ds::input::getMousePosition();
 	return hex_math::hex_round(hex_math::pixel_to_hex(_layout, mp));
 }
 // -------------------------------------------------------
@@ -100,8 +100,7 @@ const int HexGrid::size() const {
 // select
 // -------------------------------------------------------
 int HexGrid::select(int x, int y) {
-	v2 mp;
-	graphics::getMousePosition(&mp);
+	v2 mp = ds::input::getMousePosition();
 	Hex h = hex_math::hex_round(hex_math::pixel_to_hex(_layout, mp));
 	int q_offset = h.r >> 1;
 	int selected = -1;
@@ -157,36 +156,3 @@ int HexGrid::getIndex(const Hex& hex) const {
 	return (hex.q + q_offset) + hex.r * _qMax;
 }
 
-// -------------------------------------------------------
-// update
-// -------------------------------------------------------
-void HexGrid::update(float dt) {
-	// scaling based on item state
-	for (int i = 0; i < size(); ++i) {
-		GridItem& item = get(i);
-		if (item.wiggle) {
-			item.timer += dt;
-			float norm = item.timer / 0.4f;
-			item.scale.x = 0.8f + sin(item.timer * 5.0f) * 0.2f;
-			item.scale.y = 0.8f + sin(item.timer * 5.0f) * 0.2f;
-			if (norm >= 1.0f) {
-				item.wiggle = false;
-				item.scale = v2(1, 1);
-			}
-		}
-	}
-
-	// hover
-	Hex h = convertFromMousePos();
-	if (isValid(h)) {
-		int current = getIndex(h);
-		if (current != _hover) {
-			_hover = current;
-			GridItem& item = get(h);
-			if (!item.wiggle) {
-				item.wiggle = true;
-				item.timer = 0.0f;
-			}
-		}
-	}
-}

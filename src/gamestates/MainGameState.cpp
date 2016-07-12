@@ -2,13 +2,26 @@
 #include <Vector.h>
 #include <resources\ResourceContainer.h>
 
-MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
-	_sprites = ds::res::getSpriteBuffer(8);
+MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameState("MainGame", game), _context(context) {
+	_scene = game->create2DScene("Sprites");
+	_material = ds::res::find("SpriteMaterial", ds::ResourceType::MATERIAL);
+	ds::Material* m = ds::res::getMaterial(_material);
+	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
+	_scene->setActive(true);
 	_selected = -1;
 	_maxBombs = 60;
 	_showBombs = false;
 	_endTimer = 0.0f;
 	_context->mode = 1;
+	// closed
+	_textures[0] = math::buildTexture(ds::Rect(0, 40, 40, 44));
+	// marked
+	_textures[1] = math::buildTexture(ds::Rect(0, 120, 40, 44));
+	// closed
+	_textures[2] = math::buildTexture(ds::Rect(0, 40, 40, 44));
+	for (int i = 0; i < 6; ++i ) {
+		_textures[i + 3] = math::buildTexture(ds::Rect(50, i * 40, 40, 44));
+	}
 }
 
 MainGameState::~MainGameState() {
@@ -45,6 +58,7 @@ void MainGameState::fillBombs() {
 		_grid.markAsBomb(temp[i]);
 	}
 	Hex n[6];
+	_scene->clear();
 	for (int r = 0; r < _height; r++) {
 		int q_offset = r >> 1;
 		for (int q = -q_offset; q < _width - q_offset; q++) {
@@ -52,11 +66,12 @@ void MainGameState::fillBombs() {
 			if (_grid.isValid(h)) {
 				int cnt = _grid.neighbors(h, n);
 				GridItem& current = _grid.get(h);
+				current.id = _scene->add(current.position, _textures[0], _material);
 				for (int i = 0; i < cnt; ++i) {
 					const GridItem& item = _grid.get(n[i]);
 					if (item.bomb) {
 						++current.adjacentBombs;
-					}
+					}					
 				}
 			}
 		}
@@ -77,14 +92,15 @@ void MainGameState::activate() {
 	fillBombs();
 	_context->marked = 0;
 	_context->markedCorrectly = 0;	
-	_context->hud->resetTimer(3);
-	_context->hud->startTimer(3);
+	//_context->hud->resetTimer(3);
+	//_context->hud->startTimer(3);
 	//_context->hud->setNumber(2, _maxBombs);
 	char buffer[32];
 	sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
-	_context->hud->updateText(2, buffer);
+	//_context->hud->updateText(2, buffer);
 	_showBombs = false;
 	_endTimer = 0.0f;
+	_hover = -1;
 }
 
 // -------------------------------------------------------
@@ -100,14 +116,16 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 	Hex n[6];
 	int cnt = _grid.neighbors(h, n);
 	GridItem& current = _grid.get(h);
-	current.state = 1;
+	current.state = GIS_OPEN;
+	_scene->setTexture(current.id, _textures[3]);
 	for (int i = 0; i < cnt; ++i) {
 		GridItem& item = _grid.get(n[i]);
-		if (item.state == 0 && item.adjacentBombs == 0) {
+		if (item.state == 0 && item.adjacentBombs == 0) {			
 			openEmptyTiles(n[i]);
 		}
 		else if (item.state == 0) {
-			item.state = 1;
+			_scene->setTexture(item.id, _textures[3]);
+			item.state = GIS_OPEN;
 		}
 	}
 }
@@ -121,20 +139,22 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 		// right button -> mark cell or remove mark
 		if (button == 1) {			
 			GridItem& item = _grid.get(h);
-			if (item.state == 0) {
+			if (item.state == GIS_CLOSED) {
 				if (_context->marked < _maxBombs) {
-					item.state = 2;
+					item.state = GIS_MARKED;
+					_scene->setTexture(item.id, _textures[1]);
 					++_context->marked;
 					if (item.bomb) {
 						++_context->markedCorrectly;
 					}
 				}
 			}
-			else if (item.state == 2) {
+			else if (item.state == GIS_MARKED) {
 				if (item.bomb) {
 					--_context->markedCorrectly;
 				}
-				item.state = 0;
+				item.state = GIS_CLOSED;
+				_scene->setTexture(item.id, _textures[0]);
 				--_context->marked;
 			}
 
@@ -145,7 +165,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 			//_context->hud->setNumber(2, left);
 			char buffer[32];
 			sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
-			_context->hud->updateText(2, buffer);
+			//_context->hud->updateText(2, buffer);
 		}
 		// left button
 		else {
@@ -156,11 +176,15 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					_endTimer = 0.0f;
 					_showBombs = true;
 					//_context->hud->deactivate();
-
-					// FIXME: game over!!!!
-
+					for (int i = 0; i < _grid.size(); ++i) {
+						const GridItem& item = _grid.get(i);
+						if (item.bomb) {
+							_scene->setTexture(item.id, _textures[1]);
+						}
+					}
 				}
-				item.state = 1;
+				item.state = GIS_OPEN;
+				_scene->setTexture(item.id, _textures[item.adjacentBombs + 3]);
 				if (item.adjacentBombs == 0) {
 					openEmptyTiles(h);
 				}
@@ -174,8 +198,20 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 // -------------------------------------------------------
 int MainGameState::update(float dt) {
 	Hex h = _grid.convertFromMousePos();
-	_grid.update(dt);
-	_context->hud->tick(dt);
+	// wiggle hover piece
+	if (_grid.isValid(h)) {
+		int current = _grid.getIndex(h);
+		if (current != _hover) {
+			_hover = current;
+			GridItem& item = _grid.get(h);
+			if (item.state == 0) {
+				_scene->scaleTo(item.id, v2(1, 1), v2(0.8f, 0.8f), 0.2f, 0, tweening::easeSinus);
+			}
+
+		}
+	}
+
+	//_context->hud->tick(dt);
 	if (_showBombs) {
 		_endTimer += dt;
 		if (_endTimer > 2.0f) {
@@ -189,43 +225,7 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-	_sprites->begin();
-	//ds::sprites::draw(v2(512, 384), ds::math::buildTexture(ds::Rect(0, 512, 512, 384)), 0.0f, 2.0f, 2.0f);
-
-	if (_context->mode == 0) {
-		//_easyGroup->render();
-	}
-	else if (_context->mode == 1) {
-		//_mediumGroup->render();
-	}
-	if (_context->mode == 2) {
-		//_hardGroup->render();
-	}
-
-	for (int i = 0; i < _grid.size(); ++i) {
-		const GridItem& item = _grid.get(i);
-		if (_showBombs && item.bomb) {
-			_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
-		}
-		else {
-			// marked
-			if (item.state == 2) {
-				_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 120, 40, 44)));
-			}
-			// opened
-			else if (item.state == 1) {
-				int offset = item.adjacentBombs * 40;
-				_sprites->draw(item.position, math::buildTexture(ds::Rect(50, offset, 40, 44)));
-			}
-			// closed
-			else {
-				_sprites->draw(item.position, math::buildTexture(ds::Rect(0, 40, 40, 44)),0.0f,item.scale);
-			}
-		}
-		
-	}
-	_sprites->end();
-	_context->hud->render();
+	//_context->hud->render();
 }
 
 // -------------------------------------------------------

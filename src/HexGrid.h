@@ -1,14 +1,22 @@
 #pragma once
 #include <Vector.h>
 #include <math\hex.h>
+#include <Common.h>
+
+enum GridItemState {
+	GIS_CLOSED,
+	GIS_OPEN,
+	GIS_MARKED
+};
 
 struct GridItem {
 
+	ID id;
 	Hex hex;
 	v2 position;
 	bool bomb;
 	int adjacentBombs;
-	int state; // 0 = closed / 1 = open / 2 = marked
+	GridItemState state; 
 	bool wiggle;
 	float timer;
 	v2 scale;
@@ -33,7 +41,6 @@ public:
 	int neighbors(const Hex& hex,Hex* ret);
 	Hex convertFromMousePos();
 	void setOrigin(const v2& origin);
-	void update(float dt);
 	int getIndex(const Hex& h)const;
 private:
 	int _qMax;

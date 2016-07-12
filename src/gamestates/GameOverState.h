@@ -5,7 +5,7 @@
 class GameOverState : public ds::BasicMenuGameState {
 
 public:
-	GameOverState(GameContext* context);
+	GameOverState(GameContext* context, ds::Game* game);
 	~GameOverState();
 	void activate();
 private:

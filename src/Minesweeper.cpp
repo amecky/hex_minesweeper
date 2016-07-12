@@ -23,19 +23,18 @@ Minesweeper::~Minesweeper() {
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
-	_context->hud = ds::res::getGUIDialog(18);
-	_sprites = ds::res::getSpriteBuffer(8);
-	addGameState(new MainGameState(_context));
-	addGameState(new GameOverState(_context));
-	addGameState(new MainMenuState(_context));
-	addGameState(new HighscoreState(_context));
-	addGameState(new TestState(_context));
-	connectGameStates("GameOver", 1, "MainGame");
-	connectGameStates("GameOver", 2, "MainMenu");
-	connectGameStates("MainGame", 1, "GameOver");
-	connectGameStates("MainMenu", 1, "MainGame");
-	connectGameStates("MainMenu", 5, "Highscores");
-	connectGameStates("Highscores", 1, "MainMenu");
+	//_context->hud = ds::res::getGUIDialog(18);
+	addGameState(new MainGameState(_context, game));
+	//addGameState(new GameOverState(_context, game));
+	//addGameState(new MainMenuState(_context, game));
+	//addGameState(new HighscoreState(_context, game));
+	//addGameState(new TestState(_context, game));
+	//connectGameStates("GameOver", 1, "MainGame");
+	//connectGameStates("GameOver", 2, "MainMenu");
+	//connectGameStates("MainGame", 1, "GameOver");
+	//connectGameStates("MainMenu", 1, "MainGame");
+	//connectGameStates("MainMenu", 5, "Highscores");
+	//connectGameStates("Highscores", 1, "MainMenu");
 	if (!_context->highscore_service.load()) {
 		// add default scores
 		for (int i = 0; i < 3; ++i) {
@@ -54,15 +53,8 @@ bool Minesweeper::loadContent() {
 void Minesweeper::init() {
 	// for testing
 	_context->reset();
-	activate("TestState");
+	activate("MainGame");
 }
 
-void Minesweeper::render() {
-	_sprites->begin();
-	for (int y = 0; y < 3; ++y) {
-		for (int i = 0; i < 4; ++i) {
-			_sprites->draw(v2(150 + i * 300, 150 + y * 300), math::buildTexture(510, 700, 300, 300));
-		}
-	}
-	_sprites->end();
+void Minesweeper::render() {	
 }

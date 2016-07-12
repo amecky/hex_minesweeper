@@ -10,7 +10,7 @@
 class MainGameState : public ds::GameState {
 
 public:
-	MainGameState(GameContext* context);
+	MainGameState(GameContext* context, ds::Game* game);
 	virtual ~MainGameState();
 	void init();
 	int update(float dt);
@@ -29,9 +29,12 @@ private:
 	int _selected;
 	int _width;
 	int _height;
-	ds::SpriteBuffer* _sprites;
+	ds::Scene2D* _scene;
+	RID _material;
 	bool _showBombs;
 	float _endTimer;
 	Hex _current;
+	int _hover;
+	ds::Texture _textures[10];
 };
 
