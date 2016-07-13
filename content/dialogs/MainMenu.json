@@ -4,7 +4,7 @@ image {
     color : 255,255,255,255 
     centered : true 
     scale : 1.00 
-    rect : 430,0,1004,74    
+    rect : 540,0,910,105    
 }
 button { 
     id : 1 

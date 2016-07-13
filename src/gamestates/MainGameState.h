@@ -36,5 +36,6 @@ private:
 	Hex _current;
 	int _hover;
 	ds::Texture _textures[10];
+	int _gridOffset;
 };
 

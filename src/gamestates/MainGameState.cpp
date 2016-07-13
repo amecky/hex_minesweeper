@@ -67,6 +67,7 @@ void MainGameState::fillBombs() {
 			if (_grid.isValid(h)) {
 				int cnt = _grid.neighbors(h, n);
 				GridItem& current = _grid.get(h);
+				//LOG << "adding r: " << r << " q: " << q << " pos: " << DBG_V2(current.position);
 				current.id = _scene->add(current.position, _textures[0], _material);
 				for (int i = 0; i < cnt; ++i) {
 					const GridItem& item = _grid.get(n[i]);
@@ -77,21 +78,21 @@ void MainGameState::fillBombs() {
 			}
 		}
 	}
-
 	for (int r = 0; r < _width + 1; ++r) {
-		v2 p = _grid.convert(-_width / 2 + r + 1, _height);
+		v2 p = _grid.convert(-_width / 2 + r + _gridOffset, _height);
 		_scene->add(p, _textures[9], _material);		
 		p = _grid.convert(r, -1);
 		_scene->add(p, _textures[9], _material);
 	}
-	for (int r = 0; r < _height + 1; ++r) {
+
+	for (int r = 0; r < _height; ++r) {
 		int q_offset = r >> 1;
 		v2 p = _grid.convert(-r / 2 - 1, r);
 		_scene->add(p, _textures[9], _material);
 		p = _grid.convert(-r / 2 + _width, r);
 		_scene->add(p, _textures[9], _material);
 	}
-
+	
 	delete[] temp;
 }
 
@@ -105,15 +106,21 @@ void MainGameState::activate() {
 	_width = mode.width;
 	_height = mode.height;
 	_maxBombs = mode.maxBombs;
+	_gridOffset = 1;
+	switch (_context->mode) {
+		case 0: _gridOffset = 0; break;
+		case 1: _gridOffset = 1; break;
+		case 2: _gridOffset = 2; break;
+	}
 	fillBombs();
 	_context->marked = 0;
+
 	_context->markedCorrectly = 0;	
 	_context->hud->resetTimer(3);
 	_context->hud->startTimer(3);
-	_context->hud->setNumber(2, _maxBombs);
-	//char buffer[32];
-	//sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
-	//_context->hud->updateText(2, buffer);
+	char buffer[32];
+	sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
+	_context->hud->updateText(2, buffer);
 	_showBombs = false;
 	_endTimer = 0.0f;
 	_hover = -1;
@@ -180,7 +187,6 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			_context->hud->setNumber(2, left);
 			char buffer[32];
 			sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
 			_context->hud->updateText(2, buffer);

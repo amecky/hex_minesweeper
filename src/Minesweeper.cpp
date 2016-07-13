@@ -20,9 +20,29 @@ Minesweeper::~Minesweeper() {
 }
 
 // -------------------------------------------------------
+// prepare
+// -------------------------------------------------------
+void Minesweeper::prepare(ds::Settings* settings) {
+	settings->screenWidth = 1024;
+	settings->screenHeight = 768;
+	settings->clearColor = ds::Color(0, 0, 0, 255);
+	settings->fullScreen = false;
+	settings->reportingDirectory = "reports";
+	settings->synched = true;
+}
+
+// -------------------------------------------------------
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
+
+	_backgroundScene = game->create2DScene("Background");
+	_material = ds::res::find("SpriteMaterial", ds::ResourceType::MATERIAL);
+	ds::Material* m = ds::res::getMaterial(_material);
+	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
+	_backgroundScene->setActive(true);
+
+
 	_context->hud = ds::res::getGUIDialog("HUD");
 	addGameState(new MainGameState(_context, game));
 	addGameState(new GameOverState(_context, game));
@@ -47,6 +67,9 @@ bool Minesweeper::loadContent() {
 		}
 	}
 	//scoring::load(&_context->highscore);
+
+	ID id = _backgroundScene->add(v2(512, 384), math::buildTexture(0, 512, 512, 384), _material);
+	_backgroundScene->scale(id, v2(2, 2));
 	return true;
 }
 
