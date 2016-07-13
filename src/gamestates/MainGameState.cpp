@@ -1,6 +1,7 @@
 #include "MainGameState.h"
 #include <Vector.h>
 #include <resources\ResourceContainer.h>
+#include <base\InputSystem.h>
 
 MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameState("MainGame", game), _context(context) {
 	_scene = game->create2DScene("Sprites");
@@ -67,7 +68,6 @@ void MainGameState::fillBombs() {
 			if (_grid.isValid(h)) {
 				int cnt = _grid.neighbors(h, n);
 				GridItem& current = _grid.get(h);
-				//LOG << "adding r: " << r << " q: " << q << " pos: " << DBG_V2(current.position);
 				current.id = _scene->add(current.position, _textures[0], _material);
 				for (int i = 0; i < cnt; ++i) {
 					const GridItem& item = _grid.get(n[i]);
@@ -125,6 +125,7 @@ void MainGameState::activate() {
 	_endTimer = 0.0f;
 	_hover = -1;
 	_scene->setActive(true);
+	_leftClick = false;
 }
 
 // -------------------------------------------------------
@@ -160,6 +161,19 @@ void MainGameState::openEmptyTiles(const Hex& h) {
 // -------------------------------------------------------
 int MainGameState::onButtonUp(int button, int x, int y) {
 	Hex h = _grid.convertFromMousePos();
+
+	if (ds::input::isMouseButtonPressed(0)) {
+		if (!_leftClick) {
+			_leftClick = true;
+			LOG << "======> left clicked";
+		}
+	}
+	else {
+		if (_leftClick) {
+			_leftClick = false;
+			LOG << "======> left released";
+		}
+	}
 	if (_grid.isValid(h)) {
 		// right button -> mark cell or remove mark
 		if (button == 1) {			
@@ -194,23 +208,24 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 		// left button
 		else {
 			GridItem& item = _grid.get(h);
-			if (item.state == 0) {
+			if (item.state == GIS_CLOSED) {
 				if (item.bomb) {
-					//return 1;
 					_endTimer = 0.0f;
 					_showBombs = true;
 					_context->hud->deactivate();
 					for (int i = 0; i < _grid.size(); ++i) {
-						const GridItem& item = _grid.get(i);
-						if (item.bomb) {
-							_scene->setTexture(item.id, _textures[1]);
+						const GridItem& current = _grid.get(i);
+						if (current.bomb) {
+							_scene->setTexture(current.id, _textures[1]);
 						}
 					}
 				}
-				item.state = GIS_OPEN;
-				_scene->setTexture(item.id, _textures[item.adjacentBombs + 3]);
-				if (item.adjacentBombs == 0) {
-					openEmptyTiles(h);
+				else {
+					item.state = GIS_OPEN;
+					_scene->setTexture(item.id, _textures[item.adjacentBombs + 3]);
+					if (item.adjacentBombs == 0) {
+						openEmptyTiles(h);
+					}
 				}
 			}			
 		}

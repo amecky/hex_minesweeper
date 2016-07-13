@@ -4,7 +4,7 @@ image {
     color : 255,255,255,255
     centered : false
     scale : 1
-    rect : 160,500,220,55
+    rect : 760,0,220,55
 }
 image { 
     id : 1
@@ -12,7 +12,7 @@ image {
     color : 255,255,255,255
     centered : false
     scale : 1
-    rect : 160,500,220,55
+    rect : 760,0,220,55
 }
 text { 
     id : 2

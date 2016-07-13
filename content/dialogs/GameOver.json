@@ -12,7 +12,7 @@ image {
     color : 255,255,255,255
     centered : true
     scale : 1
-    rect : 510,340,320,60
+    rect : 760,0,220,55
 }
 image { 
     id : 21
@@ -20,7 +20,7 @@ image {
     color : 255,255,255,255
     centered : true
     scale : 1
-    rect : 510,0,320,60
+    rect : 760,0,220,55
 }
 image { 
     id : 22
@@ -28,7 +28,7 @@ image {
     color : 255,255,255,255
     centered : true
     scale : 1
-    rect : 510,340,320,60
+    rect : 760,0,220,55
 }
 image { 
     id : 23
@@ -36,7 +36,7 @@ image {
     color : 255,255,255,255
     centered : true
     scale : 1
-    rect : 510,0,320,60
+    rect : 760,0,220,55
 }
 text { 
     id : 10
@@ -44,7 +44,7 @@ text {
     color : 255,255,255,255
     centered : true
     scale : 1
-    text : "Correct bombs"
+    text : "Bombs"
 }
 text { 
     id : 12
@@ -56,7 +56,7 @@ text {
 }
 text { 
     id : 13
-    pos : 360,370
+    pos : 360,380
     color : 255,255,255,255
     centered : true
     scale : 1
