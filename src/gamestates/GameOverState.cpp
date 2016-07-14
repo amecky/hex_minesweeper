@@ -22,13 +22,13 @@ void GameOverState::activate() {
 	int state = 1;
 	if (_context->markedCorrectly == GAME_MODES[_context->mode].maxBombs) {
 		state = 2;
-		_dialog->updateImage(11, 140, 650, ds::Rect(80, 500, 470, 75));
+		_dialog->updateImage(11, 140, 650, ds::Rect(450, 0, 465, 85));
 		if (scoring::hasScored(timer->getSeconds(), timer->getMinutes(), _context->mode, _context->highscore)) {
 			state = 3;
 		}
 	}
 	else {
-		_dialog->updateImage(11, 140, 660, ds::Rect(0, 500, 485, 80));
+		_dialog->updateImage(11, 140, 660, ds::Rect(450, 470, 440, 85));
 	}
 	if (state == 3) {
 		_dialog->updateText(19, "Congratulations - New highscore");

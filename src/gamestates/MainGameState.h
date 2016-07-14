@@ -21,7 +21,7 @@ public:
 	int onButtonUp(int button, int x, int y);
 private:
 	void fillBombs();
-	void openEmptyTiles(const Hex& h);
+	void openEmptyTiles(const Hex& h, ds::Array<Hex>& opened);
 
 	int _maxBombs;
 	GameContext* _context;

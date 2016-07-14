@@ -138,21 +138,22 @@ void MainGameState::deactivate() {
 // -------------------------------------------------------
 // open empty tiles
 // -------------------------------------------------------
-void MainGameState::openEmptyTiles(const Hex& h) {
+void MainGameState::openEmptyTiles(const Hex& h, ds::Array<Hex>& opened) {
 	Hex n[6];
 	int cnt = _grid.neighbors(h, n);
 	GridItem& current = _grid.get(h);
 	current.state = GIS_OPEN;
+	opened.push_back(h);
 	_scene->setTexture(current.id, _textures[3]);
 	for (int i = 0; i < cnt; ++i) {
 		GridItem& item = _grid.get(n[i]);
-		if (item.state == 0 && item.adjacentBombs == 0) {			
-			openEmptyTiles(n[i]);
+		if (item.state == 0 && item.adjacentBombs == 0 && !item.bomb) {			
+			openEmptyTiles(n[i],opened);
 		}
-		else if (item.state == 0) {
-			_scene->setTexture(item.id, _textures[3]);
-			item.state = GIS_OPEN;
-		}
+		//else if (item.state == 0) {
+			//_scene->setTexture(item.id, _textures[3]);
+			//item.state = GIS_OPEN;
+		//}
 	}
 }
 
@@ -224,7 +225,20 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 					item.state = GIS_OPEN;
 					_scene->setTexture(item.id, _textures[item.adjacentBombs + 3]);
 					if (item.adjacentBombs == 0) {
-						openEmptyTiles(h);
+						ds::Array<Hex> opened;
+						openEmptyTiles(h,opened);
+						Hex n[6];
+						for (uint32_t i = 0; i < opened.size(); ++i) {
+							const Hex& h = opened[i];							
+							int cnt = _grid.neighbors(h, n);
+							for (int j = 0; j < cnt; ++j) {
+								GridItem& gi = _grid.get(n[j]);
+								if (!gi.bomb) {
+									_scene->setTexture(gi.id, _textures[gi.adjacentBombs + 3]);
+									gi.state = GIS_OPEN;
+								}
+							}
+						}
 					}
 				}
 			}			
