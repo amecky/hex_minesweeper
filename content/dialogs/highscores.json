@@ -8,7 +8,7 @@ image {
 }
 image { 
     id : 23
-    pos : 450,460
+    pos : 450,480
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -16,7 +16,7 @@ image {
 }
 image { 
     id : 26
-    pos : 660,370
+    pos : 660,350
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -24,7 +24,7 @@ image {
 }
 image { 
     id : 27
-    pos : 512,500
+    pos : 512,540
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -40,7 +40,7 @@ image {
 }
 image { 
     id : 29
-    pos : 512,320
+    pos : 512,280
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -48,7 +48,7 @@ image {
 }
 image { 
     id : 30
-    pos : 512,280
+    pos : 512,220
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -56,7 +56,7 @@ image {
 }
 text { 
     id : 2
-    pos : 440,500
+    pos : 440,540
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -72,7 +72,7 @@ text {
 }
 text { 
     id : 4
-    pos : 440,320
+    pos : 440,280
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -80,7 +80,7 @@ text {
 }
 text { 
     id : 20
-    pos : 580,460
+    pos : 580,480
     color : 255,255,255,255
     centered : true
     scale : 1
@@ -88,15 +88,15 @@ text {
 }
 text { 
     id : 21
-    pos : 580,370
+    pos : 580,350
     color : 255,255,255,255
     centered : true
     scale : 1
-    text : "99:99"
+    text : "12:99"
 }
 text { 
     id : 22
-    pos : 580,280
+    pos : 580,220
     color : 255,255,255,255
     centered : true
     scale : 1

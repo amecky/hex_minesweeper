@@ -14,13 +14,13 @@ image {
     scale : 1
     rect : 760,0,220,55
 }
-text { 
+numbers { 
     id : 2
     pos : 880,720
     color : 148,171,185,255
     centered : false
     scale : 1
-    text : "12 / 12"
+    value : 0
     length : 2
 }
 timer { 

@@ -118,9 +118,7 @@ void MainGameState::activate() {
 	_context->markedCorrectly = 0;	
 	_context->hud->resetTimer(3);
 	_context->hud->startTimer(3);
-	char buffer[32];
-	sprintf_s(buffer, 32, "%d / %d", _maxBombs, _maxBombs);
-	_context->hud->updateText(2, buffer);
+	_context->hud->setNumber(2, _maxBombs);
 	_showBombs = false;
 	_endTimer = 0.0f;
 	_hover = -1;
@@ -202,9 +200,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				return 1;
 			}
 			int left = _maxBombs - _context->marked;
-			char buffer[32];
-			sprintf_s(buffer, 32, "%d / %d", left, _maxBombs);
-			_context->hud->updateText(2, buffer);
+			_context->hud->setNumber(2, left);
 		}
 		// left button
 		else {
