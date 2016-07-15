@@ -10,6 +10,7 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
 	_scene->setActive(true);
 	_ps = _scene->addParticleSystem(1);
+	_testPS = _scene->addParticleSystem(2);
 	_selected = -1;
 	_maxBombs = 60;
 	_showBombs = false;
@@ -125,6 +126,7 @@ void MainGameState::activate() {
 	_hover = -1;
 	_scene->setActive(true);
 	_leftClick = false;
+	_scene->startParticleSystem(_testPS, v2(100, 100));
 }
 
 // -------------------------------------------------------
@@ -133,6 +135,7 @@ void MainGameState::activate() {
 void MainGameState::deactivate() {
 	_scene->setActive(false);
 	_context->hud->deactivate();
+	_scene->stopParticleSystem(_testPS);
 }
 // -------------------------------------------------------
 // open empty tiles

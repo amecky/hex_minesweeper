@@ -2,7 +2,7 @@ spawn {
 	texture : 0,165,20,20
     duration : 0
     rate : 32
-    loop : 0
+    loop : -1
     loop_delay : 0.0
 }
 ring_location {
@@ -26,7 +26,7 @@ size {
 	max : 0.2,0.2
 }
 velocity {
-	radial : 30
+	radial : 200
 	radial_variance : 10
 //	distribution : 0.0,1.0,1.0,0.8,0.4,0.4,1.0,0.0,0.0
 }

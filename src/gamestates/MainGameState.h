@@ -39,5 +39,6 @@ private:
 	int _gridOffset;
 	bool _leftClick;
 	ID _ps;
+	ID _testPS;
 };
 
