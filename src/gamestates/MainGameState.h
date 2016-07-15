@@ -38,5 +38,6 @@ private:
 	ds::Texture _textures[10];
 	int _gridOffset;
 	bool _leftClick;
+	ID _ps;
 };
 

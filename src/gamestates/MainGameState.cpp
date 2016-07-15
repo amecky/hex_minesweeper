@@ -9,6 +9,7 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	ds::Material* m = ds::res::getMaterial(_material);
 	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
 	_scene->setActive(true);
+	_ps = _scene->addParticleSystem(1);
 	_selected = -1;
 	_maxBombs = 60;
 	_showBombs = false;
@@ -148,10 +149,6 @@ void MainGameState::openEmptyTiles(const Hex& h, ds::Array<Hex>& opened) {
 		if (item.state == 0 && item.adjacentBombs == 0 && !item.bomb) {			
 			openEmptyTiles(n[i],opened);
 		}
-		//else if (item.state == 0) {
-			//_scene->setTexture(item.id, _textures[3]);
-			//item.state = GIS_OPEN;
-		//}
 	}
 }
 
@@ -160,23 +157,10 @@ void MainGameState::openEmptyTiles(const Hex& h, ds::Array<Hex>& opened) {
 // -------------------------------------------------------
 int MainGameState::onButtonUp(int button, int x, int y) {
 	Hex h = _grid.convertFromMousePos();
-
-	if (ds::input::isMouseButtonPressed(0)) {
-		if (!_leftClick) {
-			_leftClick = true;
-			LOG << "======> left clicked";
-		}
-	}
-	else {
-		if (_leftClick) {
-			_leftClick = false;
-			LOG << "======> left released";
-		}
-	}
 	if (_grid.isValid(h)) {
 		// right button -> mark cell or remove mark
-		if (button == 1) {			
-			GridItem& item = _grid.get(h);
+		if (button == 1) {				
+			GridItem& item = _grid.get(h);			
 			if (item.state == GIS_CLOSED) {
 				if (_context->marked < _maxBombs) {
 					item.state = GIS_MARKED;
@@ -209,6 +193,7 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				if (item.bomb) {
 					_endTimer = 0.0f;
 					_showBombs = true;
+					_scene->startParticleSystem(_ps, item.position);
 					_context->hud->deactivate();
 					for (int i = 0; i < _grid.size(); ++i) {
 						const GridItem& current = _grid.get(i);
