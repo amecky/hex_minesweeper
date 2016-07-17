@@ -3,7 +3,7 @@ image {
     pos : 200,650
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 650,0,565,100
 }
 image { 
@@ -11,7 +11,7 @@ image {
     pos : 450,480
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -19,7 +19,7 @@ image {
     pos : 660,350
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -27,7 +27,7 @@ image {
     pos : 512,540
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -35,7 +35,7 @@ image {
     pos : 512,410
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -43,7 +43,7 @@ image {
     pos : 512,280
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -51,7 +51,7 @@ image {
     pos : 512,220
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 text { 
@@ -59,7 +59,7 @@ text {
     pos : 440,540
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "Easy"
 }
 text { 
@@ -67,7 +67,7 @@ text {
     pos : 420,410
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "Medium"
 }
 text { 
@@ -75,7 +75,7 @@ text {
     pos : 440,280
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "Hard"
 }
 text { 
@@ -83,7 +83,7 @@ text {
     pos : 580,480
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "00:46"
 }
 text { 
@@ -91,7 +91,7 @@ text {
     pos : 580,350
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "12:99"
 }
 text { 
@@ -99,7 +99,7 @@ text {
     pos : 580,220
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "99:99"
 }
 button { 
@@ -107,7 +107,7 @@ button {
     pos : 100,120
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 300,0,302,52
     text : "Main Menu"
 }

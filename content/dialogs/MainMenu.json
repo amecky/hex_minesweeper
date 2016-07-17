@@ -3,7 +3,7 @@ image {
     pos : 140,650 
     color : 255,255,255,255 
     centered : true 
-    scale : 1.00 
+    scale : 1,1
     rect : 540,0,910,105    
 }
 button { 
@@ -11,7 +11,7 @@ button {
     pos : 400,500 
     color : 255,255,255,255 
     centered : true 
-    scale : 1.00 
+    scale : 1,1
     rect : 368,0,302,52 
     text : "Easy"    
 }
@@ -20,7 +20,7 @@ button {
     pos : 400,400 
     color : 255,255,255,255 
     centered : true 
-    scale : 1.00 
+    scale : 1,1
     rect : 368,0,302,52 
     text : "Medium"    
 }
@@ -29,7 +29,7 @@ button {
     pos : 400,300 
     color : 255,255,255,255 
     centered : true 
-    scale : 1.00 
+    scale : 1,1
     rect : 368,0,302,52 
     text : "Hard"    
 }
@@ -38,7 +38,7 @@ button {
     pos : 400,100 
     color : 255,255,255,255 
     centered : true 
-    scale : 1.00 
+    scale : 1,1
     rect : 300,0,302,52 
     text : "Exit"    
 }
@@ -47,7 +47,32 @@ button {
     pos : 400,200 
     color : 255,255,255,255 
     centered : true 
-    scale : 1.00 
+    scale : 1,1
     rect : 368,0,302,52 
     text : "Highscores"    
+}
+
+timer { 
+    id : 6
+    pos : 140,720
+    color : 148,171,185,255
+    centered : true
+    scale : 1,1
+}
+numbers { 
+    id : 7
+    pos : 880,720
+    color : 148,171,185,255
+    centered : false
+    scale : 1,1
+    value : 1234
+    length : 4
+}
+text { 
+    id : 8
+    pos : 520,450
+    color : 255,0,0,255
+    centered : true
+    scale : 1,1
+    text : "Some text comes here"
 }

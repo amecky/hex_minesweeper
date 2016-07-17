@@ -3,7 +3,7 @@ image {
     pos : 140,650
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 0,500,485,80
 }
 image { 
@@ -11,7 +11,7 @@ image {
     pos : 360,510
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -19,7 +19,7 @@ image {
     pos : 680,450
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -27,7 +27,7 @@ image {
     pos : 360,380
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -35,7 +35,7 @@ image {
     pos : 680,320
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 text { 
@@ -43,7 +43,7 @@ text {
     pos : 20,510
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "Bombs"
 }
 text { 
@@ -51,7 +51,7 @@ text {
     pos : 520,450
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "0 / 32"
 }
 text { 
@@ -59,7 +59,7 @@ text {
     pos : 360,380
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "Time"
 }
 text { 
@@ -67,7 +67,7 @@ text {
     pos : 520,320
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "00:00"
 }
 text { 
@@ -75,7 +75,7 @@ text {
     pos : 520,590
     color : 0,0,0,255
     centered : true
-    scale : 1
+    scale : 1,1
     text : "You have unveiled a bomb"
 }
 button { 
@@ -83,7 +83,7 @@ button {
     pos : 100,200
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 368,0,302,52
     text : "Restart"
 }
@@ -92,7 +92,7 @@ button {
     pos : 100,120
     color : 255,255,255,255
     centered : true
-    scale : 1
+    scale : 1,1
     rect : 300,0,302,52
     text : "Main Menu"
 }

@@ -3,7 +3,7 @@ image {
     pos : 140,720
     color : 255,255,255,255
     centered : false
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 image { 
@@ -11,7 +11,7 @@ image {
     pos : 888,720
     color : 255,255,255,255
     centered : false
-    scale : 1
+    scale : 1,1
     rect : 760,0,220,55
 }
 numbers { 
@@ -19,7 +19,7 @@ numbers {
     pos : 880,720
     color : 148,171,185,255
     centered : false
-    scale : 1
+    scale : 1,1
     value : 0
     length : 2
 }
@@ -27,6 +27,6 @@ timer {
     id : 3
     pos : 140,720
     color : 148,171,185,255
-    centered : true
-    scale : 1
+    centered : false
+    scale : 1,1
 }
