@@ -14,6 +14,7 @@ public:
 	}
 	void activate() {
 		_dialog->setNumber(7, 4567);
+		_dialog->startTransition(4, v2(-200, 100), 1.0f);
 	}
 private:
 	GameContext* _context;
