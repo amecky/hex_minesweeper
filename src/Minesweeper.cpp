@@ -65,43 +65,44 @@ bool Minesweeper::loadContent() {
 	for (int i = 0; i < 3; ++i) {
 		if (!_context->highscores[i].load(SCORE_NAMES[i])) {
 			Highscore hs;
-			hs.minutes = 99;
-			hs.seconds = 99;
+			hs.minutes = 30;
+			hs.seconds = 30;
 			hs.mode = i;
 			_context->highscores[i].add(hs);
 			_context->highscores[i].save(SCORE_NAMES[i]);
 		}
 	}
-	/*
-	Highscore tmp(12,30,0);
-	int idx = _context->highscores[0].add(tmp);
-	LOG << "new index: " << idx;
-	Highscore tmp2(14, 0, 0);
-	idx = _context->highscores[0].add(tmp2);
-	LOG << "new index: " << idx;
-	Highscore tmp3(6, 10, 0);
-	idx = _context->highscores[0].add(tmp3);
-	LOG << "new index: " << idx;
-	for (int i = 0; i < _context->highscores[0].size(); ++i) {
-		const Highscore& s = _context->highscores[0].get(i);
-		LOG << i << " : " << s.minutes << ":" << s.seconds;
+	for (int j = 0; j < 3; ++j) {
+		LOG << "scores " << SCORE_NAMES[j];
+		for (int i = 0; i < _context->highscores[j].size(); ++i) {
+			const Highscore& s = _context->highscores[j].get(i);
+			LOG << i << " : " << s.minutes << ":" << s.seconds;
+		}
 	}
-	*/
 	ID id = _backgroundScene->add(v2(512, 384), math::buildTexture(0, 512, 512, 384), _material);
 	_backgroundScene->scale(id, v2(2, 2));
 	return true;
 }
 
+// -------------------------------------------------------
+// init
+// -------------------------------------------------------
 void Minesweeper::init() {
-	// for testing
 	_context->reset();
 	activate("MainMenu");
 }
 
+// -------------------------------------------------------
+// render
+// -------------------------------------------------------
 void Minesweeper::render() {	
 }
 
+// -------------------------------------------------------
+// onShutdown
+// -------------------------------------------------------
 void Minesweeper::onShutdown() {
+	LOG << "saving scores";
 	for (int i = 0; i < 3; ++i) {
 		_context->highscores[i].save(SCORE_NAMES[i]);
 	}

@@ -4,7 +4,7 @@ image {
     color : 255,255,255,255
     centered : true
     scale : 1,1
-    rect : 0,500,485,80
+    rect : 450,470,440,85
 }
 image { 
     id : 20
@@ -72,11 +72,11 @@ text {
 }
 text { 
     id : 19
-    pos : 520,590
-    color : 0,0,0,255
+    pos : 520,580
+    color : 255,255,255,255
     centered : true
     scale : 1,1
-    text : "You have unveiled a bomb"
+    text : "This is a mighty long long text to make sure everything will fit in here"
 }
 button { 
     id : 1
