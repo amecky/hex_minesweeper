@@ -43,7 +43,18 @@ dialog {
     file : "HUD"
     font : "xscale"
 }
+dialog {
+    name : "ModeSelection"
+    file : "ModeSelection"
+    font : "xscale"
+}
 particle_manager {
 	name : "ParticleManager"
 
+}
+render_target {
+	name : "RT1"
+	width : 1024
+	height : 768
+	clear_color : 0,0,0,0
 }

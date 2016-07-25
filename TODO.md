@@ -1,7 +1,12 @@
 # TODO
+- [ ] add credits dialog
+- [ ] add credits button to main menu and fix button layout
+- [ ] better bomb explosion effect
+- [ ] game over - text is gone?
 - [ ] fix new highscore service
 - [ ] use fade to grey shader here
 - [ ] add some star animations when new highscores
+- [ ] add some looser animation to game over
 
 ## 24.12.2015
 - [x] mouse over highlight

@@ -23,7 +23,9 @@ void GameOverState::activate() {
 	if (_context->markedCorrectly == GAME_MODES[_context->mode].maxBombs) {
 		state = 2;
 		_dialog->updateImage(11, 140, 650, ds::Rect(450, 0, 465, 85));
-		if (scoring::hasScored(timer->getSeconds(), timer->getMinutes(), _context->mode, _context->highscore)) {
+		Highscore hs;
+		int ss = _context->highscores[_context->mode].add(hs);
+		if (ss == 0) {
 			state = 3;
 		}
 	}

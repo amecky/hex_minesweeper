@@ -7,6 +7,9 @@
 #include "gamestates\HighscoreState.h"
 #include "gamestates\IntroState.h"
 #include "gamestates\TestState.h"
+#include "gamestates\SelectionState.h"
+
+const char* SCORE_NAMES[] = { "easy.scr", "medium.scr", "hard.scr" };
 
 ds::BaseApp *app = new Minesweeper(); 
 
@@ -48,26 +51,42 @@ bool Minesweeper::loadContent() {
 	addGameState(new GameOverState(_context, game));
 	addGameState(new MainMenuState(_context, game));
 	addGameState(new HighscoreState(_context, game));
+	addGameState(new SelectionState(_context, game));
 	addGameState(new TestState(_context, game));
 	connectGameStates("GameOver", 1, "MainGame");
 	connectGameStates("GameOver", 2, "MainMenu");
 	connectGameStates("MainGame", 1, "GameOver");
-	connectGameStates("MainMenu", 1, "MainGame");
+	connectGameStates("MainMenu", 1, "SelectionState");
+	connectGameStates("SelectionState", 4, "MainMenu");
+	connectGameStates("SelectionState", 1, "MainGame");
 	connectGameStates("MainMenu", 5, "Highscores");
 	connectGameStates("Highscores", 1, "MainMenu");
-	if (!_context->highscore_service.load()) {
-		// add default scores
-		for (int i = 0; i < 3; ++i) {
-			PlayedTime t;
-			t.minutes = 99;
-			t.seconds = 99;
-			t.mode = i;
-			_context->highscore_service.add(t);
-			_context->highscore_service.save();
+	
+	for (int i = 0; i < 3; ++i) {
+		if (!_context->highscores[i].load(SCORE_NAMES[i])) {
+			Highscore hs;
+			hs.minutes = 99;
+			hs.seconds = 99;
+			hs.mode = i;
+			_context->highscores[i].add(hs);
+			_context->highscores[i].save(SCORE_NAMES[i]);
 		}
 	}
-	//scoring::load(&_context->highscore);
-
+	/*
+	Highscore tmp(12,30,0);
+	int idx = _context->highscores[0].add(tmp);
+	LOG << "new index: " << idx;
+	Highscore tmp2(14, 0, 0);
+	idx = _context->highscores[0].add(tmp2);
+	LOG << "new index: " << idx;
+	Highscore tmp3(6, 10, 0);
+	idx = _context->highscores[0].add(tmp3);
+	LOG << "new index: " << idx;
+	for (int i = 0; i < _context->highscores[0].size(); ++i) {
+		const Highscore& s = _context->highscores[0].get(i);
+		LOG << i << " : " << s.minutes << ":" << s.seconds;
+	}
+	*/
 	ID id = _backgroundScene->add(v2(512, 384), math::buildTexture(0, 512, 512, 384), _material);
 	_backgroundScene->scale(id, v2(2, 2));
 	return true;
@@ -80,4 +99,10 @@ void Minesweeper::init() {
 }
 
 void Minesweeper::render() {	
+}
+
+void Minesweeper::onShutdown() {
+	for (int i = 0; i < 3; ++i) {
+		_context->highscores[i].save(SCORE_NAMES[i]);
+	}
 }

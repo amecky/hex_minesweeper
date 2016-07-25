@@ -1,8 +1,8 @@
 #pragma once
 #include <utils\GameTimer.h>
 #include <Vector.h>
-#include "Highscores.h"
 #include <dialogs\GUIDialog.h>
+#include <data\HighscoreService.h>
 
 enum GameModeType {
 	GM_EASY,
@@ -27,13 +27,36 @@ const GameMode GAME_MODES[] = {
 	GameMode(GM_HARD, 60, 20, 15, v2(107,134)),
 };
 
+struct Highscore {
+
+	int minutes;
+	int seconds;
+	int mode;
+
+	Highscore() : seconds(99), minutes(99), mode(-1) {}
+
+	Highscore(int m,int s,int md) : seconds(s), minutes(m), mode(md) {}
+
+	int compare(const Highscore& other) const {
+		int time = minutes * 60 + seconds;
+		int other_time = other.minutes * 60 + other.seconds;
+		if (time < other_time) {
+			return -1;
+		}
+		if (time > other_time) {
+			return 1;
+		}
+		return 0;
+	}
+
+};
+
 struct GameContext {
 
 	int mode;
 	int marked;
 	int markedCorrectly;
-	Highscore highscore;
-	HighscoreService<PlayedTime, 3> highscore_service;
+	ds::HighscoreService<Highscore, 10> highscores[3];
 	ds::GUIDialog* hud;
 
 	void reset() {

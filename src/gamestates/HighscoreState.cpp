@@ -13,11 +13,10 @@ HighscoreState::~HighscoreState() {
 // --------------------------------------------
 void HighscoreState::activate() {
 	
-	PlayedTime entries[3];
-	int cnt = _context->highscore_service.get(entries, 3);
-	for (int i = 0; i < cnt; ++i ) {
+	for (int i = 0; i < 3; ++i ) {
+		const Highscore& h = _context->highscores[i].get(0);
 		std::string str;
-		ds::string::formatTime(entries[i].minutes, entries[i].seconds, str);
+		ds::string::formatTime(h.minutes, h.seconds, str);
 		_dialog->updateText(20 + i, str.c_str());
 	}
 }

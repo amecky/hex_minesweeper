@@ -1,0 +1,68 @@
+image { 
+    id : 10 
+    pos : 140,650 
+    color : 255,255,255,255 
+    centered : true 
+    scale : 1,1
+    rect : 540,0,910,105    
+}
+button { 
+    id : 1 
+    pos : 400,500 
+    color : 255,255,255,255 
+    centered : true 
+    scale : 1,1
+    rect : 368,0,302,52 
+    text : "Easy"    
+}
+text { 
+    id : 5
+    pos : 440,440
+    color : 255,255,255,255
+    centered : true
+    scale : 1,1
+    text : "8 x 8 Tiles - 12 Bombs"
+}
+button { 
+    id : 2 
+    pos : 400,380 
+    color : 255,255,255,255 
+    centered : true 
+    scale : 1,1
+    rect : 368,0,302,52 
+    text : "Medium"    
+}
+text { 
+    id : 6
+    pos : 440,320
+    color : 255,255,255,255
+    centered : true
+    scale : 1,1
+    text : "14 x 12 Tiles - 32 Bombs"
+}
+button { 
+    id : 3 
+    pos : 400,260 
+    color : 255,255,255,255 
+    centered : true 
+    scale : 1,1
+    rect : 368,0,302,52 
+    text : "Hard"    
+}
+text { 
+    id : 7
+    pos : 440,200
+    color : 255,255,255,255
+    centered : true
+    scale : 1,1
+    text : "20 x 15 Tiles - 60 Bombs"
+}
+button { 
+    id : 4
+    pos : 100,120
+    color : 255,255,255,255
+    centered : true
+    scale : 1,1
+    rect : 300,0,302,52
+    text : "Main Menu"
+}

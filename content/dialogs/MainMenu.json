@@ -13,25 +13,7 @@ button {
     centered : true 
     scale : 1,1
     rect : 368,0,302,52 
-    text : "Easy"    
-}
-button { 
-    id : 2 
-    pos : 400,400 
-    color : 255,255,255,255 
-    centered : true 
-    scale : 1,1
-    rect : 368,0,302,52 
-    text : "Medium"    
-}
-button { 
-    id : 3 
-    pos : 400,300 
-    color : 255,255,255,255 
-    centered : true 
-    scale : 1,1
-    rect : 368,0,302,52 
-    text : "Hard"    
+    text : "Play"    
 }
 button { 
     id : 4 
@@ -50,29 +32,4 @@ button {
     scale : 1,1
     rect : 368,0,302,52 
     text : "Highscores"    
-}
-
-timer { 
-    id : 6
-    pos : 140,720
-    color : 148,171,185,255
-    centered : true
-    scale : 1,1
-}
-numbers { 
-    id : 7
-    pos : 880,720
-    color : 148,171,185,255
-    centered : false
-    scale : 1,1
-    value : 1234
-    length : 4
-}
-text { 
-    id : 8
-    pos : 520,450
-    color : 255,0,0,255
-    centered : true
-    scale : 1,1
-    text : "Some text comes here"
 }

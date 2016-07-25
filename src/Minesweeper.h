@@ -24,6 +24,7 @@ public:
 	void init();
 	void update(float dt) {}
 	void render();
+	void onShutdown();
 protected:
 	void prepare(ds::Settings* settings);
 private:
