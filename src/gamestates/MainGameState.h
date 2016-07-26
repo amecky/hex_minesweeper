@@ -30,6 +30,7 @@ private:
 	int _width;
 	int _height;
 	ds::Scene2D* _scene;
+	ds::Scene2D* _rtScene;
 	RID _material;
 	bool _showBombs;
 	float _endTimer;
