@@ -9,6 +9,13 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	ds::Material* m = ds::res::getMaterial(_material);
 	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
 	_scene->setActive(true);
+	_scene->useRenderTarget("RT1");
+
+	_rtScene = game->create2DScene("RTScene");
+	_rtScene->setActive(true);
+	ID mtrl = ds::res::find("RTMtrl", ds::ResourceType::MATERIAL);
+	_rtScene->add(v2(512, 384), math::buildTexture(256, 192, 512, 384), mtrl);
+
 	_ps = _scene->addParticleSystem(1);
 	_testPS = _scene->addParticleSystem(2);
 	_selected = -1;
