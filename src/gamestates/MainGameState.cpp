@@ -2,6 +2,7 @@
 #include <Vector.h>
 #include <resources\ResourceContainer.h>
 #include <base\InputSystem.h>
+#include <postprocess\GrayFadePostProcess.h>
 
 MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameState("MainGame", game), _context(context) {
 	_scene = game->create2DScene("Sprites");
@@ -10,11 +11,14 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
 	_scene->setActive(true);
 	_scene->useRenderTarget("RT1");
+	ds::GrayFadePostProcessDescriptor desc;
 
-	_rtScene = game->create2DScene("RTScene");
-	_rtScene->setActive(true);
-	ID mtrl = ds::res::find("RTMtrl", ds::ResourceType::MATERIAL);
-	_rtScene->add(v2(512, 384), math::buildTexture(256, 192, 512, 384), mtrl);
+	_scene->addPostProcess(new ds::GrayFadePostProcess(desc));
+	_scene->activateRenderTarget();
+	//_rtScene = game->create2DScene("RTScene");
+	//_rtScene->setActive(true);
+	//ID mtrl = ds::res::find("RTMtrl", ds::ResourceType::MATERIAL);
+	//_rtScene->add(v2(512, 384), math::buildTexture(256, 192, 512, 384), mtrl);
 
 	_ps = _scene->addParticleSystem(1);
 	_testPS = _scene->addParticleSystem(2);
