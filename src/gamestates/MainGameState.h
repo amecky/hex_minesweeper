@@ -6,6 +6,7 @@
 #include "..\HexGrid.h"
 #include <vector>
 #include <renderer\sprites.h>
+#include <postprocess\GrayFadePostProcess.h>
 
 class MainGameState : public ds::GameState {
 
@@ -30,7 +31,6 @@ private:
 	int _width;
 	int _height;
 	ds::Scene2D* _scene;
-	ds::Scene2D* _rtScene;
 	RID _material;
 	bool _showBombs;
 	float _endTimer;
@@ -41,5 +41,6 @@ private:
 	bool _leftClick;
 	ID _ps;
 	ID _testPS;
+	ds::GrayFadePostProcess* _grayfade;
 };
 
