@@ -3,6 +3,7 @@
 #include <resources\ResourceContainer.h>
 #include <base\InputSystem.h>
 
+
 MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameState("MainGame", game), _context(context) {
 	_scene = game->create2DScene("Sprites");
 	_material = ds::res::find("SpriteMaterial", ds::ResourceType::MATERIAL);
@@ -10,12 +11,12 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
 	_scene->setActive(true);
 	_scene->useRenderTarget("RT1");
-
-	_rtScene = game->create2DScene("RTScene");
-	_rtScene->setActive(true);
-	ID mtrl = ds::res::find("RTMtrl", ds::ResourceType::MATERIAL);
-	_rtScene->add(v2(512, 384), math::buildTexture(256, 192, 512, 384), mtrl);
-
+	ds::GrayFadePostProcessDescriptor desc;
+	desc.ttl = 2.0f;
+	_grayfade = new ds::GrayFadePostProcess(desc);
+	_grayfade->deactivate();
+	_scene->addPostProcess(_grayfade);
+	_scene->activateRenderTarget();
 	_ps = _scene->addParticleSystem(1);
 	_testPS = _scene->addParticleSystem(2);
 	_selected = -1;
@@ -134,6 +135,7 @@ void MainGameState::activate() {
 	_scene->setActive(true);
 	_leftClick = false;
 	_scene->startParticleSystem(_testPS, v2(100, 100));
+	_grayfade->deactivate();
 }
 
 // -------------------------------------------------------
@@ -282,6 +284,9 @@ int MainGameState::onChar(int ascii) {
 	}
 	if (ascii == 'r') {
 		fillBombs();
+	}
+	if (ascii == 'z') {
+		_grayfade->activate();
 	}
 	return 0;
 }
