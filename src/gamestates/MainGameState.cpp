@@ -11,11 +11,27 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
 	_scene->setActive(true);
 	_scene->useRenderTarget("RT1");
-	ds::GrayFadePostProcessDescriptor desc;
-	desc.ttl = 2.0f;
-	_grayfade = new ds::GrayFadePostProcess(desc);
+	
+	// grayfade post process
+	ds::GrayFadePostProcessDescriptor gfDesc;
+	gfDesc.ttl = 2.0f;
+	gfDesc.source = ds::res::find("RT1", ds::ResourceType::RENDERTARGET);
+	gfDesc.target = ds::res::find("RT2", ds::ResourceType::RENDERTARGET);
+	_grayfade = new ds::GrayFadePostProcess(gfDesc);
 	_grayfade->deactivate();
 	_scene->addPostProcess(_grayfade);
+
+
+	// screen shake
+	ds::ScreenShakePostProcessDescriptor desc;
+	desc.ttl = 0.7f;
+	desc.frequency = 5.0f;
+	desc.shakeAmount = 6.0f;
+	desc.source = ds::res::find("RT2", ds::ResourceType::RENDERTARGET);
+	_screenShake = new ds::ScreenShakePostProcess(desc);
+	_screenShake->deactivate();
+	_scene->addPostProcess(_screenShake);
+
 	_scene->activateRenderTarget();
 	_ps = _scene->addParticleSystem(1);
 	_testPS = _scene->addParticleSystem(2);
@@ -135,7 +151,8 @@ void MainGameState::activate() {
 	_scene->setActive(true);
 	_leftClick = false;
 	_scene->startParticleSystem(_testPS, v2(100, 100));
-	_grayfade->deactivate();
+	//_grayfade->deactivate();
+	_screenShake->deactivate();
 }
 
 // -------------------------------------------------------
@@ -202,11 +219,14 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 		else {
 			GridItem& item = _grid.get(h);
 			if (item.state == GIS_CLOSED) {
+				// game over
 				if (item.bomb) {
 					_endTimer = 0.0f;
 					_showBombs = true;
 					_scene->startParticleSystem(_ps, item.position);
 					_context->hud->deactivate();
+					_grayfade->activate();
+					_screenShake->activate();
 					for (int i = 0; i < _grid.size(); ++i) {
 						const GridItem& current = _grid.get(i);
 						if (current.bomb) {
@@ -287,6 +307,11 @@ int MainGameState::onChar(int ascii) {
 	}
 	if (ascii == 'z') {
 		_grayfade->activate();
+		_screenShake->activate();
+	}
+	if (ascii == 'u') {
+		_grayfade->deactivate();
+		_screenShake->deactivate();
 	}
 	return 0;
 }

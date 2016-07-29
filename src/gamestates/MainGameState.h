@@ -7,6 +7,7 @@
 #include <vector>
 #include <renderer\sprites.h>
 #include <postprocess\GrayFadePostProcess.h>
+#include <postprocess\ScreenShakePostProcess.h>
 
 class MainGameState : public ds::GameState {
 
@@ -42,5 +43,6 @@ private:
 	ID _ps;
 	ID _testPS;
 	ds::GrayFadePostProcess* _grayfade;
+	ds::ScreenShakePostProcess* _screenShake;
 };
 
