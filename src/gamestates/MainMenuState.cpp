@@ -3,6 +3,7 @@
 #include <base\EventStream.h>
 
 MainMenuState::MainMenuState(GameContext* context, ds::Game* game) : ds::BasicMenuGameState("MainMenu", "MainMenu", game), _context(context) {
+	_dialog->registerCallback(this);
 }
 
 
@@ -32,3 +33,10 @@ int MainMenuState::onGUIButton(int button) {
 	return button;
 }
 
+void MainMenuState::entering(ID id) {
+	LOG << "entering: " << id;
+}
+
+void MainMenuState::leaving(ID id) {
+	LOG << "leaving: " << id;
+}

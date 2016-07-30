@@ -15,10 +15,12 @@ public:
 		return 0;
 	}
 	void activate() {
-		_dialog->startTransition(1, v2(1200, 500), MAIN_MENU_TRANSITION);
-		_dialog->startTransition(5, v2(-200, 200), MAIN_MENU_TRANSITION);
-		_dialog->startTransition(4, v2(1200, 100), MAIN_MENU_TRANSITION);
+		_dialog->startTransition(1, v2(1200, 470), MAIN_MENU_TRANSITION);
+		_dialog->startTransition(5, v2(-200, 340), MAIN_MENU_TRANSITION);
+		_dialog->startTransition(4, v2(1200, 210), MAIN_MENU_TRANSITION);
 	}
+	void entering(ID id);
+	void leaving(ID id);
 private:
 	GameContext* _context;
 };

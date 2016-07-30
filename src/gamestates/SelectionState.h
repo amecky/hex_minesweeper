@@ -12,6 +12,8 @@ public:
 	int onGUIButton(int button);
 	int update(float dt);
 	void activate();
+	void entering(ID id);
+	void leaving(ID id);
 private:
 	GameContext* _context;
 };

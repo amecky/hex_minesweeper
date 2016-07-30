@@ -33,8 +33,7 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	_scene->addPostProcess(_screenShake);
 
 	_scene->activateRenderTarget();
-	_ps = _scene->addParticleSystem(1);
-	_testPS = _scene->addParticleSystem(2);
+
 	_selected = -1;
 	_maxBombs = 60;
 	_showBombs = false;
@@ -53,7 +52,8 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 }
 
 MainGameState::~MainGameState() {
-
+	delete _grayfade;
+	delete _screenShake;
 }
 
 // -------------------------------------------------------
@@ -150,8 +150,7 @@ void MainGameState::activate() {
 	_hover = -1;
 	_scene->setActive(true);
 	_leftClick = false;
-	_scene->startParticleSystem(_testPS, v2(100, 100));
-	//_grayfade->deactivate();
+	_grayfade->deactivate();
 	_screenShake->deactivate();
 }
 
@@ -161,7 +160,6 @@ void MainGameState::activate() {
 void MainGameState::deactivate() {
 	_scene->setActive(false);
 	_context->hud->deactivate();
-	_scene->stopParticleSystem(_testPS);
 }
 // -------------------------------------------------------
 // open empty tiles
@@ -223,7 +221,6 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 				if (item.bomb) {
 					_endTimer = 0.0f;
 					_showBombs = true;
-					_scene->startParticleSystem(_ps, item.position);
 					_context->hud->deactivate();
 					_grayfade->activate();
 					_screenShake->activate();
