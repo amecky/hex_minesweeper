@@ -15,18 +15,6 @@ MainMenuState::~MainMenuState() {
 // --------------------------------------------
 int MainMenuState::onGUIButton(int button) {
 	LOG << "button: " << button;
-	if (button == 1) {
-		_context->mode = 0;
-		return 1;
-	}
-	if (button == 2) {
-		_context->mode = 1;
-		return 1;
-	}
-	if (button == 3) {
-		_context->mode = 2;
-		return 1;
-	}
 	if (button == 4) {
 		ds::events::send(ds::InternalEvents::ENGINE_SHUTDOWN);
 	}

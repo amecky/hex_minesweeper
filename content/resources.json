@@ -48,6 +48,11 @@ dialog {
     file : "ModeSelection"
     font : "xscale"
 }
+dialog {
+    name : "Credits"
+    file : "Credits"
+    font : "xscale"
+}
 particle_manager {
 	name : "ParticleManager"
 

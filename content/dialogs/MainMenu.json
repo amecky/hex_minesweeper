@@ -33,6 +33,15 @@ button {
     rect : 368,0,302,52 
     text : "Highscores"    
 }
+button { 
+    id : 3
+    pos : 400,280 
+    color : 255,255,255,255 
+    centered : true 
+    scale : 1,1
+    rect : 368,0,302,52 
+    text : "Credits"    
+}
 text { 
     id : 2
     pos : 360,80

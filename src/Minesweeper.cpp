@@ -8,6 +8,7 @@
 #include "gamestates\IntroState.h"
 #include "gamestates\TestState.h"
 #include "gamestates\SelectionState.h"
+#include "gamestates\CreditsState.h"
 
 const char* SCORE_NAMES[] = { "easy.scr", "medium.scr", "hard.scr" };
 
@@ -32,6 +33,7 @@ void Minesweeper::prepare(ds::Settings* settings) {
 	settings->fullScreen = false;
 	settings->reportingDirectory = "reports";
 	settings->synched = true;
+	settings->logTypes = ds::LogTypes::LT_CONSOLE|ds::LogTypes::LT_FILE;
 }
 
 // -------------------------------------------------------
@@ -53,10 +55,13 @@ bool Minesweeper::loadContent() {
 	addGameState(new HighscoreState(_context, game));
 	addGameState(new SelectionState(_context, game));
 	addGameState(new TestState(_context, game));
+	addGameState(new CreditsState(_context, game));
 	connectGameStates("GameOver", 1, "MainGame");
 	connectGameStates("GameOver", 2, "MainMenu");
 	connectGameStates("MainGame", 1, "GameOver");
 	connectGameStates("MainMenu", 1, "SelectionState");
+	connectGameStates("MainMenu", 3, "CreditsState");
+	connectGameStates("CreditsState", 1, "MainMenu");
 	connectGameStates("SelectionState", 4, "MainMenu");
 	connectGameStates("SelectionState", 1, "MainGame");
 	connectGameStates("MainMenu", 5, "Highscores");
