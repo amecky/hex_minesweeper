@@ -4,8 +4,12 @@
 #include <base\InputSystem.h>
 
 
-MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameState("MainGame", game), _context(context) {
-	_scene = game->create2DScene("Sprites");
+MainGameState::MainGameState(GameContext* context) : ds::GameState("MainGame"), _context(context) {
+	_gameOverDialog = ds::res::getGUIDialog("GameOver");
+	_hud = ds::res::getGUIDialog("HUD");
+	_mode = GM_RUNNING;
+	ds::SceneDescriptor sdef;
+	_scene = new ds::Scene2D(sdef);
 	_material = ds::res::find("SpriteMaterial", ds::ResourceType::MATERIAL);
 	ds::Material* m = ds::res::getMaterial(_material);
 	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
@@ -16,21 +20,21 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 	ds::GrayFadePostProcessDescriptor gfDesc;
 	gfDesc.ttl = 2.0f;
 	gfDesc.source = ds::res::find("RT1", ds::ResourceType::RENDERTARGET);
-	gfDesc.target = ds::res::find("RT2", ds::ResourceType::RENDERTARGET);
+	//gfDesc.target = ds::res::find("RT2", ds::ResourceType::RENDERTARGET);
 	_grayfade = new ds::GrayFadePostProcess(gfDesc);
 	_grayfade->deactivate();
 	_scene->addPostProcess(_grayfade);
 
 
 	// screen shake
-	ds::ScreenShakePostProcessDescriptor desc;
-	desc.ttl = 0.7f;
-	desc.frequency = 5.0f;
-	desc.shakeAmount = 6.0f;
-	desc.source = ds::res::find("RT2", ds::ResourceType::RENDERTARGET);
-	_screenShake = new ds::ScreenShakePostProcess(desc);
-	_screenShake->deactivate();
-	_scene->addPostProcess(_screenShake);
+	//ds::ScreenShakePostProcessDescriptor desc;
+	//desc.ttl = 0.7f;
+	//desc.frequency = 5.0f;
+	//desc.shakeAmount = 6.0f;
+	//desc.source = ds::res::find("RT2", ds::ResourceType::RENDERTARGET);
+	//_screenShake = new ds::ScreenShakePostProcess(desc);
+	//_screenShake->deactivate();
+	//_scene->addPostProcess(_screenShake);
 
 	_scene->activateRenderTarget();
 
@@ -53,7 +57,7 @@ MainGameState::MainGameState(GameContext* context, ds::Game* game) : ds::GameSta
 
 MainGameState::~MainGameState() {
 	delete _grayfade;
-	delete _screenShake;
+	//delete _screenShake;
 }
 
 // -------------------------------------------------------
@@ -142,16 +146,20 @@ void MainGameState::activate() {
 	_context->marked = 0;
 
 	_context->markedCorrectly = 0;	
-	_context->hud->resetTimer(3);
-	_context->hud->startTimer(3);
-	_context->hud->setNumber(2, _maxBombs);
+	_hud->activate();
+	_hud->resetTimer(3);
+	_hud->startTimer(3);
+	_hud->setNumber(2, _maxBombs);
 	_showBombs = false;
 	_endTimer = 0.0f;
 	_hover = -1;
 	_scene->setActive(true);
 	_leftClick = false;
 	_grayfade->deactivate();
-	_screenShake->deactivate();
+	//_screenShake->deactivate();
+	_mode = GM_RUNNING;
+	_gameOverDialog->deactivate();
+	_scene->deactivateRenderTarget();
 }
 
 // -------------------------------------------------------
@@ -159,7 +167,7 @@ void MainGameState::activate() {
 // -------------------------------------------------------
 void MainGameState::deactivate() {
 	_scene->setActive(false);
-	_context->hud->deactivate();
+	_hud->deactivate();
 }
 // -------------------------------------------------------
 // open empty tiles
@@ -183,75 +191,81 @@ void MainGameState::openEmptyTiles(const Hex& h, ds::Array<Hex>& opened) {
 // on button up
 // -------------------------------------------------------
 int MainGameState::onButtonUp(int button, int x, int y) {
-	Hex h = _grid.convertFromMousePos();
-	if (_grid.isValid(h)) {
-		// right button -> mark cell or remove mark
-		if (button == 1) {				
-			GridItem& item = _grid.get(h);			
-			if (item.state == GIS_CLOSED) {
-				if (_context->marked < _maxBombs) {
-					item.state = GIS_MARKED;
-					_scene->setTexture(item.id, _textures[1]);
-					++_context->marked;
-					if (item.bomb) {
-						++_context->markedCorrectly;
-					}
-				}
-			}
-			else if (item.state == GIS_MARKED) {
-				if (item.bomb) {
-					--_context->markedCorrectly;
-				}
-				item.state = GIS_CLOSED;
-				_scene->setTexture(item.id, _textures[0]);
-				--_context->marked;
-			}
-
-			if (_context->markedCorrectly == _maxBombs) {
-				return 1;
-			}
-			int left = _maxBombs - _context->marked;
-			_context->hud->setNumber(2, left);
+	if (_mode == GM_OVER) {
+		int ret = _gameOverDialog->onButton(button, x, y, true);
+		if (ret != -1) {
+			return ret;
 		}
-		// left button
-		else {
-			GridItem& item = _grid.get(h);
-			if (item.state == GIS_CLOSED) {
-				// game over
-				if (item.bomb) {
-					_endTimer = 0.0f;
-					_showBombs = true;
-					_context->hud->deactivate();
-					_grayfade->activate();
-					_screenShake->activate();
-					for (int i = 0; i < _grid.size(); ++i) {
-						const GridItem& current = _grid.get(i);
-						if (current.bomb) {
-							_scene->setTexture(current.id, _textures[1]);
+	}
+	else {
+		Hex h = _grid.convertFromMousePos();
+		if (_grid.isValid(h)) {
+			// right button -> mark cell or remove mark
+			if (button == 1) {
+				GridItem& item = _grid.get(h);
+				if (item.state == GIS_CLOSED) {
+					if (_context->marked < _maxBombs) {
+						item.state = GIS_MARKED;
+						_scene->setTexture(item.id, _textures[1]);
+						++_context->marked;
+						if (item.bomb) {
+							++_context->markedCorrectly;
 						}
 					}
 				}
-				else {
-					item.state = GIS_OPEN;
-					_scene->setTexture(item.id, _textures[item.adjacentBombs + 3]);
-					if (item.adjacentBombs == 0) {
-						ds::Array<Hex> opened;
-						openEmptyTiles(h,opened);
-						Hex n[6];
-						for (uint32_t i = 0; i < opened.size(); ++i) {
-							const Hex& h = opened[i];							
-							int cnt = _grid.neighbors(h, n);
-							for (int j = 0; j < cnt; ++j) {
-								GridItem& gi = _grid.get(n[j]);
-								if (!gi.bomb) {
-									_scene->setTexture(gi.id, _textures[gi.adjacentBombs + 3]);
-									gi.state = GIS_OPEN;
+				else if (item.state == GIS_MARKED) {
+					if (item.bomb) {
+						--_context->markedCorrectly;
+					}
+					item.state = GIS_CLOSED;
+					_scene->setTexture(item.id, _textures[0]);
+					--_context->marked;
+				}
+
+				if (_context->markedCorrectly == _maxBombs) {
+					stopGame();
+				}
+				int left = _maxBombs - _context->marked;
+				_hud->setNumber(2, left);
+			}
+			// left button
+			else {
+				GridItem& item = _grid.get(h);
+				if (item.state == GIS_CLOSED) {
+					// game over
+					if (item.bomb) {
+
+						stopGame();
+
+						for (int i = 0; i < _grid.size(); ++i) {
+							const GridItem& current = _grid.get(i);
+							if (current.bomb) {
+								_scene->setTexture(current.id, _textures[1]);
+							}
+						}
+					}
+					else {
+						item.state = GIS_OPEN;
+						_scene->setTexture(item.id, _textures[item.adjacentBombs + 3]);
+						if (item.adjacentBombs == 0) {
+							ds::Array<Hex> opened;
+							openEmptyTiles(h, opened);
+							Hex n[6];
+							for (uint32_t i = 0; i < opened.size(); ++i) {
+								const Hex& h = opened[i];
+								int cnt = _grid.neighbors(h, n);
+								for (int j = 0; j < cnt; ++j) {
+									GridItem& gi = _grid.get(n[j]);
+									if (!gi.bomb) {
+										_scene->setTexture(gi.id, _textures[gi.adjacentBombs + 3]);
+										gi.state = GIS_OPEN;
+									}
 								}
 							}
 						}
 					}
 				}
-			}			
+			}
 		}
 	}
 	return 0;
@@ -260,28 +274,25 @@ int MainGameState::onButtonUp(int button, int x, int y) {
 // Update
 // -------------------------------------------------------
 int MainGameState::update(float dt) {
-	Hex h = _grid.convertFromMousePos();
-	// wiggle hover piece
-	if (_grid.isValid(h)) {
-		int current = _grid.getIndex(h);
-		if (current != _hover) {
-			_hover = current;
-			GridItem& item = _grid.get(h);
-			if (item.state == 0) {
-				_scene->scaleTo(item.id, v2(1, 1), v2(0.8f, 0.8f), 0.2f, 0, tweening::easeSinus);
+	if (_mode == GM_RUNNING) {
+		Hex h = _grid.convertFromMousePos();
+		// wiggle hover piece
+		if (_grid.isValid(h)) {
+			int current = _grid.getIndex(h);
+			if (current != _hover) {
+				_hover = current;
+				GridItem& item = _grid.get(h);
+				if (item.state == 0) {
+					_scene->scaleTo(item.id, v2(1, 1), v2(0.8f, 0.8f), 0.2f, 0, tweening::easeSinus);
+				}
+
 			}
-
 		}
-	}
 
-	_context->hud->tick(dt);
+		_hud->tick(dt);
 
-	if (_showBombs) {
-		_endTimer += dt;
-		if (_endTimer > 2.0f) {
-			return 1;
-		}
-	}
+	}	
+	_scene->tick(dt);
 	return 0;
 }
 
@@ -289,7 +300,11 @@ int MainGameState::update(float dt) {
 // render
 // -------------------------------------------------------
 void MainGameState::render() {
-	_context->hud->render();
+	_scene->draw();
+	if (_mode == GM_RUNNING) {
+		_hud->render();
+	}
+	_gameOverDialog->render();
 }
 
 // -------------------------------------------------------
@@ -297,18 +312,58 @@ void MainGameState::render() {
 // -------------------------------------------------------
 int MainGameState::onChar(int ascii) {	
 	if (ascii == 'e') {
-		return 1;
+		stopGame();
 	}
 	if (ascii == 'r') {
 		fillBombs();
 	}
 	if (ascii == 'z') {
 		_grayfade->activate();
-		_screenShake->activate();
+		//_screenShake->activate();
 	}
 	if (ascii == 'u') {
 		_grayfade->deactivate();
-		_screenShake->deactivate();
+		//_screenShake->deactivate();
 	}
 	return 0;
+}
+
+void MainGameState::stopGame() {
+	_grayfade->activate();
+	//_screenShake->activate();
+	_endTimer = 0.0f;
+	_showBombs = true;
+	_mode = GM_OVER;
+	_gameOverDialog->activate();
+	_hud->deactivate();
+	char buffer[32];
+	sprintf_s(buffer, 32, "%d / %d", _context->markedCorrectly, GAME_MODES[_context->mode].maxBombs);
+	_gameOverDialog->updateText(12, buffer);
+	std::string str;
+	ds::GameTimer* timer = _hud->getTimer(3);
+	ds::string::formatTime(timer->getMinutes(), timer->getSeconds(), str);
+	_gameOverDialog->updateText(14, str.c_str());
+	int state = 1;
+	if (_context->markedCorrectly == GAME_MODES[_context->mode].maxBombs) {
+		state = 2;
+		_gameOverDialog->updateImage(11, 140, 650, ds::Rect(450, 0, 465, 85));
+		Highscore hs;
+		int ss = _context->highscores[_context->mode].add(hs);
+		if (ss == 0) {
+			state = 3;
+		}
+	}
+	else {
+		_gameOverDialog->updateImage(11, 140, 660, ds::Rect(450, 470, 440, 85));
+	}
+	if (state == 3) {
+		_gameOverDialog->updateText(19, "Congratulations - New highscore");
+	}
+	else if (state == 2) {
+		_gameOverDialog->updateText(19, "Try to be faster next time");
+	}
+	else {
+		_gameOverDialog->updateText(19, "You have unveiled a bomb");
+	}
+	_scene->activateRenderTarget();
 }

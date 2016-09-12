@@ -1,23 +1,23 @@
-image { 
-    id : 0
-    pos : 140,720
-    color : 255,255,255,255
+text { 
+    id : 10
+    pos : 180,750
+    color : 67,129,222,255
     centered : false
     scale : 1,1
-    rect : 760,0,220,55
+    text : "Time"
 }
-image { 
-    id : 1
-    pos : 888,720
-    color : 255,255,255,255
+text { 
+    id : 11
+    pos : 880,750
+    color : 67,129,222,255
     centered : false
     scale : 1,1
-    rect : 760,0,220,55
+    text : "Bombs left"
 }
 numbers { 
     id : 2
     pos : 880,720
-    color : 148,171,185,255
+    color : 230,180,0,255
     centered : false
     scale : 1,1
     value : 0
@@ -25,8 +25,8 @@ numbers {
 }
 timer { 
     id : 3
-    pos : 140,720
-    color : 148,171,185,255
+    pos : 140,710
+    color : 230,180,0,255
     centered : false
     scale : 1,1
 }

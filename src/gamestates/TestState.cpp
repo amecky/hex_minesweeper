@@ -1,8 +1,8 @@
 #include "TestState.h"
-#include <utils\Log.h>
-#include <base\EventStream.h>
+#include <core\log\Log.h>
+#include <core\base\EventStream.h>
 
-TestState::TestState(GameContext* context, ds::Game* game) : ds::GameState("TestState", game), _context(context) {
+TestState::TestState(GameContext* context) : ds::GameState("TestState"), _context(context) {
 	_particles = ds::res::getParticleManager();
 }
 

@@ -1,8 +1,8 @@
 #include "CreditsState.h"
-#include <utils\Log.h>
-#include <base\EventStream.h>
+#include <core\log\Log.h>
+#include <core\base\EventStream.h>
 
-CreditsState::CreditsState(GameContext* context, ds::Game* game) : ds::BasicMenuGameState("CreditsState", "Credits", game), _context(context) {
+CreditsState::CreditsState(GameContext* context) : ds::BasicMenuGameState("CreditsState", "Credits"), _context(context) {
 	_dialog->registerCallback(this);
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <Vector.h>
-#include <math\hex.h>
-#include <Common.h>
+#include <core\math\hex.h>
+#include <core\Common.h>
 
 enum GridItemState {
 	GIS_CLOSED,

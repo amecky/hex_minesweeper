@@ -11,8 +11,13 @@
 
 class MainGameState : public ds::GameState {
 
+	enum MainGameMode {
+		GM_RUNNING,
+		GM_OVER
+	};
+
 public:
-	MainGameState(GameContext* context, ds::Game* game);
+	MainGameState(GameContext* context);
 	virtual ~MainGameState();
 	void init();
 	int update(float dt);
@@ -24,7 +29,9 @@ public:
 private:
 	void fillBombs();
 	void openEmptyTiles(const Hex& h, ds::Array<Hex>& opened);
-
+	void stopGame();
+	ds::GUIDialog* _gameOverDialog;
+	ds::GUIDialog* _hud;
 	int _maxBombs;
 	GameContext* _context;
 	HexGrid _grid;
@@ -41,6 +48,7 @@ private:
 	int _gridOffset;
 	bool _leftClick;
 	ds::GrayFadePostProcess* _grayfade;
-	ds::ScreenShakePostProcess* _screenShake;
+	//ds::ScreenShakePostProcess* _screenShake;
+	MainGameMode _mode;
 };
 

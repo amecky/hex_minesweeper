@@ -1,8 +1,8 @@
 #include "SelectionState.h"
-#include <utils\Log.h>
-#include <base\EventStream.h>
+#include <core\log\Log.h>
+#include <core\base\EventStream.h>
 
-SelectionState::SelectionState(GameContext* context, ds::Game* game) : ds::BasicMenuGameState("SelectionState", "ModeSelection", game), _context(context) {
+SelectionState::SelectionState(GameContext* context) : ds::BasicMenuGameState("SelectionState", "ModeSelection"), _context(context) {
 	_dialog->registerCallback(this);
 }
 
@@ -15,6 +15,7 @@ int SelectionState::update(float dt) {
 	return 0;
 }
 void SelectionState::activate() {
+	_dialog->activate();
 	_dialog->startTransition(1, v2(1200, 500), SELECTION_MENU_TRANSITION);
 	_dialog->startTransition(2, v2(-200, 380), SELECTION_MENU_TRANSITION);
 	_dialog->startTransition(3, v2(1200, 260), SELECTION_MENU_TRANSITION);
@@ -22,6 +23,9 @@ void SelectionState::activate() {
 	_dialog->setVisible(5, false);
 	_dialog->setVisible(6, false);
 	_dialog->setVisible(7, false);
+}
+void SelectionState::deactivate() {
+	_dialog->deactivate();
 }
 // --------------------------------------------
 // click

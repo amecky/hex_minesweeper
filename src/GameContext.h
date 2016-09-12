@@ -1,8 +1,8 @@
 #pragma once
-#include <utils\GameTimer.h>
+#include <core\utils\GameTimer.h>
 #include <Vector.h>
 #include <dialogs\GUIDialog.h>
-#include <data\HighscoreService.h>
+#include <core\data\HighscoreService.h>
 
 enum GameModeType {
 	GM_EASY,
@@ -57,8 +57,7 @@ struct GameContext {
 	int marked;
 	int markedCorrectly;
 	ds::HighscoreService<Highscore, 10> highscores[3];
-	ds::GUIDialog* hud;
-
+	
 	void reset() {
 		marked = 0;
 		markedCorrectly = 0;

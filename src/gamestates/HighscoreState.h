@@ -5,7 +5,7 @@
 class HighscoreState : public ds::BasicMenuGameState {
 
 public:
-	HighscoreState(GameContext* context, ds::Game* game);
+	HighscoreState(GameContext* context);
 	~HighscoreState();
 	void activate();
 private:

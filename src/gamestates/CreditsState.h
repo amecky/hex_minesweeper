@@ -5,7 +5,7 @@
 class CreditsState : public ds::BasicMenuGameState {
 
 public:
-	CreditsState(GameContext* context, ds::Game* game);
+	CreditsState(GameContext* context);
 	~CreditsState();
 	int onGUIButton(int button);
 	int update(float dt);

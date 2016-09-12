@@ -7,11 +7,12 @@ const float SELECTION_MENU_TRANSITION = 0.4f;
 class SelectionState : public ds::BasicMenuGameState {
 
 public:
-	SelectionState(GameContext* context, ds::Game* game);
+	SelectionState(GameContext* context);
 	~SelectionState();
 	int onGUIButton(int button);
 	int update(float dt);
 	void activate();
+	void deactivate();
 	void entering(ID id);
 	void leaving(ID id);
 private:

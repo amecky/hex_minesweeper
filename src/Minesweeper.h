@@ -1,4 +1,5 @@
 #pragma comment(lib, "D11.lib")
+#pragma comment(lib, "DieselCore.lib")
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxerr.lib")
@@ -29,6 +30,6 @@ protected:
 	void prepare(ds::Settings* settings);
 private:
 	GameContext* _context;
-	ds::Scene2D* _backgroundScene;
+	//ds::Scene2D* _backgroundScene;
 	RID _material;
 };

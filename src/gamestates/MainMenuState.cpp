@@ -1,8 +1,8 @@
 #include "MainMenuState.h"
-#include <utils\Log.h>
-#include <base\EventStream.h>
+#include <core\log\Log.h>
+#include <core\base\EventStream.h>
 
-MainMenuState::MainMenuState(GameContext* context, ds::Game* game) : ds::BasicMenuGameState("MainMenu", "MainMenu", game), _context(context) {
+MainMenuState::MainMenuState(GameContext* context) : ds::BasicMenuGameState("MainMenu", "MainMenu"), _context(context) {
 	_dialog->registerCallback(this);
 }
 

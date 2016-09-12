@@ -20,9 +20,6 @@
   <ItemGroup>
     <ClCompile Include="src\Minesweeper.cpp" />
     <ClCompile Include="src\HexGrid.cpp" />
-    <ClCompile Include="src\gamestates\GameOverState.cpp">
-      <Filter>states</Filter>
-    </ClCompile>
     <ClCompile Include="src\gamestates\MainGameState.cpp">
       <Filter>states</Filter>
     </ClCompile>
@@ -32,11 +29,16 @@
     <ClCompile Include="src\gamestates\HighscoreState.cpp">
       <Filter>states</Filter>
     </ClCompile>
-    <ClCompile Include="src\Highscores.cpp" />
     <ClCompile Include="src\gamestates\IntroState.cpp">
       <Filter>states</Filter>
     </ClCompile>
     <ClCompile Include="src\gamestates\TestState.cpp">
+      <Filter>states</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gamestates\SelectionState.cpp">
+      <Filter>states</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gamestates\CreditsState.cpp">
       <Filter>states</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,9 +48,6 @@
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\HexGrid.h" />
-    <ClInclude Include="src\gamestates\GameOverState.h">
-      <Filter>states</Filter>
-    </ClInclude>
     <ClInclude Include="src\gamestates\MainGameState.h">
       <Filter>states</Filter>
     </ClInclude>
@@ -58,11 +57,16 @@
     <ClInclude Include="src\gamestates\HighscoreState.h">
       <Filter>states</Filter>
     </ClInclude>
-    <ClInclude Include="src\Highscores.h" />
     <ClInclude Include="src\gamestates\IntroState.h">
       <Filter>states</Filter>
     </ClInclude>
     <ClInclude Include="src\gamestates\TestState.h">
+      <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestates\SelectionState.h">
+      <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestates\CreditsState.h">
       <Filter>states</Filter>
     </ClInclude>
   </ItemGroup>
@@ -108,6 +112,15 @@
     </None>
     <None Include="content\particles\streaks.json">
       <Filter>content\particles</Filter>
+    </None>
+    <None Include="content\dialogs\ModeSelection.json">
+      <Filter>content\dialogs</Filter>
+    </None>
+    <None Include="content\dialogs\Credits.json">
+      <Filter>content\dialogs</Filter>
+    </None>
+    <None Include="content\resources\nullshock.json">
+      <Filter>content\resources</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

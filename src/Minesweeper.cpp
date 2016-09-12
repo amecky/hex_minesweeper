@@ -1,8 +1,7 @@
 #include "Minesweeper.h"
-#include "utils\Log.h"
+#include <core\log\Log.h>
 #include <gamestates\GameStateMachine.h>
 #include "gamestates\MainGameState.h"
-#include "gamestates\GameOverState.h"
 #include "gamestates\MainMenuState.h"
 #include "gamestates\HighscoreState.h"
 #include "gamestates\IntroState.h"
@@ -40,25 +39,15 @@ void Minesweeper::prepare(ds::Settings* settings) {
 // Load content and prepare game
 // -------------------------------------------------------
 bool Minesweeper::loadContent() {	
-
-	_backgroundScene = game->create2DScene("Background");
-	_material = ds::res::find("SpriteMaterial", ds::ResourceType::MATERIAL);
-	ds::Material* m = ds::res::getMaterial(_material);
-	m->texture = ds::res::find("TextureArray", ds::ResourceType::TEXTURE);
-	_backgroundScene->setActive(true);
-
-
-	_context->hud = ds::res::getGUIDialog("HUD");
-	addGameState(new MainGameState(_context, game));
-	addGameState(new GameOverState(_context, game));
-	addGameState(new MainMenuState(_context, game));
-	addGameState(new HighscoreState(_context, game));
-	addGameState(new SelectionState(_context, game));
-	addGameState(new TestState(_context, game));
-	addGameState(new CreditsState(_context, game));
-	connectGameStates("GameOver", 1, "MainGame");
-	connectGameStates("GameOver", 2, "MainMenu");
-	connectGameStates("MainGame", 1, "GameOver");
+	
+	addGameState(new MainGameState(_context));
+	addGameState(new MainMenuState(_context));
+	addGameState(new HighscoreState(_context));
+	addGameState(new SelectionState(_context));
+	addGameState(new TestState(_context));
+	addGameState(new CreditsState(_context));
+	connectGameStates("MainGame", 1, "MainGame");
+	connectGameStates("MainGame", 2, "MainMenu");
 	connectGameStates("MainMenu", 1, "SelectionState");
 	connectGameStates("MainMenu", 3, "CreditsState");
 	connectGameStates("CreditsState", 1, "MainMenu");
@@ -84,8 +73,7 @@ bool Minesweeper::loadContent() {
 			LOG << i << " : " << s.minutes << ":" << s.seconds;
 		}
 	}
-	ID id = _backgroundScene->add(v2(512, 384), math::buildTexture(0, 512, 512, 384), _material);
-	_backgroundScene->scale(id, v2(2, 2));
+
 	return true;
 }
 
@@ -101,6 +89,8 @@ void Minesweeper::init() {
 // render
 // -------------------------------------------------------
 void Minesweeper::render() {	
+	ds::SpriteBuffer* sprites = graphics::getSpriteBuffer();
+	sprites->draw(v2(512, 384), math::buildTexture(0, 512, 512, 384), 0.0f, v2(2, 2));
 }
 
 // -------------------------------------------------------
