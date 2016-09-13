@@ -341,7 +341,7 @@ void MainGameState::stopGame() {
 	if (_context->markedCorrectly == GAME_MODES[_context->mode].maxBombs) {
 		state = 2;
 		_gameOverDialog->updateImage(11, 140, 650, ds::Rect(450, 0, 465, 85));
-		Highscore hs;
+		Highscore hs(timer->getMinutes(),timer->getSeconds(),_context->mode);
 		int ss = _context->highscores[_context->mode].add(hs);
 		LOG << "add score at: " << ss;
 		if (ss == 0) {

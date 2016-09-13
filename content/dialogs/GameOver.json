@@ -38,6 +38,14 @@ image {
     scale : 1,1
     rect : 760,0,220,55
 }
+image { 
+    id : 24
+    pos : 680,580
+    color : 255,255,255,255
+    centered : true
+    scale : 6,1
+    rect : 760,0,220,55
+}
 text { 
     id : 10
     pos : 20,510
