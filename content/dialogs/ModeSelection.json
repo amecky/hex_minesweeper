@@ -10,9 +10,10 @@ button {
     id : 1 
     pos : 400,500 
     color : 255,255,255,255 
+	image_color : 128,128,128,255
     centered : true 
     scale : 1,1
-    rect : 368,0,302,52 
+    rect : 230,0,302,52
     text : "Easy"    
 }
 text { 
@@ -27,9 +28,10 @@ button {
     id : 2 
     pos : 400,380 
     color : 255,255,255,255 
+	image_color : 128,128,128,255
     centered : true 
     scale : 1,1
-    rect : 368,0,302,52 
+    rect : 230,0,302,52
     text : "Medium"    
 }
 text { 
@@ -44,9 +46,10 @@ button {
     id : 3 
     pos : 400,260 
     color : 255,255,255,255 
+	image_color : 128,128,128,255
     centered : true 
     scale : 1,1
-    rect : 368,0,302,52 
+    rect : 230,0,302,52
     text : "Hard"    
 }
 text { 
@@ -61,8 +64,9 @@ button {
     id : 4
     pos : 100,120
     color : 255,255,255,255
+	image_color : 192,0,0,255
     centered : true
     scale : 1,1
-    rect : 300,0,302,52
+    rect : 230,0,302,52
     text : "Main Menu"
 }

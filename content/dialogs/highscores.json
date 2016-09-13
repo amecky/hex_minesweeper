@@ -106,8 +106,9 @@ button {
     id : 1
     pos : 100,120
     color : 255,255,255,255
+	image_color : 192,0,0,255
     centered : true
     scale : 1,1
-    rect : 300,0,302,52
+    rect : 230,0,302,52
     text : "Main Menu"
 }

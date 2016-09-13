@@ -52,7 +52,7 @@ text {
     color : 255,255,255,255
     centered : true
     scale : 1,1
-    text : "0 / 32"
+    text : "100 / 100"
 }
 text { 
     id : 13
@@ -82,7 +82,7 @@ button {
     id : 1
     pos : 100,200
     color : 255,255,255,255
-	image_color : 0,255,0,255
+	image_color : 0,192,0,255
     centered : true
     scale : 1,1
     rect : 230,0,302,52
@@ -92,7 +92,7 @@ button {
     id : 2
     pos : 100,120
 	color : 255,255,255,255
-    image_color : 255,0,0,255
+    image_color : 192,0,0,255
     centered : true
     scale : 1,1
     rect : 230,0,302,52

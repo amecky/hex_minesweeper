@@ -1,7 +1,10 @@
 # TODO
-- [ ] better bomb explosion effect
 - [ ] add some star animations when new highscores
 - [ ] add some looser animation to game over
+- [ ] show text message when new highscore
+
+## 13.09.2016
+- [x] WONTFIX: better bomb explosion effect
 
 ## 30.07.2016
 - [x] WONTFIX: add credits dialog

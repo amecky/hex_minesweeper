@@ -20,9 +20,6 @@ font {
 	name : "gui_font"
 	file : "gui_font.json"
 }
-//particles {
-//	sprite_buffer : 8
-//}
 dialog {
     name : "MainMenu"
     font : "xscale"
@@ -47,15 +44,6 @@ dialog {
     name : "ModeSelection"
     file : "ModeSelection"
     font : "xscale"
-}
-dialog {
-    name : "Credits"
-    file : "Credits"
-    font : "xscale"
-}
-particle_manager {
-	name : "ParticleManager"
-
 }
 render_target {
 	name : "RT1"

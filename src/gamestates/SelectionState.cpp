@@ -2,6 +2,8 @@
 #include <core\log\Log.h>
 #include <core\base\EventStream.h>
 
+const float SELECTION_MENU_TRANSITION = 0.4f;
+
 SelectionState::SelectionState(GameContext* context) : ds::BasicMenuGameState("SelectionState", "ModeSelection"), _context(context) {
 	_dialog->registerCallback(this);
 }
@@ -10,10 +12,6 @@ SelectionState::SelectionState(GameContext* context) : ds::BasicMenuGameState("S
 SelectionState::~SelectionState() {
 }
 
-int SelectionState::update(float dt) {
-	_dialog->tick(dt);
-	return 0;
-}
 void SelectionState::activate() {
 	_dialog->activate();
 	_dialog->startTransition(1, v2(1200, 500), SELECTION_MENU_TRANSITION);
@@ -31,7 +29,6 @@ void SelectionState::deactivate() {
 // click
 // --------------------------------------------
 int SelectionState::onGUIButton(int button) {
-	LOG << "button: " << button;
 	if (button == 1) {
 		_context->mode = 0;
 		return 1;
@@ -57,11 +54,9 @@ void SelectionState::entering(ID id) {
 	if (id == 3) {
 		_dialog->setVisible(7, true);
 	}
-	LOG << "SelectionState entering: " << id;
 }
 
 void SelectionState::leaving(ID id) {
-	LOG << "SelectionState leaving: " << id;
 	_dialog->setVisible(5, false);
 	_dialog->setVisible(6, false);
 	_dialog->setVisible(7, false);

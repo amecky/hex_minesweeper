@@ -19,4 +19,5 @@ void HighscoreState::activate() {
 		ds::string::formatTime(h.minutes, h.seconds, str);
 		_dialog->updateText(20 + i, str.c_str());
 	}
+	_dialog->activate();
 }

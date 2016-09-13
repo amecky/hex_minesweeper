@@ -192,6 +192,7 @@ void MainGameState::openEmptyTiles(const Hex& h, ds::Array<Hex>& opened) {
 // -------------------------------------------------------
 int MainGameState::onButtonUp(int button, int x, int y) {
 	if (_mode == GM_OVER) {
+		// FIXME: include some delay if someone has clicked accidentially
 		int ret = _gameOverDialog->onButton(button, x, y, true);
 		if (ret != -1) {
 			return ret;
@@ -319,36 +320,30 @@ int MainGameState::onChar(int ascii) {
 	}
 	if (ascii == 'z') {
 		_grayfade->activate();
-		//_screenShake->activate();
 	}
 	if (ascii == 'u') {
 		_grayfade->deactivate();
-		//_screenShake->deactivate();
 	}
 	return 0;
 }
 
 void MainGameState::stopGame() {
 	_grayfade->activate();
-	//_screenShake->activate();
 	_endTimer = 0.0f;
 	_showBombs = true;
 	_mode = GM_OVER;
 	_gameOverDialog->activate();
 	_hud->deactivate();
-	char buffer[32];
-	sprintf_s(buffer, 32, "%d / %d", _context->markedCorrectly, GAME_MODES[_context->mode].maxBombs);
-	_gameOverDialog->updateText(12, buffer);
-	std::string str;
+	_gameOverDialog->updateTextFormatted(12, "%d / %d", _context->markedCorrectly, GAME_MODES[_context->mode].maxBombs);
 	ds::GameTimer* timer = _hud->getTimer(3);
-	ds::string::formatTime(timer->getMinutes(), timer->getSeconds(), str);
-	_gameOverDialog->updateText(14, str.c_str());
+	_gameOverDialog->updateTextFormatted(14, "%02d:%02d", timer->getMinutes(), timer->getSeconds());
 	int state = 1;
 	if (_context->markedCorrectly == GAME_MODES[_context->mode].maxBombs) {
 		state = 2;
 		_gameOverDialog->updateImage(11, 140, 650, ds::Rect(450, 0, 465, 85));
 		Highscore hs;
 		int ss = _context->highscores[_context->mode].add(hs);
+		LOG << "add score at: " << ss;
 		if (ss == 0) {
 			state = 3;
 		}

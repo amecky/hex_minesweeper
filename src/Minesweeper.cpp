@@ -5,9 +5,7 @@
 #include "gamestates\MainMenuState.h"
 #include "gamestates\HighscoreState.h"
 #include "gamestates\IntroState.h"
-#include "gamestates\TestState.h"
 #include "gamestates\SelectionState.h"
-#include "gamestates\CreditsState.h"
 
 const char* SCORE_NAMES[] = { "easy.scr", "medium.scr", "hard.scr" };
 
@@ -44,13 +42,9 @@ bool Minesweeper::loadContent() {
 	addGameState(new MainMenuState(_context));
 	addGameState(new HighscoreState(_context));
 	addGameState(new SelectionState(_context));
-	addGameState(new TestState(_context));
-	addGameState(new CreditsState(_context));
 	connectGameStates("MainGame", 1, "MainGame");
 	connectGameStates("MainGame", 2, "MainMenu");
 	connectGameStates("MainMenu", 1, "SelectionState");
-	connectGameStates("MainMenu", 3, "CreditsState");
-	connectGameStates("CreditsState", 1, "MainMenu");
 	connectGameStates("SelectionState", 4, "MainMenu");
 	connectGameStates("SelectionState", 1, "MainGame");
 	connectGameStates("MainMenu", 5, "Highscores");
