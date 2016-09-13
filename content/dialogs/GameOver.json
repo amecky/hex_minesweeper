@@ -9,42 +9,42 @@ image {
 image { 
     id : 20
     pos : 360,510
-    color : 255,255,255,255
+    color : 67,129,222,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 21
     pos : 680,450
-    color : 255,255,255,255
+    color : 230,180,0,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 22
     pos : 360,380
-    color : 255,255,255,255
+    color : 67,129,222,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 23
     pos : 680,320
-    color : 255,255,255,255
+    color : 230,180,0,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 24
     pos : 680,580
-    color : 255,255,255,255
+    color : 32,32,32,255
     centered : true
-    scale : 6,1
-    rect : 760,0,220,55
+    scale : 1,1
+    rect : 825,0,600,55
 }
 text { 
     id : 10
@@ -81,7 +81,7 @@ text {
 text { 
     id : 19
     pos : 520,580
-    color : 255,255,255,255
+    color : 230,180,0,255
     centered : true
     scale : 1,1
     text : "This is a mighty long long text to make sure everything will fit in here"

@@ -9,50 +9,50 @@ image {
 image { 
     id : 23
     pos : 450,480
-    color : 255,255,255,255
+    color : 230,180,0,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 26
     pos : 660,350
-    color : 255,255,255,255
+    color : 230,180,0,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 27
     pos : 512,540
-    color : 255,255,255,255
+    color : 67,129,222,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 28
     pos : 512,410
-    color : 255,255,255,255
+    color : 67,129,222,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 29
     pos : 512,280
-    color : 255,255,255,255
+    color : 67,129,222,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 image { 
     id : 30
     pos : 512,220
-    color : 255,255,255,255
+    color : 230,180,0,255
     centered : true
     scale : 1,1
-    rect : 760,0,220,55
+    rect : 825,0,220,45
 }
 text { 
     id : 2
