@@ -1,6 +1,0 @@
-select_color 213,207,197,255
-add_cube 0,0.05,0 0.8,0.1,0.8
-slice 4 3 3
-expand_face 9 4 7 13 11 0.2 0.1
-extrude_face 9 -0.09
-remove_face 9

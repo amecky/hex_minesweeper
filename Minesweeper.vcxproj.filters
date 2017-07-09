@@ -12,29 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <ClCompile Include="src\Minesweeper.cpp" />
-    <ClCompile Include="src\HexGrid.cpp" />
-    <ClCompile Include="src\gamestates\GameOverState.cpp">
-      <Filter>states</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gamestates\MainGameState.cpp">
-      <Filter>states</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gamestates\MainMenuState.cpp">
-      <Filter>states</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gamestates\HighscoreState.cpp">
-      <Filter>states</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Highscores.cpp" />
-    <ClCompile Include="src\gamestates\IntroState.cpp">
-      <Filter>states</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-=======
->>>>>>> origin/2D
     <ClInclude Include="resource.h" />
     <ClInclude Include="ext\stb_image.h">
       <Filter>ext</Filter>
@@ -45,13 +22,11 @@
     <ClInclude Include="ext\ds_imgui.h">
       <Filter>ext</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Highscores.h" />
     <ClInclude Include="src\gamestates\IntroState.h">
       <Filter>states</Filter>
     </ClInclude>
     <ClInclude Include="src\GameSettings.h" />
-=======
     <ClInclude Include="ext\SpriteBatchBuffer.h">
       <Filter>ext</Filter>
     </ClInclude>
@@ -61,54 +36,11 @@
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\HUD.h" />
     <ClInclude Include="src\tweening.h" />
->>>>>>> origin/2D
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />
     <None Include="README.md" />
     <None Include="TODO.md" />
-<<<<<<< HEAD
-    <None Include="content\dialogs\test_dialog.json">
-      <Filter>content\dialogs</Filter>
-    </None>
-    <None Include="content\engine_settings.json">
-      <Filter>content</Filter>
-    </None>
-    <None Include="content\dialogs\GameOver.json">
-      <Filter>content\dialogs</Filter>
-    </None>
-    <None Include="content\dialogs\Highscores.json">
-      <Filter>content\dialogs</Filter>
-    </None>
-    <None Include="content\dialogs\MainMenu.json">
-      <Filter>content\dialogs</Filter>
-    </None>
-    <None Include="content\dialogs\HUD.json">
-      <Filter>content\dialogs</Filter>
-    </None>
-    <None Include="content\resources.json">
-      <Filter>content</Filter>
-    </None>
-    <None Include="content\resources\gui_font.json">
-      <Filter>content\resources</Filter>
-    </None>
-    <None Include="content\particles\explosion.json">
-      <Filter>content\particles</Filter>
-    </None>
-    <None Include="content\particles\particlesystems.json">
-      <Filter>content\particles</Filter>
-    </None>
-    <None Include="content\particles\inner_explosion.json">
-      <Filter>content\particles</Filter>
-    </None>
-    <None Include="content\particles\streaks.json">
-      <Filter>content\particles</Filter>
-    </None>
-    <None Include="content\path.json">
-      <Filter>content</Filter>
-    </None>
-=======
->>>>>>> origin/2D
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Minesweeper.rc" />

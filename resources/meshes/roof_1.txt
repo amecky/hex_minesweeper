@@ -1,6 +1,0 @@
-select_color 213,207,197,255
-add_cube 0,0,0 0.8,0.1,0.8
-slice 4 1 3 
-move_face 6 0,0.2,0.0
-make_face 29 25 17 4
-make_face 19 27 31 124

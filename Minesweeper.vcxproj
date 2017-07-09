@@ -107,11 +107,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/IGNORE:4089 %(AdditionalOptions)</AdditionalOptions>
-<<<<<<< HEAD
-      <AdditionalDependencies>d3d11.lib;d3dx11.lib;dxerr.lib;dxgi.lib;dinput8.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-=======
       <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
->>>>>>> origin/2D
       <OutputFile>$(OutDir)Minesweeper.exe</OutputFile>
       <GenerateManifest>false</GenerateManifest>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -228,58 +224,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <ClCompile Include="src\gamestates\GameOverState.cpp" />
-    <ClCompile Include="src\gamestates\HighscoreState.cpp" />
-    <ClCompile Include="src\gamestates\IntroState.cpp" />
-    <ClCompile Include="src\gamestates\MainGameState.cpp" />
-    <ClCompile Include="src\gamestates\MainMenuState.cpp" />
-    <ClCompile Include="src\HexGrid.cpp" />
-    <ClCompile Include="src\Highscores.cpp" />
-    <ClCompile Include="src\Minesweeper.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-=======
     <ClInclude Include="ext\diesel.h" />
     <ClInclude Include="ext\ds_imgui.h" />
     <ClInclude Include="ext\SpriteBatchBuffer.h" />
     <ClInclude Include="ext\stb_image.h" />
->>>>>>> origin/2D
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\GameContext.h" />
-<<<<<<< HEAD
-    <ClInclude Include="src\GameSettings.h" />
-    <ClInclude Include="src\gamestates\GameOverState.h" />
-    <ClInclude Include="src\gamestates\HighscoreState.h" />
-    <ClInclude Include="src\gamestates\IntroState.h" />
-    <ClInclude Include="src\gamestates\MainGameState.h" />
-    <ClInclude Include="src\gamestates\MainMenuState.h" />
-=======
     <ClInclude Include="src\hex.h" />
->>>>>>> origin/2D
     <ClInclude Include="src\HexGrid.h" />
     <ClInclude Include="src\HUD.h" />
     <ClInclude Include="src\tweening.h" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <None Include="content\dialogs\GameOver.json" />
-    <None Include="content\dialogs\Highscores.json" />
-    <None Include="content\dialogs\HUD.json" />
-    <None Include="content\dialogs\MainMenu.json" />
-    <None Include="content\dialogs\test_dialog.json" />
-    <None Include="content\engine_settings.json" />
-    <None Include="content\particles\explosion.json" />
-    <None Include="content\particles\inner_explosion.json" />
-    <None Include="content\particles\particlesystems.json" />
-    <None Include="content\particles\streaks.json" />
-    <None Include="content\path.json" />
-    <None Include="content\resources.json" />
-    <None Include="content\resources\gui_font.json" />
-    <None Include="content\resources\xscale.json" />
-=======
->>>>>>> origin/2D
     <None Include="Minesweeper.manifest" />
     <None Include="README.md" />
     <None Include="TODO.md" />
