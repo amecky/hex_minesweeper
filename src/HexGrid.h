@@ -1,7 +1,8 @@
 #pragma once
-#include <Vector.h>
-#include <core\math\hex.h>
-#include <core\Common.h>
+#include <diesel.h>
+#include "hex.h"
+
+typedef unsigned int ID;
 
 enum GridItemState {
 	GIS_CLOSED,
@@ -13,13 +14,13 @@ struct GridItem {
 
 	ID id;
 	Hex hex;
-	v2 position;
+	ds::vec2 position;
 	bool bomb;
 	int adjacentBombs;
 	GridItemState state; 
 	bool wiggle;
 	float timer;
-	v2 scale;
+	ds::vec2 scale;
 };
 
 class HexGrid {
@@ -40,9 +41,9 @@ public:
 	void markAsBomb(const Hex& hex);
 	int neighbors(const Hex& hex,Hex* ret);
 	Hex convertFromMousePos();
-	void setOrigin(const v2& origin);
+	void setOrigin(const ds::vec2& origin);
 	int getIndex(const Hex& h)const;
-	v2 convert(int q, int r) const;
+	ds::vec2 convert(int q, int r) const;
 private:
 	int _qMax;
 	int _rMax;
