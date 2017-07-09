@@ -1,9 +1,7 @@
 #include "HexGrid.h"
 #include <assert.h>
-#include <renderer\graphics.h>
-#include <base\InputSystem.h>
 
-HexGrid::HexGrid() : _qMax(0), _rMax(0), _items(0), _layout(layout_pointy, v2(0.5f, 0.5f), v2(0, 0)) {
+HexGrid::HexGrid() : _qMax(0), _rMax(0), _items(0), _layout(layout_pointy, ds::vec2(24.0f, 24.0f), ds::vec2(100, 130)) {
 }
 
 HexGrid::~HexGrid() {
@@ -25,11 +23,6 @@ void HexGrid::resize(int qMax, int rMax) {
 	fill();
 }
 
-v3 HexGrid::convert(int q, int r) const {
-	Hex hex = Hex(q, r);
-	v2 position = hex_math::hex_to_pixel(_layout, hex);
-	return v3(position.x, 0.0f, position.y);
-}
 // -------------------------------------------------------
 // fill
 // -------------------------------------------------------
@@ -41,13 +34,12 @@ void HexGrid::fill() {
 			GridItem item;
 			item.hex = Hex(q, r);
 			item.position = hex_math::hex_to_pixel(_layout, item.hex);
-			item.state = 0;
+			item.state = GIS_CLOSED;
 			item.bomb = false;
 			item.adjacentBombs = 0;
 			item.wiggle = false;
 			item.timer = 0.0f;
-			item.scale = v2(1, 1);
-			//item.rotating = false;
+			item.scale = ds::vec2(1, 1);
 			int idx = (q + q_offset) + r * _qMax;
 			_items[idx] = item;
 		}
@@ -79,8 +71,13 @@ int HexGrid::neighbors(const Hex& hex, Hex* ret) {
 }
 
 Hex HexGrid::convertFromMousePos() {
-	v2 mp = ds::input::getMousePosition();
-	return hex_math::hex_round(hex_math::pixel_to_hex(_layout, mp));
+	ds::vec2 mousePos = ds::getMousePosition();
+	return hex_math::hex_round(hex_math::pixel_to_hex(_layout, mousePos));
+}
+
+ds::vec2 HexGrid::convert(int q, int r) const {
+	Hex hex = Hex(q, r);
+	return hex_math::hex_to_pixel(_layout, hex);
 }
 // -------------------------------------------------------
 // get
@@ -106,8 +103,8 @@ const int HexGrid::size() const {
 // select
 // -------------------------------------------------------
 int HexGrid::select(int x, int y) {
-	v2 mp = ds::input::getMousePosition();
-	Hex h = hex_math::hex_round(hex_math::pixel_to_hex(_layout, mp));
+	ds::vec2 mousePos = ds::getMousePosition();
+	Hex h = hex_math::hex_round(hex_math::pixel_to_hex(_layout, mousePos));
 	int q_offset = h.r >> 1;
 	int selected = -1;
 	//LOG << "h: " << h.q << " " << h.r << " q_offset: " << q_offset;
@@ -150,7 +147,7 @@ void HexGrid::markAsBomb(const Hex& hex) {
 	_items[idx].bomb = true;
 }
 
-void HexGrid::setOrigin(const v2& origin) {
+void HexGrid::setOrigin(const ds::vec2& origin) {
 	_layout.origin = origin;
 }
 
@@ -162,45 +159,3 @@ int HexGrid::getIndex(const Hex& hex) const {
 	return (hex.q + q_offset) + hex.r * _qMax;
 }
 
-int HexGrid::getIndex(ID id) const {
-	for (int i = 0; i < size(); ++i) {
-		const GridItem& item = get(i);
-		if (item.id == id) {
-			return i;
-		}
-	}
-	return -1;
-}
-// -------------------------------------------------------
-// update
-// -------------------------------------------------------
-void HexGrid::update(float dt) {
-	// scaling based on item state
-	for (int i = 0; i < size(); ++i) {
-		GridItem& item = get(i);
-		if (item.wiggle) {
-			item.timer += dt;
-			float norm = item.timer / 0.4f;
-			item.scale.x = 0.8f + sin(item.timer * 5.0f) * 0.2f;
-			item.scale.y = 0.8f + sin(item.timer * 5.0f) * 0.2f;
-			if (norm >= 1.0f) {
-				item.wiggle = false;
-				item.scale = v2(1, 1);
-			}
-		}
-	}
-
-	// hover
-	Hex h = convertFromMousePos();
-	if (isValid(h)) {
-		int current = getIndex(h);
-		if (current != _hover) {
-			_hover = current;
-			GridItem& item = get(h);
-			if (!item.wiggle) {
-				item.wiggle = true;
-				item.timer = 0.0f;
-			}
-		}
-	}
-}

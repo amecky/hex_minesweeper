@@ -1,22 +1,26 @@
 #pragma once
-#include <Vector.h>
-#include <math\hex.h>
-#include <Common.h>
+#include <diesel.h>
+#include "hex.h"
+
+typedef unsigned int ID;
+
+enum GridItemState {
+	GIS_CLOSED,
+	GIS_OPEN,
+	GIS_MARKED
+};
 
 struct GridItem {
 
+	ID id;
 	Hex hex;
-	v3 position;
+	ds::vec2 position;
 	bool bomb;
 	int adjacentBombs;
-	int state; // 0 = closed / 1 = open / 2 = marked
+	GridItemState state; 
 	bool wiggle;
 	float timer;
-	v3 scale;
-	ID id;
-	ID numberID;
-	ID marker_id;
-	//bool rotating;
+	ds::vec2 scale;
 };
 
 class HexGrid {
@@ -37,17 +41,9 @@ public:
 	void markAsBomb(const Hex& hex);
 	int neighbors(const Hex& hex,Hex* ret);
 	Hex convertFromMousePos();
-	void setOrigin(const v2& origin);
-	void update(float dt);
-	int getIndex(const Hex& h) const;
-	int getIndex(ID id) const;
-	v3 convert(int q, int r) const;
-	int getWidth() const {
-		return _qMax;
-	}
-	int getHeight() const {
-		return _rMax;
-	}
+	void setOrigin(const ds::vec2& origin);
+	int getIndex(const Hex& h)const;
+	ds::vec2 convert(int q, int r) const;
 private:
 	int _qMax;
 	int _rMax;

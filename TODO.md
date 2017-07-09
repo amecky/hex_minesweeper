@@ -1,7 +1,21 @@
 # TODO
-- [ ] fix new highscore service
-- [ ] use fade to grey shader here
 - [ ] add some star animations when new highscores
+- [ ] add some looser animation to game over
+- [ ] show text message when new highscore
+
+## 13.09.2016
+- [x] WONTFIX: better bomb explosion effect
+
+## 30.07.2016
+- [x] WONTFIX: add credits dialog
+- [x] add credits button to main menu and fix button layout
+
+## 28.07.2016
+- [x] use fade to grey shader here
+
+## 25.07.2016
+- [x] game over - text is gone?
+- [x] fix new highscore service
 
 ## 24.12.2015
 - [x] mouse over highlight

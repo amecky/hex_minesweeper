@@ -1,9 +1,0 @@
-"image" {
-	"id" : "0" , "pos" : "200,660" , "rect" : "650,0,560,104" 
-}
-"text" {
-	"id" : "2" , "pos" : "374,480" , "text" : "Some test text" , "centered" : "false"
-}
-"button" { 
-	"id" : "1" , "pos" : "100,120" , "text" : "Test Me" , "rect" : "300,0,302,52" 
-}

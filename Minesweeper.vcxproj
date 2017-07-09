@@ -23,6 +23,7 @@
     <RootNamespace>Minesweeper</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>Minesweeper</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -32,8 +33,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -83,12 +84,12 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EmbedManifest>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath);$(DXSDK_DIR)Include;..\math;..\D11</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath);$(DXSDK_DIR)Lib\x86;..\D11\Debug</LibraryPath>
-    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\devtools\DirectX\Lib\x86;$(ReferencePath)</ReferencePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\math;..\D11;C:\devtools\DirectX_SDK\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\D11\Release;C:\devtools\DirectX_SDK\Lib\x86;$(LibraryPath)</LibraryPath>
-    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\devtools\DirectX_SDK\Lib\x86;$(ReferencePath)</ReferencePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath);$(DXSDK_DIR)Include;ext</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)Lib\x86;$(ReferencePath)</ReferencePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IncludePath);$(DXSDK_DIR)Include;ext</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,7 +107,11 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/IGNORE:4089 %(AdditionalOptions)</AdditionalOptions>
+<<<<<<< HEAD
       <AdditionalDependencies>d3d11.lib;d3dx11.lib;dxerr.lib;dxgi.lib;dinput8.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+=======
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+>>>>>>> origin/2D
       <OutputFile>$(OutDir)Minesweeper.exe</OutputFile>
       <GenerateManifest>false</GenerateManifest>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -140,7 +145,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/IGNORE:4089 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>D11.lib;d3dxof.lib;dxguid.lib;d3dx9.lib;d3d9.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)Minesweeper.exe</OutputFile>
       <GenerateManifest>false</GenerateManifest>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -223,6 +228,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="src\gamestates\GameOverState.cpp" />
     <ClCompile Include="src\gamestates\HighscoreState.cpp" />
     <ClCompile Include="src\gamestates\IntroState.cpp" />
@@ -233,20 +239,31 @@
     <ClCompile Include="src\Minesweeper.cpp" />
   </ItemGroup>
   <ItemGroup>
+=======
+    <ClInclude Include="ext\diesel.h" />
+    <ClInclude Include="ext\ds_imgui.h" />
+    <ClInclude Include="ext\SpriteBatchBuffer.h" />
+    <ClInclude Include="ext\stb_image.h" />
+>>>>>>> origin/2D
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Constants.h" />
+    <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\GameContext.h" />
+<<<<<<< HEAD
     <ClInclude Include="src\GameSettings.h" />
     <ClInclude Include="src\gamestates\GameOverState.h" />
     <ClInclude Include="src\gamestates\HighscoreState.h" />
     <ClInclude Include="src\gamestates\IntroState.h" />
     <ClInclude Include="src\gamestates\MainGameState.h" />
     <ClInclude Include="src\gamestates\MainMenuState.h" />
+=======
+    <ClInclude Include="src\hex.h" />
+>>>>>>> origin/2D
     <ClInclude Include="src\HexGrid.h" />
-    <ClInclude Include="src\Highscores.h" />
-    <ClInclude Include="src\Minesweeper.h" />
+    <ClInclude Include="src\HUD.h" />
+    <ClInclude Include="src\tweening.h" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="content\dialogs\GameOver.json" />
     <None Include="content\dialogs\Highscores.json" />
     <None Include="content\dialogs\HUD.json" />
@@ -261,12 +278,26 @@
     <None Include="content\resources.json" />
     <None Include="content\resources\gui_font.json" />
     <None Include="content\resources\xscale.json" />
+=======
+>>>>>>> origin/2D
     <None Include="Minesweeper.manifest" />
     <None Include="README.md" />
     <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Minesweeper.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Board.cpp" />
+    <ClCompile Include="src\hex.cpp" />
+    <ClCompile Include="src\HexGrid.cpp" />
+    <ClCompile Include="src\HUD.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\tweening.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="content\TextureArray.png" />
+    <Image Include="DXUT\Optional\directx.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
