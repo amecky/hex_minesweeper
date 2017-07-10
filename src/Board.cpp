@@ -104,6 +104,10 @@ bool Board::select() {
 		if (ds::isMouseButtonPressed(0) && !_buttonState[0].pressed) {
 			_buttonState[0].released = true;
 			_buttonState[0].pressed = true;
+		}
+		if (!ds::isMouseButtonPressed(0) && _buttonState[0].pressed) {
+			_buttonState[0].pressed = false;
+			_buttonState[0].released = false;
 			GridItem& item = _grid.get(h);
 			if (item.state == GIS_CLOSED) {
 				// game over
@@ -131,13 +135,13 @@ bool Board::select() {
 				}
 			}
 		}
-		if (!ds::isMouseButtonPressed(0) && _buttonState[0].pressed) {
-			_buttonState[0].pressed = false;
-			_buttonState[0].released = false;
-		}
 		if (ds::isMouseButtonPressed(1) && !_buttonState[1].pressed) {
 			_buttonState[1].released = true;
-			_buttonState[1].pressed = true;
+			_buttonState[1].pressed = true;			
+		}
+		if (!ds::isMouseButtonPressed(1) && _buttonState[1].pressed) {
+			_buttonState[1].pressed = false;
+			_buttonState[1].released = false;
 			GridItem& item = _grid.get(h);
 			if (item.state == GIS_CLOSED) {
 				if (_marked < _maxBombs) {
@@ -159,10 +163,6 @@ bool Board::select() {
 				return false;
 			}
 			int left = _maxBombs - _marked;
-		}
-		if (!ds::isMouseButtonPressed(1) && _buttonState[1].pressed) {
-			_buttonState[1].pressed = false;
-			_buttonState[1].released = false;
 		}
 	}
 	return true;

@@ -90,7 +90,7 @@ namespace dialog {
 		_guiCtx = new GUIContext;
 		_guiCtx->buffer = buffer;
 		_guiCtx->clicked = false;
-		_guiCtx->buttonPressed = false;
+		_guiCtx->buttonPressed = ds::isMouseButtonPressed(0);
 	}
 
 	void begin() {

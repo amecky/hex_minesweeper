@@ -67,7 +67,7 @@ void initialize() {
 	rs.width = 1024;
 	rs.height = 768;
 	rs.title = "Colors - match 3 game";
-	rs.clearColor = ds::Color(0.125f, 0.125f, 0.125f, 1.0f);
+	rs.clearColor = ds::Color(0,225,121,255);
 	rs.multisampling = 4;
 	ds::init(rs);
 }
@@ -95,7 +95,7 @@ int floatButton(float time, float ttl, FloatInDirection dir) {
 int showGameOverMenu(const Score& score, float time, float ttl) {
 	int ret = 0;
 	dialog::begin();
-	int dy = 550;
+	int dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
 	}
@@ -105,9 +105,10 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	else {
 		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 490, 300, 60));
 	}
-	ds::vec2 mp = ds::getMousePosition();
-	dialog::FormattedText(ds::vec2(400, 450), "Bombs left: %d", score.bombsLeft);
-	dialog::FormattedText(ds::vec2(400, 400), "Time: %02d:%02d", score.minutes, score.seconds);
+	dialog::Image(ds::vec2(512, 470), ds::vec4(610, 0, 400, 50));
+	dialog::Image(ds::vec2(512, 390), ds::vec4(610, 0, 400, 50));
+	dialog::FormattedText(ds::vec2(400, 470), "Bombs left: %d", score.bombsLeft);
+	dialog::FormattedText(ds::vec2(400, 390), "Time: %02d:%02d", score.minutes, score.seconds);
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
 	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(0, 368, 300, 50),"Replay")) {
 		ret = 1;
@@ -126,7 +127,7 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 int showMainMenu(float time, float ttl) {
 	int ret = 0;
 	dialog::begin();
-	int dy = 550;
+	int dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
 	}
@@ -193,8 +194,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	GameState mode = GM_MENU;
 	int selectedMode = 2;
-
-	
 	
 	dialog::init(&spriteBuffer);
 	
@@ -235,10 +234,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 				}
 				mode = GM_GAMEOVER;
 			}
+			board.tick(static_cast<float>(ds::getElapsedSeconds()));
+			hud.tick(static_cast<float>(ds::getElapsedSeconds()));
 			board.render();
+			hud.render();
 		}
-
-		if (mode == GM_MENU) {
+		else if (mode == GM_MENU) {
 			menuTimer += static_cast<float>(ds::getElapsedSeconds());
 			int ret = showMainMenu(menuTimer, menuTTL);
 			if (ret > 0 && ret < 4) {
@@ -264,14 +265,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 				menuTimer = 0.0f;
 				mode = GM_MENU;
 			}
-		}
-		if (mode == GM_RUNNING || mode == GM_GAMEOVER) {
-			board.tick(static_cast<float>(ds::getElapsedSeconds()));
-			hud.tick(static_cast<float>(ds::getElapsedSeconds()));
-		}
-
-		if (mode == GM_RUNNING) {
-			hud.render();
 		}
 		
 		spriteBuffer.flush();
