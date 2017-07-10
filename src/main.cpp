@@ -109,11 +109,11 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	dialog::FormattedText(ds::vec2(400, 450), "Bombs left: %d", score.bombsLeft);
 	dialog::FormattedText(ds::vec2(400, 400), "Time: %02d:%02d", score.minutes, score.seconds);
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(0, 368, 300, 50))) {
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(0, 368, 300, 50),"Replay")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 300, 300, 50))) {
+	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 300, 300, 50),"Main menu")) {
 		ret = 2;
 	}
 	dialog::end();
@@ -133,19 +133,19 @@ int showMainMenu(float time, float ttl) {
 	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 640, 70));
 	
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50))) {
+	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50),"easy")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 300, 50))) {
+	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 300, 50),"medium")) {
 		ret = 2;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 300, 50))) {
+	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 300, 50),"hard")) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 300, 300, 50))) {
+	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 300, 300, 50),"Exit")) {
 		ret = 4;
 	}
 	dialog::end();

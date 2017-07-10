@@ -20,6 +20,8 @@ namespace dialog {
 
 	bool Button(const ds::vec2& pos, const ds::vec4& rect);
 
+	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text);
+
 	void Text(const ds::vec2& pos, const char* text);
 
 	void FormattedText(const ds::vec2& pos, const char* fmt, ...);

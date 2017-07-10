@@ -118,6 +118,32 @@ namespace dialog {
 		return isClicked(pos, dim);
 	}
 
+	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text) {
+		DrawCall call;
+		call.pos = pos;
+		call.rect = rect;
+		_guiCtx->calls.push_back(call);
+		ds::vec2 dim = ds::vec2(rect.z, rect.w);
+		int l = strlen(text);
+		ds::vec2 p = pos;
+		ds::vec2 size = font::textSize(text);
+		p.x = pos.x - size.x * 0.5f;
+		for (int i = 0; i < l; ++i) {
+			int idx = (int)text[i] - 32;
+			if (idx >= 0 && idx < 127) {
+				ds::vec4 r = FONT_RECTS[idx];
+				r.r += 640.0f;
+				r.g -= 130.0f;
+				DrawCall call;
+				call.pos = p;
+				call.rect = r;
+				_guiCtx->calls.push_back(call);
+				p.x += r.z + 6.0f;
+			}
+		}
+		return isClicked(pos, dim);
+	}
+
 	void Image(const ds::vec2& pos, const ds::vec4& rect) {
 		DrawCall call;
 		call.pos = pos;
