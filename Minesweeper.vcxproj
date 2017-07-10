@@ -230,6 +230,8 @@
     <ClInclude Include="ext\stb_image.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Board.h" />
+    <ClInclude Include="src\Constants.h" />
+    <ClInclude Include="src\Dialog.h" />
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\hex.h" />
     <ClInclude Include="src\HexGrid.h" />
@@ -246,6 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Board.cpp" />
+    <ClCompile Include="src\Dialog.cpp" />
     <ClCompile Include="src\hex.cpp" />
     <ClCompile Include="src\HexGrid.cpp" />
     <ClCompile Include="src\HUD.cpp" />

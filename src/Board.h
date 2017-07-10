@@ -25,6 +25,7 @@ public:
 		return _marked;
 	}
 private:
+	void openEmptyTiles(const Hex& h);
 	ButtonState _buttonState[2];
 	SpriteBatchBuffer* _sprites;
 	HexGrid _grid;
@@ -40,5 +41,7 @@ private:
 	int _gridOffset;
 	int _marked;
 	int _markedCorrectly;
+	Hex _openTiles[300];
+	int _numOpen;
 };
 

@@ -4,3 +4,6 @@ Minesweeper.VC.db
 TMP/
 assets/
 reports/
+Debug/
+Minesweeper.opensdf
+Minesweeper.sdf

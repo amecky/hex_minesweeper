@@ -61,14 +61,11 @@ struct Number {
 
 };
 
-struct Score {
-	int itemsCleared;
+struct Score {	
 	int seconds;
 	int minutes;
-	int points;
-	int totalPoints;
-	int highestCombo;
-	int piecesLeft;
+	int bombsLeft;
+	bool success;
 };
 
 class HUD {
@@ -79,20 +76,19 @@ public:
 	void render();
 	void tick(float dt);
 	void reset();
-	void rebuildScore(bool flash = true);
+	//void rebuildScore(bool flash = true);
 	int getMinutes() const {
 		return _minutes.value;
 	}
 	int getSeconds() const {
 		return _seconds.value;
 	}
-	void setPieces(int pc);
+	void setBombs(int pc);
 private:
 	void scaleNumber(Number& nr, float dt);
 	void renderNumber(const Number& nr, const ds::vec2& startPos);
 	float _timer;
-	Number _pieces;
-	Number _points;
+	Number _bombs;
 	Number _minutes;
 	Number _seconds;
 	SpriteBatchBuffer* _buffer;

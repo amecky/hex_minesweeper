@@ -1,7 +1,7 @@
 #include "HUD.h"
 #include "tweening.h"
 
-HUD::HUD(SpriteBatchBuffer* buffer, Score* score) : _buffer(buffer) , _score(score) , _pieces(3), _points(6), _minutes(2), _seconds(2) {
+HUD::HUD(SpriteBatchBuffer* buffer, Score* score) : _buffer(buffer) , _score(score) , _bombs(2), _minutes(2), _seconds(2) {
 	reset();
 }
 
@@ -14,15 +14,12 @@ HUD::~HUD() {
 void HUD::reset() {
 	_minutes.setValue(0, false);
 	_seconds.setValue(0, false);
-	_pieces.setValue(0, false);
+	_bombs.setValue(0, false);
 	_timer = 0.0f;
-	_score->points = 0;
+	_score->success = false;
 	_score->minutes = 0;
 	_score->seconds = 0;
-	_score->itemsCleared = 0;
-	_score->highestCombo = 0;
-	rebuildScore(false);
-	setPieces(0);
+	_score->bombsLeft = 0;
 }
 
 // ------------------------------------------------------
@@ -53,25 +50,14 @@ void HUD::tick(float dt) {
 	}
 	_minutes.setValue(_minutes.value, false);
 	_seconds.setValue(_seconds.value, false);
-	scaleNumber(_points, dt);
-	scaleNumber(_pieces, dt);
-}
-
-// ------------------------------------------------------
-// set number
-// ------------------------------------------------------
-void HUD::rebuildScore(bool flash) {
-	_points.setValue(_score->points);
+	scaleNumber(_bombs, dt);
 }
 
 // ------------------------------------------------------
 // set pieces
 // ------------------------------------------------------
-void HUD::setPieces(int pc) {
-	if (pc < 0) {
-		pc = 0;
-	}
-	_pieces.setValue(pc);
+void HUD::setBombs(int pc) {
+	_bombs.setValue(pc);
 }
 
 void HUD::renderNumber(const Number& nr, const ds::vec2& startPos) {
@@ -92,11 +78,9 @@ void HUD::renderNumber(const Number& nr, const ds::vec2& startPos) {
 // ------------------------------------------------------
 void HUD::render() {
 	
-	ds::vec2 p(180, 30);
-	renderNumber(_points, p);
-	p.x = 512.0f;
-	renderNumber(_pieces, p);
-	p.x = 725.0f;
+	ds::vec2 p(512, 720);
+	renderNumber(_bombs, p);
+	p.y = 30.0f;
 	renderNumber(_minutes, p);
 	p.x += 38.0f * 3.0f;
 	renderNumber(_seconds, p);

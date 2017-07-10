@@ -1,14 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="states">
-      <UniqueIdentifier>{542ec666-7c31-4696-9b30-c5c7da1d98a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ext">
       <UniqueIdentifier>{8213c888-ffa0-4747-bc48-0214812eb24d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="content\shaders">
-      <UniqueIdentifier>{12d73df3-e8d2-4f4b-ac8e-6c879f5eb9f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -22,11 +16,6 @@
     <ClInclude Include="ext\ds_imgui.h">
       <Filter>ext</Filter>
     </ClInclude>
-    <ClInclude Include="src\Highscores.h" />
-    <ClInclude Include="src\gamestates\IntroState.h">
-      <Filter>states</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GameSettings.h" />
     <ClInclude Include="ext\SpriteBatchBuffer.h">
       <Filter>ext</Filter>
     </ClInclude>
@@ -36,6 +25,8 @@
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\HUD.h" />
     <ClInclude Include="src\tweening.h" />
+    <ClInclude Include="src\Dialog.h" />
+    <ClInclude Include="src\Constants.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />
@@ -52,6 +43,7 @@
     <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\HUD.cpp" />
     <ClCompile Include="src\tweening.cpp" />
+    <ClCompile Include="src\Dialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="content\TextureArray.png" />

@@ -9,28 +9,16 @@
 #include "..\resource.h"
 #include "Board.h"
 #include "HUD.h"
-
+#include "GameContext.h"
+#include "Dialog.h"
+#include "tweening.h"
 // ---------------------------------------------------------------
 // Game modes
 // ---------------------------------------------------------------
-enum GameMode {
+enum GameState {
 	GM_MENU,
 	GM_RUNNING,
 	GM_GAMEOVER
-};
-
-// ---------------------------------------------------------------
-// Background settings
-// ---------------------------------------------------------------
-struct BackgroundSettings {
-	ds::Color colors[8];
-	float timer;
-	int colorIndex;
-	ds::Color startColor;
-	ds::Color endColor;
-	float ttl;
-	float minAlpha;
-	float maxAlpha;
 };
 
 // ---------------------------------------------------------------
@@ -41,6 +29,10 @@ struct DebugPanel {
 	bool pressed;
 	bool active;
 	int state;
+};
+
+struct DebugSettings {
+	int value;
 };
 
 // ---------------------------------------------------------------
@@ -84,7 +76,7 @@ enum FloatInDirection {
 	FID_LEFT,
 	FID_RIGHT
 };
-/*
+
 int floatButton(float time, float ttl, FloatInDirection dir) {
 	if (time <= ttl) {
 		if (dir == FloatInDirection::FID_LEFT) {
@@ -96,28 +88,32 @@ int floatButton(float time, float ttl, FloatInDirection dir) {
 	}
 	return 512;
 }
+
 // ---------------------------------------------------------------
 // show game over menu
 // ---------------------------------------------------------------
 int showGameOverMenu(const Score& score, float time, float ttl) {
 	int ret = 0;
 	dialog::begin();
-	dialog::Image(ds::vec2(512, 620), ds::vec4(0, 870, 530, 45));
+	int dy = 550;
+	if (time <= ttl) {
+		dy = tweening::interpolate(tweening::easeOutElastic, 900, 550, time, ttl);
+	}
+	if (score.success) {
+		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 420, 310, 60));
+	}
+	else {
+		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 490, 300, 60));
+	}
 	ds::vec2 mp = ds::getMousePosition();
-	dialog::Image(ds::vec2(512, 550), ds::vec4(420, 570, 500, 42));
-	dialog::FormattedText(ds::vec2(400, 550), "Pieces cleared: %d", score.itemsCleared);
-	dialog::Image(ds::vec2(512, 500), ds::vec4(420, 570, 500, 42));
-	dialog::FormattedText(ds::vec2(400, 500), "Time: %02d:%02d", score.minutes, score.seconds);
-	dialog::Image(ds::vec2(512, 450), ds::vec4(420, 570, 500, 42));
-	dialog::FormattedText(ds::vec2(400, 450), "Score: %d", score.points);
-	dialog::Image(ds::vec2(512, 400), ds::vec4(420, 570, 500, 42));
-	dialog::FormattedText(ds::vec2(400, 400), "Highest combo: %d", score.highestCombo);
+	dialog::FormattedText(ds::vec2(400, 450), "Bombs left: %d", score.bombsLeft);
+	dialog::FormattedText(ds::vec2(400, 400), "Time: %02d:%02d", score.minutes, score.seconds);
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(0, 70, 260, 60))) {
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(0, 368, 300, 50))) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(270, 130, 260, 60))) {
+	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 300, 300, 50))) {
 		ret = 2;
 	}
 	dialog::end();
@@ -134,20 +130,27 @@ int showMainMenu(float time, float ttl) {
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 550, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(200, 700, 760, 50));
-	dialog::Image(ds::vec2(512, 35), ds::vec4(0, 955, 530, 12));
+	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 640, 70));
+	
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 400), ds::vec4(0, 70, 260, 60))) {
+	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50))) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 270), ds::vec4(270, 130, 260, 60))) {
+	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 300, 50))) {
 		ret = 2;
+	}
+	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
+	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 300, 50))) {
+		ret = 3;
+	}
+	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
+	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 300, 300, 50))) {
+		ret = 4;
 	}
 	dialog::end();
 	return ret;
 }
-*/
 // ---------------------------------------------------------------
 // handle input for debug panel
 // ---------------------------------------------------------------
@@ -182,10 +185,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	Score score;
 	
 	HUD hud(&spriteBuffer, &score);
-	hud.rebuildScore(false);
+	hud.reset();
 
-	GameMode mode = GM_RUNNING;
-
+	GameState mode = GM_MENU;
+	int selectedMode = 2;
 	/*
 	// prepare the game settings
 	GameSettings settings;
@@ -201,96 +204,69 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	settings.messageScale = 0.8f;
 	settings.highlightTime = 5.0f;
 
-	BackgroundSettings bgSettings;
-	color::pick_colors(bgSettings.colors,8);
-	bgSettings.colorIndex = 1;
-	bgSettings.minAlpha = 0.6f;
-	bgSettings.maxAlpha = 0.8f;
-	bgSettings.ttl = 2.0f;
-	bgSettings.startColor = bgSettings.colors[0];
-	bgSettings.endColor = bgSettings.colors[1];
-
-	Board* board = new Board(&spriteBuffer,textureID, &settings);
-
-	Score score;
-
-	HUD hud(&spriteBuffer, textureID, &score);
-	hud.reset();
-
+	
 	char txt[256];
 
 	bool pressed = false;
-
+	*/
 	
 
-	dialog::init(&spriteBuffer, textureID);
-	*/
-	int moves = 0;
-
+	dialog::init(&spriteBuffer);
+	
 	bool running = true;
 
-	DebugPanel backDbgPanel  = { 'D', false, false, 1 };
-	DebugPanel infoDbgPanel  = { 'I', false, false, 1 };
-	DebugPanel settingsPanel = { 'S', false, false, 1 };
-	DebugPanel boardPanel    = { 'B', false, false, 1 };
+	DebugPanel debugPanel  = { 'D', false, false, 1 };
 
 	float menuTimer = 0.0f;
 	float menuTTL = 1.6f;
 
 	while (ds::isRunning() && running) {
 
-		handleDebugInput(&boardPanel);
-		handleDebugInput(&backDbgPanel);
-		handleDebugInput(&infoDbgPanel);
-		handleDebugInput(&settingsPanel);		
+		handleDebugInput(&debugPanel);
 
 		ds::begin();
 
 		spriteBuffer.begin();		
 
-		//for (int i = 0; i < 6; ++i) {
-			//spriteBuffer.add(ds::vec2(-50 + i * 200, 384), ds::vec4(0, 200, 200, 600));
-		//}
+		for (int i = 0; i < 6; ++i) {
+			spriteBuffer.add(ds::vec2(-50 + i * 200, 384), ds::vec4(400, 0, 200, 600));
+		}
 
 		if (mode == GM_RUNNING) {
 			if (board.select()) {
+				int max = GAME_MODES[selectedMode].maxBombs;
 				int marked = board.getNumMarked();
-				hud.setPieces(marked);
+				hud.setBombs(max - marked);
 			}
 			board.render();
-			hud.tick(static_cast<float>(ds::getElapsedSeconds()));
-			hud.render();
-			//board->render();
 		}
 
 		if (mode == GM_MENU) {
-			/*
 			menuTimer += static_cast<float>(ds::getElapsedSeconds());
 			int ret = showMainMenu(menuTimer, menuTTL);
-			if (ret == 1) {
-				board->fill(4);
+			if (ret > 0 && ret < 4) {
+				selectedMode = ret - 1;
 				hud.reset();
+				board.activate(selectedMode);
 				mode = GM_RUNNING;
 			}
-			else  if (ret == 2) {
+			else  if (ret == 4) {
 				running = false;
 			}
-			*/
 		}
 		else if (mode == GM_GAMEOVER) {
-			/*
 			menuTimer += static_cast<float>(ds::getElapsedSeconds());
-			board->render();
+			board.render();
 			int ret = showGameOverMenu(score,menuTimer,menuTTL);
 			if (ret == 1) {
-				board->fill(4);
+				board.activate(selectedMode);
+				hud.reset();
 				mode = GM_RUNNING;
 			}
 			else if (ret == 2) {
 				menuTimer = 0.0f;
 				mode = GM_MENU;
 			}
-			*/
 		}
 		else if (mode == GM_RUNNING) {			
 			/*
@@ -322,85 +298,48 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 		if (mode == GM_RUNNING || mode == GM_GAMEOVER) {
 			//board->update(static_cast<float>(ds::getElapsedSeconds()));
+			hud.tick(static_cast<float>(ds::getElapsedSeconds()));
 		}
 
 		if (mode == GM_RUNNING) {
-			//hud.render();
+			hud.render();
 		}
 		
 		spriteBuffer.flush();
-		/*
-		if (infoDbgPanel.active || backDbgPanel.active || settingsPanel.active || boardPanel.active) {
+		if (debugPanel.active) {
 			gui::start(ds::vec2(0, 755));
-			if (infoDbgPanel.active) {
-				gui::begin("Debug", &infoDbgPanel.state);
+			if (debugPanel.active) {
+				gui::begin("Debug", &debugPanel.state);
 				gui::Value("FPS", ds::getFramesPerSecond());
-				int cx = -1;
-				int cy = -1;
-				input::convertMouse2Grid(&cx, &cy);
-				gui::Value("MPG", ds::vec2(cx, cy));
-				gui::Value("Moves", moves);
-				if (mode == GM_RUNNING) {
-					if (gui::Button("Hightlight")) {
-						board->highlightBlock();
-					}
-					if (gui::Button("Move")) {
-						board->move();
-					}
+				if (gui::Button("Small")) {
+					hud.reset();
+					selectedMode = 0;
+					board.activate(0);
 				}
-				gui::Input("Button ttl", &menuTTL);
+				if (gui::Button("Medium")) {
+					hud.reset();
+					selectedMode = 1;
+					board.activate(1);
+				}
+				if (gui::Button("Large")) {
+					hud.reset();
+					selectedMode = 2;
+					board.activate(2);
+				}
+				if (gui::Button("Show bombs")) {
+					board.toggleShowBombs();
+				}
 				if (gui::Button("Reset timer")) {
 					menuTimer = 0.0f;
 				}
-				if (gui::Button("Game Over")) {
-					board->clearBoard();
-					mode = GM_GAMEOVER;
+				if (gui::Button("Game over")) {
 					menuTimer = 0.0f;
+					mode = GM_GAMEOVER;
 				}
-			}
-			if (backDbgPanel.active) {
-				gui::begin("Background", &backDbgPanel.state);
-				gui::Value("TTL", bgSettings.ttl);
-				gui::Value("Min A", bgSettings.minAlpha);
-				gui::Value("Max A", bgSettings.maxAlpha);
-				gui::Value("Start", bgSettings.startColor);
-				gui::Value("End", bgSettings.endColor);
-				//gui::Value("Current", clr);
-				gui::Value("Index", bgSettings.colorIndex);
-			}
-			if (settingsPanel.active) {
-				gui::begin("Settings", &settingsPanel.state);
-				gui::Input("Prepare TTL", &settings.prepareTTL);
-				gui::Input("Message scale", &settings.messageScale);
-				gui::Input("Min SU TTL", &settings.scaleUpMinTTL);
-				gui::Input("Max SU TTL", &settings.scaleUpMaxTTL);
-				gui::Input("Flash TTL", &settings.flashTTL);
-				gui::Input("Dropping TTL", &settings.droppingTTL);
-				gui::Input("Wiggle TTL", &settings.wiggleTTL);
-				gui::Input("Wiggle Scale", &settings.wiggleScale);
-				gui::Input("Min Clear TTL", &settings.clearMinTTL);
-				gui::Input("Max Clear TTL", &settings.clearMaxTTL);
-				gui::Input("Highlight Time", &settings.highlightTime);
-				if (gui::Button("Restart")) {
-					if (mode == GM_RUNNING) {
-						board->fill(4);
-					}
-				}
-				if (gui::Button("Clear")) {
-					if (mode == GM_RUNNING) {
-						board->clearBoard();
-					}
-				}
-			}
-			if (boardPanel.active) {
-				gui::begin("Board", &boardPanel.state);
-				board->debug();
 			}
 			gui::end();
 		}
-		*/
 		ds::end();
 	}
-	//delete board;
 	ds::shutdown();
 }
