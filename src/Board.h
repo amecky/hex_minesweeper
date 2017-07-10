@@ -2,6 +2,7 @@
 #include "HexGrid.h"
 #include <diesel.h>
 #include <SpriteBatchBuffer.h>
+#include "GameContext.h"
 
 struct ButtonState {
 	bool pressed;
@@ -12,10 +13,11 @@ struct ButtonState {
 class Board {
 
 public:
-	Board(SpriteBatchBuffer* sprites);
+	Board(SpriteBatchBuffer* sprites,GameSettings* settings);
 	~Board();
 	void fillBombs();
 	void render();
+	void tick(float dt);
 	void activate(int modeIndex);
 	void toggleShowBombs() {
 		_showBombs = !_showBombs;
@@ -24,8 +26,12 @@ public:
 	int getNumMarked() const {
 		return _marked;
 	}
+	int getMarkedCorrectly() const {
+		return _markedCorrectly;
+	}
 private:
 	void openEmptyTiles(const Hex& h);
+	GameSettings* _settings;
 	ButtonState _buttonState[2];
 	SpriteBatchBuffer* _sprites;
 	HexGrid _grid;

@@ -1,7 +1,7 @@
 #include "Board.h"
 #include "GameContext.h"
 
-Board::Board(SpriteBatchBuffer* sprites) : _sprites(sprites) , _showBombs(false) {
+Board::Board(SpriteBatchBuffer* sprites, GameSettings* settings) : _sprites(sprites) , _showBombs(false), _settings(settings) {
 	// closed
 	_textures[0] = ds::vec4(40, 0, 40, 44);
 	// marked
@@ -39,6 +39,7 @@ void Board::activate(int modeIndex) {
 	_buttonState[0] = { false, false };
 	_buttonState[1] = { false, false };
 	_showBombs = false;
+	_current = Hex(-1, -1);
 }
 
 // -------------------------------------------------------
@@ -54,6 +55,42 @@ void Board::openEmptyTiles(const Hex& h) {
 		GridItem& item = _grid.get(n[i]);
 		if (item.state == 0 && item.adjacentBombs == 0 && !item.bomb) {
 			openEmptyTiles(n[i]);
+		}
+	}
+}
+
+void Board::tick(float dt) {
+	Hex h = _grid.convertFromMousePos();
+	if (_grid.isValid(h) && h != _current) {
+		// start wiggeling
+		GridItem& item = _grid.get(h);
+		if (item.wiggle == false) {
+			item.wiggle = true;
+			item.timer = _settings->wiggleTTL;
+			item.scale = ds::vec2(1.5f, 1.5f);
+			_current = h;
+		}
+	}
+
+	for (int r = 0; r < _height; r++) {
+		int q_offset = r >> 1;
+		for (int q = -q_offset; q < _width - q_offset; q++) {
+			Hex h = Hex(q, r);
+			if (_grid.isValid(h)) {
+				GridItem& current = _grid.get(h);
+				if (current.wiggle) {
+					current.timer -= dt;
+					if (current.timer <= 0.0f) {
+						current.wiggle = false;
+						current.scale = ds::vec2(1, 1);
+					}
+					else {
+						float n = 1.0f - current.timer / _settings->wiggleTTL;
+						float s = 1.0f + sin(n * ds::PI) * _settings->wiggleScale;
+						current.scale = ds::vec2(s, s);
+					}
+				}
+			}
 		}
 	}
 }
@@ -197,7 +234,7 @@ void Board::render() {
 						_sprites->add(current.position, _textures[1]);
 					}
 					else {
-						_sprites->add(current.position, _textures[0]);
+						_sprites->add(current.position, _textures[0],current.scale);
 					}
 				}
 			}

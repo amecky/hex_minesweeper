@@ -97,7 +97,7 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	dialog::begin();
 	int dy = 550;
 	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutElastic, 900, 550, time, ttl);
+		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
 	}
 	if (score.success) {
 		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 420, 310, 60));
@@ -128,7 +128,7 @@ int showMainMenu(float time, float ttl) {
 	dialog::begin();
 	int dy = 550;
 	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutElastic, 900, 550, time, ttl);
+		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
 	}
 	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 640, 70));
 	
@@ -179,7 +179,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::LINEAR };
 	SpriteBatchBuffer spriteBuffer(sbbInfo);
 
-	Board board(&spriteBuffer);
+	GameSettings settings;
+	settings.wiggleScale = 0.2f;
+	settings.wiggleTTL = 0.2f;
+
+	Board board(&spriteBuffer, &settings);
 	board.activate(2);
 
 	Score score;
@@ -189,28 +193,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	GameState mode = GM_MENU;
 	int selectedMode = 2;
-	/*
-	// prepare the game settings
-	GameSettings settings;
-	settings.flashTTL = 0.3f;
-	settings.droppingTTL = 0.2f;
-	settings.wiggleTTL = 0.4f;
-	settings.wiggleScale = 0.2f;
-	settings.clearMinTTL = 0.2f;
-	settings.clearMaxTTL = 0.8f;
-	settings.scaleUpMinTTL = 0.2f;
-	settings.scaleUpMaxTTL = 0.8f;
-	settings.prepareTTL = 1.0f;
-	settings.messageScale = 0.8f;
-	settings.highlightTime = 5.0f;
 
 	
-	char txt[256];
-
-	bool pressed = false;
-	*/
 	
-
 	dialog::init(&spriteBuffer);
 	
 	bool running = true;
@@ -233,10 +218,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		}
 
 		if (mode == GM_RUNNING) {
-			if (board.select()) {
-				int max = GAME_MODES[selectedMode].maxBombs;
+			int max = GAME_MODES[selectedMode].maxBombs;
+			if (board.select()) {				
 				int marked = board.getNumMarked();
 				hud.setBombs(max - marked);
+			}
+			else {
+				score.minutes = hud.getMinutes();
+				score.seconds = hud.getSeconds();
+				menuTimer = 0.0f;
+				if (board.getMarkedCorrectly() == max) {
+					score.success = true;
+				}
+				else {
+					score.success = false;
+				}
+				mode = GM_GAMEOVER;
 			}
 			board.render();
 		}
@@ -268,36 +265,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 				mode = GM_MENU;
 			}
 		}
-		else if (mode == GM_RUNNING) {			
-			/*
-			if (ds::isMouseButtonPressed(0) && !pressed) {
-				if ( board->select(&score)) {
-					hud.rebuildScore();
-					hud.setPieces(score.piecesLeft);
-				}
-				pressed = true;
-			}
-			if (!ds::isMouseButtonPressed(0) && pressed) {
-				pressed = false;
-			}
-			moves = board->getNumberOfMoves();
-
-			if (board->isReady()) {
-				hud.tick(static_cast<float>(ds::getElapsedSeconds()));
-			}
-
-			if (moves == 0) {
-				board->clearBoard();
-				score.minutes = hud.getMinutes();
-				score.seconds = hud.getSeconds();
-				menuTimer = 0.0f;
-				mode = GM_GAMEOVER;
-			}
-			*/
-		}
-
 		if (mode == GM_RUNNING || mode == GM_GAMEOVER) {
-			//board->update(static_cast<float>(ds::getElapsedSeconds()));
+			board.tick(static_cast<float>(ds::getElapsedSeconds()));
 			hud.tick(static_cast<float>(ds::getElapsedSeconds()));
 		}
 
@@ -306,11 +275,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		}
 		
 		spriteBuffer.flush();
+
 		if (debugPanel.active) {
 			gui::start(ds::vec2(0, 755));
 			if (debugPanel.active) {
 				gui::begin("Debug", &debugPanel.state);
 				gui::Value("FPS", ds::getFramesPerSecond());
+				gui::Input("Wiggle Scale", &settings.wiggleScale);
+				gui::Input("Wiggle TTL", &settings.wiggleTTL);
 				if (gui::Button("Small")) {
 					hud.reset();
 					selectedMode = 0;

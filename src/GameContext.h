@@ -23,3 +23,9 @@ const GameMode GAME_MODES[] = {
 	GameMode(GM_MEDIUM, 32, 14, 12, ds::vec2(237, 189)),
 	GameMode(GM_HARD, 60, 20, 15, ds::vec2(107,134)),
 };
+
+struct GameSettings {
+
+	float wiggleScale;
+	float wiggleTTL;
+};
