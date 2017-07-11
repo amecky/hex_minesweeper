@@ -68,15 +68,15 @@ void HUD::renderNumber(const Number& nr, const ds::vec2& startPos) {
 // ------------------------------------------------------
 void HUD::render() {
 	
-	ds::vec2 p(512, 720);
+	ds::vec2 p(512, 725);
 	_buffer->add(p, ds::vec4(610, 0, 120, 50));
 	renderNumber(_bombs, p);
 	p.x -= 38.0f;
-	p.y = 30.0f;
-	_buffer->add(p, ds::vec4(610, 0, 100, 50));
+	p.y = 40.0f;
+	_buffer->add(p, ds::vec4(750, 0, 100, 50));
 	renderNumber(_timer.minutes, p);
 	p.x += 38.0f * 3.0f;
-	_buffer->add(p, ds::vec4(610, 0, 100, 50));
+	_buffer->add(p, ds::vec4(750, 0, 100, 50));
 	renderNumber(_timer.seconds, p);
 	
 }

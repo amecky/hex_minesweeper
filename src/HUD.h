@@ -113,6 +113,7 @@ struct Score {
 	int minutes;
 	int bombsLeft;
 	bool success;
+	int rank;
 };
 
 class HUD {

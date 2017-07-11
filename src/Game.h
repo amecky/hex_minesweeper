@@ -42,6 +42,9 @@ public:
 	void tick(float dt);
 	void render();
 private:
+	int handleScore();
+	void handleDebugInput(DebugPanel* panel);
+	void renderDebugPanel();
 	bool _running;
 	SpriteBatchBuffer* _spriteBuffer;
 	GameSettings _settings;
@@ -50,9 +53,8 @@ private:
 	HUD* _hud;
 	GameState _mode;
 	int _selectedMode;
-
 	DebugPanel _debugPanel;
-
 	float _menuTimer;
+	Highscore _highscores[30];
 };
 

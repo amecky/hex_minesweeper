@@ -1,5 +1,7 @@
 #define DS_IMPLEMENTATION
 #include <diesel.h>
+#define DS_IMGUI_IMPLEMENTATION
+#include <ds_imgui.h>
 #include "Game.h"
 
 // ---------------------------------------------------------------

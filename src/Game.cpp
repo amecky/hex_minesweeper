@@ -1,7 +1,6 @@
 #include "Game.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#define DS_IMGUI_IMPLEMENTATION
 #include <ds_imgui.h>
 #include "..\resource.h"
 #include "Dialog.h"
@@ -46,6 +45,7 @@ Game::Game() {
 	_settings.wiggleTTL = 0.2f;
 	_settings.numberScaleAmplitude = 1.5f;
 	_settings.numberScaleTTL = 0.4f;
+	_settings.menuTTL = 1.2f;
 
 	_board = new Board(_spriteBuffer, &_settings);
 	_board->activate(2);
@@ -62,7 +62,7 @@ Game::Game() {
 
 	_running = true;
 
-	DebugPanel debugPanel = { 'D', false, false, 1 };
+	_debugPanel = { 'D', false, false, 1 };
 
 	_menuTimer = 0.0f;
 	//float menuTTL = 1.6f;
@@ -105,9 +105,9 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	else {
 		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 490, 300, 60));
 	}
-	dialog::Image(ds::vec2(512, 470), ds::vec4(610, 0, 400, 50));
-	dialog::Image(ds::vec2(512, 390), ds::vec4(610, 0, 400, 50));
-	dialog::FormattedText(ds::vec2(400, 470), "Bombs left: %d", score.bombsLeft);
+	dialog::Image(ds::vec2(512, 470), ds::vec4(610, 160, 400, 50));
+	dialog::Image(ds::vec2(512, 390), ds::vec4(610, 160, 400, 50));
+	dialog::FormattedText(ds::vec2(400, 470), "Bombs left: %d Rank %d", score.bombsLeft,score.rank);
 	dialog::FormattedText(ds::vec2(400, 390), "Time: %02d:%02d", score.minutes, score.seconds);
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
 	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(0, 368, 300, 50), "Replay")) {
@@ -152,10 +152,11 @@ int showMainMenu(float time, float ttl) {
 	dialog::end();
 	return ret;
 }
+
 // ---------------------------------------------------------------
 // handle input for debug panel
-// ---------------------------------------------------------------hud
-void handleDebugInput(DebugPanel* panel) {
+// ---------------------------------------------------------------
+void Game::handleDebugInput(DebugPanel* panel) {
 	if (ds::isKeyPressed(panel->key)) {
 		panel->pressed = true;
 	}
@@ -165,20 +166,28 @@ void handleDebugInput(DebugPanel* panel) {
 	}
 }
 
-void Game::tick(float dt) {
-	handleDebugInput(&_debugPanel);
+// ---------------------------------------------------------------
+// handle highscore
+// ---------------------------------------------------------------
+int Game::handleScore() {
+	if (_score.success) {
+		int offset = _selectedMode * 10;
+		Highscore current = { _score.minutes,_score.seconds,_selectedMode };
+		for (int i = 0; i < 10; ++i) {
+			if (_highscores[offset + i].compare(current)) {
+				// FIXME: insert score here
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
-void Game::render() {
-
-	ds::begin();
-
-	_spriteBuffer->begin();
-
-	for (int i = 0; i < 6; ++i) {
-		_spriteBuffer->add(ds::vec2(-50 + i * 200, 384), ds::vec4(400, 0, 200, 600));
-	}
-
+// ---------------------------------------------------------------
+// tick
+// ---------------------------------------------------------------
+void Game::tick(float dt) {
+	handleDebugInput(&_debugPanel);
 	if (_mode == GM_RUNNING) {
 		int max = GAME_MODES[_selectedMode].maxBombs;
 		if (_board->select()) {
@@ -200,15 +209,85 @@ void Game::render() {
 				_score.success = false;
 			}
 			_score.bombsLeft = max - _board->getMarkedCorrectly();
+			_score.rank = handleScore();
+			// FIXME: find highscore/ranking
 			_mode = GM_GAMEOVER;
 		}
-		_board->tick(static_cast<float>(ds::getElapsedSeconds()));
-		_hud->tick(static_cast<float>(ds::getElapsedSeconds()));
+		_board->tick(dt);
+		_hud->tick(dt);
+	}
+}
+
+// ---------------------------------------------------------------
+// render debug panel if active
+// ---------------------------------------------------------------
+void Game::renderDebugPanel() {
+	if (_debugPanel.active) {
+		gui::start(ds::vec2(0, 755));
+		if (_debugPanel.active) {
+			gui::begin("Debug", &_debugPanel.state);
+			gui::Input("Menu TTL", &_settings.menuTTL);
+			gui::Value("FPS", ds::getFramesPerSecond());
+			gui::Input("Wiggle Scale", &_settings.wiggleScale);
+			gui::Input("Wiggle TTL", &_settings.wiggleTTL);
+			gui::Input("Number Scale", &_settings.numberScaleAmplitude);
+			gui::Input("Number TTL", &_settings.numberScaleTTL);
+			if (gui::Button("Small")) {
+				_hud->reset();
+				_selectedMode = 0;
+				_board->activate(0);
+			}
+			if (gui::Button("Medium")) {
+				_hud->reset();
+				_selectedMode = 1;
+				_board->activate(1);
+			}
+			if (gui::Button("Large")) {
+				_hud->reset();
+				_selectedMode = 2;
+				_board->activate(2);
+			}
+			if (gui::Button("Show bombs")) {
+				_board->toggleShowBombs();
+			}
+			if (gui::Button("Reset timer")) {
+				_menuTimer = 0.0f;
+			}
+			if (gui::Button("Game over")) {
+				_menuTimer = 0.0f;
+				_mode = GM_GAMEOVER;
+			}
+		}
+		gui::end();
+	}
+}
+// ---------------------------------------------------------------
+// render
+// ---------------------------------------------------------------
+void Game::render() {
+
+	ds::begin();
+
+	_spriteBuffer->begin();
+	//
+	// background
+	//
+	for (int i = 0; i < 6; ++i) {
+		_spriteBuffer->add(ds::vec2(-50 + i * 200, 384), ds::vec4(400, 0, 200, 600));
+	}
+
+	if (_mode == GM_RUNNING) {
+		//
+		// render board and HUD
+		//
 		_board->render();
 		_hud->render();
 	}
 	else if (_mode == GM_MENU) {
 		_menuTimer += static_cast<float>(ds::getElapsedSeconds());
+		//
+		// render main menu immediate mode
+		//
 		int ret = showMainMenu(_menuTimer, _settings.menuTTL);
 		if (ret > 0 && ret < 4) {
 			_selectedMode = ret - 1;
@@ -222,6 +301,9 @@ void Game::render() {
 	}
 	else if (_mode == GM_GAMEOVER) {
 		_menuTimer += static_cast<float>(ds::getElapsedSeconds());
+		//
+		// render game over menu immediate mode and board
+		//
 		_board->render();
 		int ret = showGameOverMenu(_score, _menuTimer, _settings.menuTTL);
 		if (ret == 1) {
@@ -236,44 +318,8 @@ void Game::render() {
 	}
 
 	_spriteBuffer->flush();
-	/*
-	if (debugPanel.active) {
-		gui::start(ds::vec2(0, 755));
-		if (debugPanel.active) {
-			gui::begin("Debug", &debugPanel.state);
-			gui::Value("FPS", ds::getFramesPerSecond());
-			gui::Input("Wiggle Scale", &settings.wiggleScale);
-			gui::Input("Wiggle TTL", &settings.wiggleTTL);
-			gui::Input("Number Scale", &settings.numberScaleAmplitude);
-			gui::Input("Number TTL", &settings.numberScaleTTL);
-			if (gui::Button("Small")) {
-				_hud->reset();
-				selectedMode = 0;
-				_board->activate(0);
-			}
-			if (gui::Button("Medium")) {
-				_hud->reset();
-				selectedMode = 1;
-				_board->activate(1);
-			}
-			if (gui::Button("Large")) {
-				_hud->reset();
-				selectedMode = 2;
-				_board->activate(2);
-			}
-			if (gui::Button("Show bombs")) {
-				_board->toggleShowBombs();
-			}
-			if (gui::Button("Reset timer")) {
-				menuTimer = 0.0f;
-			}
-			if (gui::Button("Game over")) {
-				menuTimer = 0.0f;
-				mode = GM_GAMEOVER;
-			}
-		}
-		gui::end();
-	}
-	*/
+	
+	renderDebugPanel();
+	
 	ds::end();
 }

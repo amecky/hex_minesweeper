@@ -1,6 +1,30 @@
 #pragma once
 #include <diesel.h>
 
+struct Highscore {
+
+	int minutes;
+	int seconds;
+	int mode;
+
+	Highscore() : seconds(99), minutes(99), mode(-1) {}
+
+	Highscore(int m, int s, int md) : seconds(s), minutes(m), mode(md) {}
+
+	int compare(const Highscore& other) const {
+		int time = minutes * 60 + seconds;
+		int other_time = other.minutes * 60 + other.seconds;
+		if (time < other_time) {
+			return -1;
+		}
+		if (time > other_time) {
+			return 1;
+		}
+		return 0;
+	}
+
+};
+
 enum GameModeType {
 	GM_EASY,
 	GM_MEDIUM,
