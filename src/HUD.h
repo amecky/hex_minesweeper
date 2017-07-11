@@ -1,7 +1,7 @@
 #pragma once
 #include <diesel.h>
 #include <SpriteBatchBuffer.h>
-
+#include "GameContext.h"
 
 struct Number {
 
@@ -35,6 +35,14 @@ struct Number {
 	uint8_t size;
 	int value;
 
+	void reset() {
+		value = 0;
+		for (int i = 0; i < size; ++i) {
+			items[i] = 0;
+			scaleFlags[i] = 0;
+			scalingTimers[i] = 0.0f;
+		}
+	}
 	void setValue(int v, bool flash = true) {
 		int tmp = v;
 		int div = 1;
@@ -43,22 +51,61 @@ struct Number {
 				div *= 10;
 			}
 		}
+		bool scale = false;
 		for (int i = 0; i < size; ++i) {
 			int r = tmp / div;
-			if (r != items[i] && flash) {
-				scaleFlags[i] = 1;
-				scalingTimers[i] = 0.0f;
-			}
-			else {
-				scaleFlags[i] = 0;
+			if (r != items[i]) {
+				scale = true;
 			}
 			items[i] = r;
 			tmp = tmp - r * div;
 			div /= 10;
 		}
+		if (scale && flash) {
+			for (int i = 0; i < size; ++i) {
+				scaleFlags[i] = 1;
+				scalingTimers[i] = 0.0f;
+			}
+		}
 		value = v;
 	}
 
+};
+
+struct Timer {
+
+	Number minutes;
+	Number seconds;
+	float timer;
+
+	Timer() : minutes(2), seconds(2) {
+		minutes.reset();
+		seconds.reset();
+		timer = 0.0f;
+	}
+
+	void reset() {
+		minutes.setValue(0, false);
+		seconds.setValue(0, false);
+		timer = 0.0f;
+	}
+
+	void tick(float dt) {
+		timer += dt;
+		if (timer > 1.0f) {
+			timer -= 1.0f;
+			++seconds.value;
+			if (seconds.value >= 60) {
+				seconds.value = 0;
+				++minutes.value;
+				if (minutes.value > 99) {
+					minutes.value = 0;
+				}
+				minutes.setValue(minutes.value, false);
+			}
+			seconds.setValue(seconds.value, false);
+		}
+	}
 };
 
 struct Score {	
@@ -71,26 +118,24 @@ struct Score {
 class HUD {
 
 public:
-	HUD(SpriteBatchBuffer* buffer, Score* score);
+	HUD(SpriteBatchBuffer* buffer, Score* score, GameSettings* settings);
 	~HUD();
 	void render();
 	void tick(float dt);
 	void reset();
-	//void rebuildScore(bool flash = true);
 	int getMinutes() const {
-		return _minutes.value;
+		return _timer.minutes.value;
 	}
 	int getSeconds() const {
-		return _seconds.value;
+		return _timer.seconds.value;
 	}
 	void setBombs(int pc);
 private:
 	void scaleNumber(Number& nr, float dt);
 	void renderNumber(const Number& nr, const ds::vec2& startPos);
-	float _timer;
+	GameSettings* _settings;
 	Number _bombs;
-	Number _minutes;
-	Number _seconds;
+	Timer _timer;
 	SpriteBatchBuffer* _buffer;
 	Score* _score;
 };

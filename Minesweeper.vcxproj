@@ -232,6 +232,7 @@
     <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Dialog.h" />
+    <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameContext.h" />
     <ClInclude Include="src\hex.h" />
     <ClInclude Include="src\HexGrid.h" />
@@ -249,6 +250,7 @@
   <ItemGroup>
     <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\Dialog.cpp" />
+    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\hex.cpp" />
     <ClCompile Include="src\HexGrid.cpp" />
     <ClCompile Include="src\HUD.cpp" />

@@ -28,4 +28,9 @@ struct GameSettings {
 
 	float wiggleScale;
 	float wiggleTTL;
+
+	float numberScaleAmplitude;
+	float numberScaleTTL;
+
+	float menuTTL;
 };
