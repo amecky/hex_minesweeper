@@ -6,8 +6,9 @@ struct Highscore {
 	int minutes;
 	int seconds;
 	int mode;
+	char name[10];
 
-	Highscore() : seconds(99), minutes(99), mode(-1) {}
+	Highscore() : seconds(99), minutes(99), mode(-1) , name("Name") {}
 
 	Highscore(int m, int s, int md) : seconds(s), minutes(m), mode(md) {}
 

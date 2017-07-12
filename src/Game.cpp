@@ -65,92 +65,34 @@ Game::Game() {
 	_debugPanel = { 'D', false, false, 1 };
 
 	_menuTimer = 0.0f;
-	//float menuTTL = 1.6f;
-}
 
+	// load highscores
+	FILE* fp = fopen("scores.scr", "rb");
+	if (fp) {
+		for (int i = 0; i < 30; ++i) {
+			fread(&_highscores[i], sizeof(Highscore), 1, fp);
+		}
+		fclose(fp);
+	}
+
+	_debugScore = ds::vec2(0, 0);
+
+	_page = 0;
+	_pageTimer = 0.0f;
+}
 
 Game::~Game() {
-}
-
-enum FloatInDirection {
-	FID_LEFT,
-	FID_RIGHT
-};
-
-int floatButton(float time, float ttl, FloatInDirection dir) {
-	if (time <= ttl) {
-		if (dir == FloatInDirection::FID_LEFT) {
-			return tweening::interpolate(tweening::easeOutElastic, -200, 512, time, ttl);
+	// save highscores
+	FILE* fp = fopen("scores.scr", "wb");
+	if (fp) {
+		for (int i = 0; i < 30; ++i) {
+			fwrite(&_highscores[i], sizeof(Highscore), 1, fp);
 		}
-		else {
-			return tweening::interpolate(tweening::easeOutElastic, 1020, 512, time, ttl);
-		}
+		fclose(fp);
 	}
-	return 512;
-}
-
-// ---------------------------------------------------------------
-// show game over menu
-// ---------------------------------------------------------------
-int showGameOverMenu(const Score& score, float time, float ttl) {
-	int ret = 0;
-	dialog::begin();
-	int dy = 600;
-	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
-	}
-	if (score.success) {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 420, 310, 60));
-	}
-	else {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 490, 300, 60));
-	}
-	dialog::Image(ds::vec2(512, 470), ds::vec4(610, 160, 400, 50));
-	dialog::Image(ds::vec2(512, 390), ds::vec4(610, 160, 400, 50));
-	dialog::FormattedText(ds::vec2(400, 470), "Bombs left: %d Rank %d", score.bombsLeft,score.rank);
-	dialog::FormattedText(ds::vec2(400, 390), "Time: %02d:%02d", score.minutes, score.seconds);
-	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(0, 368, 300, 50), "Replay")) {
-		ret = 1;
-	}
-	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 300, 300, 50), "Main menu")) {
-		ret = 2;
-	}
-	dialog::end();
-	return ret;
-}
-
-// ---------------------------------------------------------------
-// show main menu
-// ---------------------------------------------------------------
-int showMainMenu(float time, float ttl) {
-	int ret = 0;
-	dialog::begin();
-	int dy = 600;
-	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
-	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 640, 70));
-
-	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50), "easy")) {
-		ret = 1;
-	}
-	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 300, 50), "medium")) {
-		ret = 2;
-	}
-	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 300, 50), "hard")) {
-		ret = 3;
-	}
-	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 300, 300, 50), "Exit")) {
-		ret = 4;
-	}
-	dialog::end();
-	return ret;
+	delete _hud;
+	delete _board;
+	delete _spriteBuffer;
 }
 
 // ---------------------------------------------------------------
@@ -170,17 +112,26 @@ void Game::handleDebugInput(DebugPanel* panel) {
 // handle highscore
 // ---------------------------------------------------------------
 int Game::handleScore() {
+	int idx = -1;
 	if (_score.success) {
 		int offset = _selectedMode * 10;
 		Highscore current = { _score.minutes,_score.seconds,_selectedMode };
 		for (int i = 0; i < 10; ++i) {
-			if (_highscores[offset + i].compare(current)) {
-				// FIXME: insert score here
-				return i;
+			if (_highscores[offset + i].compare(current) != -1 && idx == -1) {
+				idx = i;
 			}
 		}
+		if (idx != -1) {
+			int pos = _selectedMode * 10 + idx;
+			// FIXME: move existing down the line
+			int last = _selectedMode * 10 + 8;
+			for (int p = last; p >= pos; --p) {
+				_highscores[p + 1] = _highscores[p];
+			}
+			_highscores[pos] = current;
+		}
 	}
-	return -1;
+	return idx;
 }
 
 // ---------------------------------------------------------------
@@ -231,31 +182,35 @@ void Game::renderDebugPanel() {
 			gui::Input("Wiggle Scale", &_settings.wiggleScale);
 			gui::Input("Wiggle TTL", &_settings.wiggleTTL);
 			gui::Input("Number Scale", &_settings.numberScaleAmplitude);
-			gui::Input("Number TTL", &_settings.numberScaleTTL);
-			if (gui::Button("Small")) {
+			gui::Input("Number TTL", &_settings.numberScaleTTL);			
+			gui::Input("Mode", &_selectedMode);
+			if (gui::Button("Start Game")) {
 				_hud->reset();
-				_selectedMode = 0;
-				_board->activate(0);
-			}
-			if (gui::Button("Medium")) {
-				_hud->reset();
-				_selectedMode = 1;
-				_board->activate(1);
-			}
-			if (gui::Button("Large")) {
-				_hud->reset();
-				_selectedMode = 2;
-				_board->activate(2);
+				_board->activate(_selectedMode);
 			}
 			if (gui::Button("Show bombs")) {
 				_board->toggleShowBombs();
 			}
+			if (gui::Button("Stop game")) {
+				_menuTimer = 0.0f;
+				_mode = GM_GAMEOVER;
+			}
+			gui::Input("Score", &_debugScore);
 			if (gui::Button("Reset timer")) {
 				_menuTimer = 0.0f;
 			}
 			if (gui::Button("Game over")) {
 				_menuTimer = 0.0f;
+				_score.success = true;
+				_score.seconds = _debugScore.y;
+				_score.minutes = _debugScore.x;
+				_score.rank = handleScore();
+				_score.bombsLeft = 42;
 				_mode = GM_GAMEOVER;
+			}
+			if (gui::Button("Highscores")) {
+				_menuTimer = 0.0f;
+				_mode = GM_HIGHSCORES;
 			}
 		}
 		gui::end();
@@ -295,6 +250,11 @@ void Game::render() {
 			_board->activate(_selectedMode);
 			_mode = GM_RUNNING;
 		}
+		if (ret == 5) {
+			_menuTimer = 0.0f;
+			_pageTimer = 0.0f;
+			_mode = GM_HIGHSCORES;
+		}
 		else  if (ret == 4) {
 			_running = false;
 		}
@@ -312,6 +272,22 @@ void Game::render() {
 			_mode = GM_RUNNING;
 		}
 		else if (ret == 2) {
+			_menuTimer = 0.0f;
+			_mode = GM_MENU;
+		}
+	}
+	else if (_mode == GM_HIGHSCORES) {
+		_menuTimer += static_cast<float>(ds::getElapsedSeconds());
+		_pageTimer += static_cast<float>(ds::getElapsedSeconds());
+		if (_pageTimer >= 1.0f) {
+			_pageTimer -= 1.0f;
+			_page = (_page + 1) & 1;
+		}
+		//
+		// render game over menu immediate mode and board
+		//
+		int ret = showHighscores(_menuTimer, _settings.menuTTL, _selectedMode,_highscores, _page);
+		if (ret == 1) {
 			_menuTimer = 0.0f;
 			_mode = GM_MENU;
 		}

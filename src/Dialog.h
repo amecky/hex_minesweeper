@@ -2,6 +2,15 @@
 #include <diesel.h>
 #include <SpriteBatchBuffer.h>
 
+struct Score;
+struct Highscore;
+
+int showGameOverMenu(const Score& score, float time, float ttl);
+
+int showMainMenu(float time, float ttl);
+
+int showHighscores(float time, float ttl, int mode, Highscore* highscores, int page);
+
 namespace font {
 
 	void renderText(const ds::vec2& pos, const char* txt, SpriteBatchBuffer* buffer);

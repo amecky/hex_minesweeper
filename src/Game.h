@@ -13,7 +13,8 @@
 enum GameState {
 	GM_MENU,
 	GM_RUNNING,
-	GM_GAMEOVER
+	GM_GAMEOVER,
+	GM_HIGHSCORES
 };
 
 // ---------------------------------------------------------------
@@ -56,5 +57,8 @@ private:
 	DebugPanel _debugPanel;
 	float _menuTimer;
 	Highscore _highscores[30];
+	ds::vec2 _debugScore;
+	int _page;
+	float _pageTimer;
 };
 
