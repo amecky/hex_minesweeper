@@ -230,7 +230,6 @@
     <ClInclude Include="ext\stb_image.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Board.h" />
-    <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Dialog.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameContext.h" />

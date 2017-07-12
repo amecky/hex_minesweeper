@@ -1,7 +1,6 @@
 #include "Dialog.h"
 #include <vector>
 #include <stdarg.h>
-#include "Constants.h"
 #include "tweening.h"
 #include "HUD.h"
 
@@ -44,7 +43,7 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 	}	
 	//
 	int dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 180), ds::vec4(0, 300, 300, 50), "Main menu")) {
+	if (dialog::Button(ds::vec2(dx, 180), ds::vec4(0, 300, 300, 50), "MAIN MENU")) {
 		ret = 1;
 	}
 	dialog::end();
@@ -81,15 +80,15 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 		}
 	}
 	else {
-		dialog::FormattedText(ds::vec2(400, 310), "%s","You have failed - No new highscore");
+		dialog::FormattedText(ds::vec2(400, 310), "%s","No new highscore");
 	}
 	
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 368, 300, 50), "Replay")) {
+	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 368, 300, 50), "REPLAY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 150), ds::vec4(0, 300, 300, 50), "Main menu")) {
+	if (dialog::Button(ds::vec2(dx, 150), ds::vec4(0, 300, 300, 50), "MAIN MENU")) {
 		ret = 2;
 	}
 	dialog::end();
@@ -109,29 +108,48 @@ int showMainMenu(float time, float ttl) {
 	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 640, 70));
 
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50), "easy")) {
+	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50), "EASY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 300, 50), "medium")) {
+	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 300, 50), "MEDIUM")) {
 		ret = 2;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 300, 50), "hard")) {
+	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 300, 50), "HARD")) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 368, 300, 50), "Highscores")) {
+	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 368, 300, 50), "HIGHSCORES")) {
 		ret = 5;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 130), ds::vec4(0, 300, 300, 50), "Exit")) {
+	if (dialog::Button(ds::vec2(dx, 130), ds::vec4(0, 300, 300, 50), "EXIT")) {
 		ret = 4;
 	}
 	dialog::end();
 	return ret;
 }
 
+const static int FONT_WIDTH[] = {
+	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 
+	22,	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 
+	 8,  9,	13, 19, 16, 28, 19,  7, 12, 12, 16, 19,  8, 11,  8, 15, 
+	16, 16, 16,	16, 16, 16, 16, 16, 16, 16,  9,  9, 19, 19, 19, 14, 
+	21, 17, 17, 16,	18, 15, 14, 18, 18, 12, 12, 17, 14, 21, 19, 19, 
+	16, 19, 17, 16,	15, 18, 17, 25, 17, 16, 15, 12, 15, 12, 19, 16, 
+	16, 15, 15, 13,	15, 15,  9, 15, 16,  8,  9, 15,  8, 23, 16, 15, 
+	15, 15, 11, 13, 10,	16, 14, 22, 15, 14, 13, 16, 12, 16, 19, 22, 
+	16, 22,  7, 16, 13,	23, 16, 16, 16, 39, 16, 12, 25, 22, 15, 22, 
+	22,  7,  7, 13, 13,	16, 16, 22, 16, 21, 13, 12, 24, 22, 13, 16, 
+	 8,  9, 16, 16, 16,	16, 12, 16, 16, 21, 13, 19, 19, 11, 21, 16, 
+	13, 19, 13, 13, 16,	16, 16,  8, 16, 13, 13, 19, 26, 26, 26, 14, 
+	17, 17, 17, 17, 17,	17, 24, 16, 15, 15, 15, 15, 12, 12, 12, 12, 
+	18, 19, 19, 19,	19, 19, 19, 19, 19, 18, 18, 18, 18, 16, 16, 16, 
+	15, 15, 15,	15, 15, 15, 22, 13, 15, 15, 15, 15,  8,  8,  8,  8, 
+	15, 16, 15,	15, 15, 15, 15, 19, 15, 16, 16, 16, 16, 14, 15, 14
+
+};
 
 namespace font {
 
@@ -140,8 +158,10 @@ namespace font {
 		ds::vec2 p = pos;
 		for (int i = 0; i < l; ++i) {
 			int idx = (int)txt[i] - 32;
+			int y = idx / 18;
+			int x = idx - y * 18;
 			if (idx >= 0 && idx < 127) {
-				const ds::vec4& r = FONT_RECTS[idx];
+				ds::vec4 r = ds::vec4(420 + x * 28, 670 + y * 28, FONT_WIDTH[idx+32], 28);
 				buffer->add(p, r);
 				p.x += r.z + 6.0f;
 			}
@@ -153,8 +173,10 @@ namespace font {
 		ds::vec2 p(0.0f);
 		for (int i = 0; i < l; ++i) {
 			int idx = (int)txt[i] - 32;
+			int y = idx / 18;
+			int x = idx - y * 18;
 			if (idx >= 0 && idx < 127) {
-				const ds::vec4& r = FONT_RECTS[idx];
+				ds::vec4 r = ds::vec4(420 + x * 28, 670 + y * 28, FONT_WIDTH[idx+32], 28);
 				p.x += r.z + 6.0f;
 				if (r.w > p.y) {
 					p.y = r.w;
@@ -260,10 +282,10 @@ namespace dialog {
 		p.x = pos.x - size.x * 0.5f;
 		for (int i = 0; i < l; ++i) {
 			int idx = (int)text[i] - 32;
+			int y = idx / 18;
+			int x = idx - y * 18;
 			if (idx >= 0 && idx < 127) {
-				ds::vec4 r = FONT_RECTS[idx];
-				r.r += 640.0f;
-				r.g -= 130.0f;
+				ds::vec4 r = ds::vec4(420 + x * 28, 670 + y * 28, FONT_WIDTH[idx+32], 26);			
 				DrawCall call;
 				call.pos = p;
 				call.rect = r;
@@ -288,10 +310,10 @@ namespace dialog {
 		p.x = (1024.0f - size.x) * 0.5f;
 		for (int i = 0; i < l; ++i) {
 			int idx = (int)text[i] - 32;
+			int y = idx / 18;
+			int x = idx - y * 18;
 			if (idx >= 0 && idx < 127) {
-				ds::vec4 r = FONT_RECTS[idx];
-				r.r += 640.0f;
-				r.g -= 130.0f;
+				ds::vec4 r = ds::vec4(420 + x * 28, 670 + y * 28, FONT_WIDTH[idx+32], 26);
 				DrawCall call;
 				call.pos = p;
 				call.rect = r;
