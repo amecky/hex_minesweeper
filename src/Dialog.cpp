@@ -31,7 +31,7 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 700, 400, 80));
+	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 690, 420, 85));
 	ds::vec2 p = ds::vec2(512, 500);
 	int start = page * 5;
 	int end = start + 5;
@@ -61,10 +61,10 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
 	}
 	if (score.success) {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 420, 310, 60));
+		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 420, 325, 70));
 	}
 	else {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 490, 300, 60));
+		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 490, 310, 70));
 	}
 	dialog::Image(ds::vec2(512, 470), ds::vec4(610, 160, 540, 50));
 	dialog::Image(ds::vec2(512, 390), ds::vec4(610, 160, 540, 50));
@@ -105,65 +105,53 @@ int showMainMenu(float time, float ttl) {
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 640, 70));
+	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 645, 82));
 
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
 	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50), "EASY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 300, 50), "MEDIUM")) {
+	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 304, 50), "MEDIUM")) {
 		ret = 2;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 300, 50), "HARD")) {
+	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 304, 50), "HARD")) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 368, 300, 50), "HIGHSCORES")) {
+	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 230, 304, 50), "HIGHSCORES")) {
 		ret = 5;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 130), ds::vec4(0, 300, 300, 50), "EXIT")) {
+	if (dialog::Button(ds::vec2(dx, 130), ds::vec4(0, 300, 304, 50), "EXIT")) {
 		ret = 4;
 	}
 	dialog::end();
 	return ret;
 }
 
-const static int FONT_WIDTH[] = {
-	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,	22, 
-	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,  8,  9,	13, 19, 
-	16, 28, 19,  7, 12, 12, 16, 19,  8, 11,  8, 15, 16, 16, 16,	16, 16, 16, 
-	16, 16, 16, 16,  9,  9, 19, 19, 19, 14, 21, 17, 17, 16,	18, 15, 14, 18, 
-	18, 12, 12, 17, 14, 21, 19, 19, 16, 19, 17, 16,	15, 18, 17, 25, 17, 16, 
-	15, 12, 15, 12, 19, 16, 16, 15, 15, 13,	15, 15,  9, 15, 16,  8,  9, 15,  
-	 8, 23, 16, 15, 15, 15, 11, 13, 10,	16, 14, 22, 15, 14, 13, 16, 12, 16, 
-	19, 22, 16, 22,  7, 16, 13,	23, 16, 16, 16, 39, 16, 12, 25, 22, 15, 22, 
-	22,  7,  7, 13, 13,	16, 16, 22, 16, 21, 13, 12, 24, 22, 13, 16,  8,  9, 
-	16, 16, 16,	16, 12, 16, 16, 21, 13, 19, 19, 11, 21, 16, 13, 19, 13, 13, 
-	16,	16, 16,  8, 16, 13, 13, 19, 26, 26, 26, 14, 17, 17, 17, 17, 17,	17, 
-	24, 16, 15, 15, 15, 15, 12, 12, 12, 12, 18, 19, 19, 19,	19, 19, 19, 19, 
-	19, 18, 18, 18, 18, 16, 16, 16, 15, 15, 15,	15, 15, 15, 22, 13, 15, 15, 
-	15, 15,  8,  8,  8,  8, 15, 16, 15,	15, 15, 15, 15, 19, 15, 16, 16, 16, 
-	16, 14, 15, 14
-
-};
+const float FONT_PADDING = 0.0f;
 
 namespace font {
+
+	ds::vec4 getFontRect(char c) {
+		int idx = (int)c - 32;
+		int y = idx / 28;
+		int x = idx - y * 28;
+		if (idx >= 0 && idx < 127) {
+			return ds::vec4(450 + x * 18, 700 + y * 25, 18, 25);
+		}
+		return ds::vec4(420, 670, 18, 25); // space as default
+	}
 
 	void renderText(const ds::vec2& pos, const char* txt, SpriteBatchBuffer* buffer) {
 		int l = strlen(txt);
 		ds::vec2 p = pos;
 		for (int i = 0; i < l; ++i) {
-			int idx = (int)txt[i] - 32;
-			int y = idx / 18;
-			int x = idx - y * 18;
-			if (idx >= 0 && idx < 127) {
-				ds::vec4 r = ds::vec4(420 + x * 28, 670 + y * 28, FONT_WIDTH[idx+32], 28);
-				buffer->add(p, r);
-				p.x += r.z + 6.0f;
-			}
+			ds::vec4 r = getFontRect(txt[i]);
+			buffer->add(p, r);
+			p.x += r.z + FONT_PADDING;
 		}
 	}
 
@@ -171,15 +159,10 @@ namespace font {
 		int l = strlen(txt);
 		ds::vec2 p(0.0f);
 		for (int i = 0; i < l; ++i) {
-			int idx = (int)txt[i] - 32;
-			int y = idx / 18;
-			int x = idx - y * 18;
-			if (idx >= 0 && idx < 127) {
-				ds::vec4 r = ds::vec4(420 + x * 28, 670 + y * 28, FONT_WIDTH[idx+32], 28);
-				p.x += r.z + 6.0f;
-				if (r.w > p.y) {
-					p.y = r.w;
-				}
+			ds::vec4 r = getFontRect(txt[i]);
+			p.x += r.z + FONT_PADDING;
+			if (r.w > p.y) {
+				p.y = r.w;
 			}
 		}
 		return p;
@@ -280,17 +263,12 @@ namespace dialog {
 		ds::vec2 size = font::textSize(text);
 		p.x = pos.x - size.x * 0.5f;
 		for (int i = 0; i < l; ++i) {
-			int idx = (int)text[i] - 32;
-			int y = idx / 28;
-			int x = idx - y * 28;
-			if (idx >= 0 && idx < 127) {
-				ds::vec4 r = ds::vec4(420 + x * 18, 670 + y * 25, 18, 25);			
-				DrawCall call;
-				call.pos = p;
-				call.rect = r;
-				_guiCtx->calls.push_back(call);
-				p.x += r.z + 0.0f;
-			}
+			ds::vec4 r = font::getFontRect(text[i]);
+			DrawCall call;
+			call.pos = p;
+			call.rect = r;
+			_guiCtx->calls.push_back(call);
+			p.x += r.z + 0.0f;			
 		}
 		return isClicked(pos, dim);
 	}
@@ -308,17 +286,12 @@ namespace dialog {
 		ds::vec2 size = font::textSize(text);
 		p.x = (1024.0f - size.x) * 0.5f;
 		for (int i = 0; i < l; ++i) {
-			int idx = (int)text[i] - 32;
-			int y = idx / 28;
-			int x = idx - y * 28;
-			if (idx >= 0 && idx < 127) {
-				ds::vec4 r = ds::vec4(420 + x * 18, 670 + y * 25, 18, 25);
-				DrawCall call;
-				call.pos = p;
-				call.rect = r;
-				_guiCtx->calls.push_back(call);
-				p.x += r.z + 0.0f;
-			}
+			ds::vec4 r = font::getFontRect(text[i]);
+			DrawCall call;
+			call.pos = p;
+			call.rect = r;
+			_guiCtx->calls.push_back(call);
+			p.x += r.z + 0.0f;
 		}
 	}
 
