@@ -58,4 +58,5 @@ struct GameSettings {
 	float numberScaleTTL;
 
 	float menuTTL;
+	float highscorePagingTTL;
 };

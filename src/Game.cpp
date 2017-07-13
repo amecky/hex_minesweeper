@@ -38,7 +38,7 @@ Game::Game() {
 	RID textureID = loadImage("content\\TextureArray.png");
 
 	// create the sprite batch buffer
-	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::LINEAR };
+	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::POINT };
 	_spriteBuffer = new SpriteBatchBuffer(sbbInfo);
 
 	_settings.wiggleScale = 0.2f;
@@ -46,6 +46,7 @@ Game::Game() {
 	_settings.numberScaleAmplitude = 1.5f;
 	_settings.numberScaleTTL = 0.4f;
 	_settings.menuTTL = 1.2f;
+	_settings.highscorePagingTTL = 2.0f;
 
 	_board = new Board(_spriteBuffer, &_settings);
 	_board->activate(2);
@@ -182,7 +183,8 @@ void Game::renderDebugPanel() {
 			gui::Input("Wiggle Scale", &_settings.wiggleScale);
 			gui::Input("Wiggle TTL", &_settings.wiggleTTL);
 			gui::Input("Number Scale", &_settings.numberScaleAmplitude);
-			gui::Input("Number TTL", &_settings.numberScaleTTL);			
+			gui::Input("Number TTL", &_settings.numberScaleTTL);	
+			gui::Input("HS TTL", &_settings.highscorePagingTTL);
 			gui::Input("Mode", &_selectedMode);
 			if (gui::Button("Start Game")) {
 				_hud->reset();
@@ -279,8 +281,8 @@ void Game::render() {
 	else if (_mode == GM_HIGHSCORES) {
 		_menuTimer += static_cast<float>(ds::getElapsedSeconds());
 		_pageTimer += static_cast<float>(ds::getElapsedSeconds());
-		if (_pageTimer >= 1.0f) {
-			_pageTimer -= 1.0f;
+		if (_pageTimer >= _settings.highscorePagingTTL) {
+			_pageTimer -= _settings.highscorePagingTTL;
 			_page = (_page + 1) & 1;
 		}
 		//
