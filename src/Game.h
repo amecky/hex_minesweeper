@@ -2,11 +2,10 @@
 #include <diesel.h>
 #define SPRITE_IMPLEMENTATION
 #include <SpriteBatchBuffer.h>
-
 #include "board.h"
 #include "hud.h"
 #include "GameContext.h"
-
+#include "Dialog.h"
 // ---------------------------------------------------------------
 // Game modes
 // ---------------------------------------------------------------
@@ -27,11 +26,9 @@ struct DebugPanel {
 	int state;
 };
 
-struct DebugSettings {
-	int value;
-};
-
-
+// ---------------------------------------------------------------
+// Game
+// ---------------------------------------------------------------
 class Game {
 
 public:
@@ -60,5 +57,8 @@ private:
 	ds::vec2 _debugScore;
 	int _page;
 	float _pageTimer;
+	InputDialog _inputDialog;
+	bool _inputActive;
+	char _playerName[10];
 };
 

@@ -3,7 +3,6 @@
 #include <stb_image.h>
 #include <ds_imgui.h>
 #include "..\resource.h"
-#include "Dialog.h"
 #include "tweening.h"
 #include <Windows.h>
 // ---------------------------------------------------------------
@@ -51,9 +50,13 @@ Game::Game() {
 	_board = new Board(_spriteBuffer, &_settings);
 	_board->activate(2);
 
-	Score score;
+	_score.rank = -1;
+	_score.bombsLeft = 0;
+	_score.minutes = 0;
+	_score.seconds = 0;
+	_score.success = false;
 
-	_hud = new HUD(_spriteBuffer, &score, &_settings);
+	_hud = new HUD(_spriteBuffer, &_score, &_settings);
 	_hud->reset();
 
 	_mode = GM_MENU;
@@ -80,6 +83,10 @@ Game::Game() {
 
 	_page = 0;
 	_pageTimer = 0.0f;
+
+	sprintf(_playerName, "%", "Name");
+
+	_inputActive = true;
 }
 
 Game::~Game() {
@@ -163,6 +170,12 @@ void Game::tick(float dt) {
 			_score.bombsLeft = max - _board->getMarkedCorrectly();
 			_score.rank = handleScore();
 			// FIXME: find highscore/ranking
+			if (_score.rank != -1) {
+				_inputActive = true;
+			}
+			else {
+				_inputActive = false;
+			}
 			_mode = GM_GAMEOVER;
 		}
 		_board->tick(dt);
@@ -214,6 +227,10 @@ void Game::renderDebugPanel() {
 				_menuTimer = 0.0f;
 				_mode = GM_HIGHSCORES;
 			}
+			if (gui::Button("Input Name")) {
+				_inputActive = true;
+				_inputDialog.reset(_playerName);
+			}
 		}
 		gui::end();
 	}
@@ -226,6 +243,7 @@ void Game::render() {
 	ds::begin();
 
 	_spriteBuffer->begin();
+	dialog::begin();
 	//
 	// background
 	//
@@ -246,19 +264,21 @@ void Game::render() {
 		// render main menu immediate mode
 		//
 		int ret = showMainMenu(_menuTimer, _settings.menuTTL);
-		if (ret > 0 && ret < 4) {
-			_selectedMode = ret - 1;
-			_hud->reset();
-			_board->activate(_selectedMode);
-			_mode = GM_RUNNING;
-		}
-		if (ret == 5) {
-			_menuTimer = 0.0f;
-			_pageTimer = 0.0f;
-			_mode = GM_HIGHSCORES;
-		}
-		else  if (ret == 4) {
-			_running = false;
+		if (!_inputActive) {
+			if (ret > 0 && ret < 4) {
+				_selectedMode = ret - 1;
+				_hud->reset();
+				_board->activate(_selectedMode);
+				_mode = GM_RUNNING;
+			}
+			if (ret == 5) {
+				_menuTimer = 0.0f;
+				_pageTimer = 0.0f;
+				_mode = GM_HIGHSCORES;
+			}
+			else  if (ret == 4) {
+				_running = false;
+			}
 		}
 	}
 	else if (_mode == GM_GAMEOVER) {
@@ -295,6 +315,21 @@ void Game::render() {
 		}
 	}
 
+	if (_inputActive) {
+		_inputDialog.tick(static_cast<float>(ds::getElapsedSeconds()));
+		int ret = _inputDialog.render();
+		if (ret == 1 ) {
+			sprintf(_playerName, "%s", _inputDialog.getName());
+			if (_score.rank != -1 && _score.success) {
+				sprintf(_highscores[_score.rank + _selectedMode * 10].name, "%s", _playerName);
+			}
+			_inputActive = false;
+		}
+		if (ret == 2) {
+			_inputActive = false;
+		}
+	}
+	dialog::end();
 	_spriteBuffer->flush();
 	
 	renderDebugPanel();

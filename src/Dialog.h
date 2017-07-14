@@ -41,4 +41,20 @@ namespace dialog {
 
 }
 
+class InputDialog {
+
+public:
+	InputDialog();
+	void reset(const char* name);
+	void tick(float dt);
+	int render();
+	const char* getName() const {
+		return _name;
+	}
+private:
+	bool handleTextInput();
+	int _caretPos;
+	char _name[20];
+	int _index;
+};
 

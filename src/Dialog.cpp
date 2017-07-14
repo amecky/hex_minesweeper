@@ -26,7 +26,6 @@ int floatButton(float time, float ttl, FloatInDirection dir) {
 // ---------------------------------------------------------------
 int showHighscores(float time, float ttl, int mode, Highscore* highscores, int page) {
 	int ret = 0;
-	dialog::begin();
 	int dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
@@ -46,7 +45,6 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 	if (dialog::Button(ds::vec2(dx, 180), ds::vec4(0, 300, 300, 50), "MAIN MENU")) {
 		ret = 1;
 	}
-	dialog::end();
 	return ret;
 }
 
@@ -55,7 +53,6 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 // ---------------------------------------------------------------
 int showGameOverMenu(const Score& score, float time, float ttl) {
 	int ret = 0;
-	dialog::begin();
 	int dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
@@ -91,7 +88,6 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	if (dialog::Button(ds::vec2(dx, 150), ds::vec4(0, 300, 300, 50), "MAIN MENU")) {
 		ret = 2;
 	}
-	dialog::end();
 	return ret;
 }
 
@@ -100,7 +96,6 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 // ---------------------------------------------------------------
 int showMainMenu(float time, float ttl) {
 	int ret = 0;
-	dialog::begin();
 	int dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
@@ -108,26 +103,25 @@ int showMainMenu(float time, float ttl) {
 	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 645, 82));
 
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 450), ds::vec4(0, 368, 300, 50), "EASY")) {
+	if (dialog::Button(ds::vec2(dx, 490), ds::vec4(0, 368, 300, 50), "EASY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 370), ds::vec4(0, 368, 304, 50), "MEDIUM")) {
+	if (dialog::Button(ds::vec2(dx, 410), ds::vec4(0, 368, 304, 50), "MEDIUM")) {
 		ret = 2;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 290), ds::vec4(0, 368, 304, 50), "HARD")) {
+	if (dialog::Button(ds::vec2(dx, 330), ds::vec4(0, 368, 304, 50), "HARD")) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 210), ds::vec4(0, 230, 304, 50), "HIGHSCORES")) {
+	if (dialog::Button(ds::vec2(dx, 250), ds::vec4(0, 230, 304, 50), "HIGHSCORES")) {
 		ret = 5;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 130), ds::vec4(0, 300, 304, 50), "EXIT")) {
+	if (dialog::Button(ds::vec2(dx, 170), ds::vec4(0, 300, 304, 50), "EXIT")) {
 		ret = 4;
 	}
-	dialog::end();
 	return ret;
 }
 
@@ -321,4 +315,92 @@ namespace dialog {
 		}
 	}
 
+}
+
+// -------------------------------------------------------
+// Input dialog
+// -------------------------------------------------------
+InputDialog::InputDialog() {
+	sprintf(_name, "%s", "Name");
+	_caretPos = 4;
+}
+
+void InputDialog::reset(const char* name) {
+	sprintf(_name, "%s", name);
+}
+
+void InputDialog::tick(float dt) {
+}
+
+bool InputDialog::handleTextInput() {
+	int len = strlen(_name);
+	for (int i = 0; i < ds::getNumInputKeys(); ++i) {
+		const ds::InputKey& key = ds::getInputKey(i);
+		if (key.type == ds::IKT_SYSTEM) {
+			if (key.value == ds::SpecialKeys::DSKEY_Backspace) {
+				if (_caretPos > 0) {
+					if (_caretPos < len) {
+						memmove(_name + _caretPos - 1, _name + _caretPos, len - _caretPos);
+					}
+					--_caretPos;
+					--len;
+					_name[len] = '\0';
+
+				}
+			}
+		}
+		else if (key.value == ds::SpecialKeys::DSKEY_Enter) {
+			return false;
+		}
+		else {
+			if (len < 10) {
+				if ((key.value > 47 && key.value < 128) || key.value == '.' || key.value == '-') {
+					if (len < 32) {
+						if (_caretPos < len) {
+							memmove(_name + _caretPos + 1, _name + _caretPos, len - _caretPos);
+						}
+						_name[_caretPos] = key.value;
+						++len;
+						++_caretPos;
+
+					}
+				}
+			}
+		}
+		_name[len] = '\0';
+	}
+	return true;
+}
+
+int InputDialog::render() {
+	int ret = 0;
+	ds::vec2 boxPos(270, 384);
+	dialog::Image(boxPos, ds::vec4(610, 220, 100, 200));
+	boxPos.x += 140.0f;
+	dialog::Image(boxPos, ds::vec4(720, 220, 180, 200));
+	boxPos.x += 180.0f;
+	dialog::Image(boxPos, ds::vec4(720, 220, 180, 200));
+	boxPos.x += 140.0f;
+	dialog::Image(boxPos, ds::vec4(890, 220, 100, 200));
+	
+	dialog::Text(ds::vec2(400, 440), "Please enter your name");
+
+	dialog::Image(ds::vec2(512, 380), ds::vec4(610,160,400,40));
+
+	if (!handleTextInput()) {
+		return 1;
+	}
+	dialog::Text(ds::vec2(512, 380), _name);
+
+	// FIXME: blinking cursor
+
+	int dx = 400;
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(610, 430, 102, 32))) {
+		ret = 1;
+	}
+	dx = 600;
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(720, 430, 102, 32))) {
+		ret = 2;
+	}
+	return ret;
 }
