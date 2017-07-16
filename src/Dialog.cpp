@@ -103,7 +103,7 @@ int showMainMenu(float time, float ttl) {
 	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 645, 82));
 
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 490), ds::vec4(0, 368, 300, 50), "EASY")) {
+	if (dialog::Button(ds::vec2(dx, 490), ds::vec4(0, 368, 304, 50), "EASY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
