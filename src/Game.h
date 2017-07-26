@@ -2,6 +2,7 @@
 #include <diesel.h>
 #define SPRITE_IMPLEMENTATION
 #include <SpriteBatchBuffer.h>
+#include <ds_imgui.h>
 #include "board.h"
 #include "hud.h"
 #include "GameContext.h"
@@ -25,6 +26,7 @@ struct DebugPanel {
 	bool active;
 	int state;
 };
+
 
 // ---------------------------------------------------------------
 // Game
@@ -60,5 +62,8 @@ private:
 	InputDialog _inputDialog;
 	bool _inputActive;
 	char _playerName[10];
+
+	int _dummy; // FIXME: remove after debugging
+	p2i _dialogPos; // FIXME: remove after debugging
 };
 

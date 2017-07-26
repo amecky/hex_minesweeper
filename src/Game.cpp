@@ -1,7 +1,7 @@
 #include "Game.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#include <ds_imgui.h>
+
 #include "..\resource.h"
 #include "tweening.h"
 #include <Windows.h>
@@ -84,9 +84,13 @@ Game::Game() {
 	_page = 0;
 	_pageTimer = 0.0f;
 
-	sprintf(_playerName, "%", "Name");
+	sprintf(_playerName, "%s", "Name");
 
 	_inputActive = true;
+
+	_dummy = 0;
+
+	_dialogPos = p2i(20, 720);
 }
 
 Game::~Game() {
@@ -188,6 +192,15 @@ void Game::tick(float dt) {
 // ---------------------------------------------------------------
 void Game::renderDebugPanel() {
 	if (_debugPanel.active) {
+		gui::start();		
+		gui::begin("Debug", &_debugPanel.state,&_dialogPos,300);
+		if (gui::Button("Dummy")) {
+			++_dummy;
+		}
+		gui::Value("Dummy", _dummy);
+		gui::debug();
+		gui::end();
+		/*
 		gui::start(ds::vec2(0, 755));
 		if (_debugPanel.active) {
 			gui::begin("Debug", &_debugPanel.state);
@@ -233,6 +246,7 @@ void Game::renderDebugPanel() {
 			}
 		}
 		gui::end();
+		*/
 	}
 }
 // ---------------------------------------------------------------
