@@ -86,10 +86,10 @@ Game::Game() {
 
 	sprintf(_playerName, "%s", "Name");
 
-	_inputActive = true;
+	_inputActive = false;
 
 	_dummy = 0;
-
+	_dummyColor = ds::Color(128, 64, 255, 255);
 	_dialogPos = p2i(20, 720);
 }
 
@@ -193,60 +193,54 @@ void Game::tick(float dt) {
 void Game::renderDebugPanel() {
 	if (_debugPanel.active) {
 		gui::start();		
-		gui::begin("Debug", &_debugPanel.state,&_dialogPos,300);
+		gui::begin("Debug", &_debugPanel.state,&_dialogPos,440);
 		if (gui::Button("Dummy")) {
 			++_dummy;
 		}
-		gui::Value("Dummy", _dummy);
+		gui::Value("Dummy#1", _dummy);
+		gui::Input("Menu TTL", &_settings.menuTTL);
+		gui::Value("FPS", ds::getFramesPerSecond());
+		gui::Input("Wiggle Scale", &_settings.wiggleScale);
+		gui::Input("Wiggle TTL", &_settings.wiggleTTL);
+		gui::Input("Number Scale", &_settings.numberScaleAmplitude);
+		gui::Input("Number TTL", &_settings.numberScaleTTL);	
+		gui::Input("HS TTL", &_settings.highscorePagingTTL);
+		gui::Input("Mode", &_selectedMode);
+		gui::Input("Color", &_dummyColor);
+		if (gui::Button("Start Game")) {
+			_hud->reset();
+			_board->activate(_selectedMode);
+		}
+		if (gui::Button("Show bombs")) {
+			_board->toggleShowBombs();
+		}
+		if (gui::Button("Stop game")) {
+			_menuTimer = 0.0f;
+			_mode = GM_GAMEOVER;
+		}
+		gui::Input("Score", &_debugScore);
+		if (gui::Button("Reset timer")) {
+			_menuTimer = 0.0f;
+		}
+		if (gui::Button("Game over")) {
+			_menuTimer = 0.0f;
+			_score.success = true;
+			_score.seconds = _debugScore.y;
+			_score.minutes = _debugScore.x;
+			_score.rank = handleScore();
+			_score.bombsLeft = 42;
+			_mode = GM_GAMEOVER;
+		}
+		if (gui::Button("Highscores")) {
+			_menuTimer = 0.0f;
+			_mode = GM_HIGHSCORES;
+		}
+		if (gui::Button("Input Name")) {
+			_inputActive = true;
+			_inputDialog.reset(_playerName);
+		}
 		gui::debug();
 		gui::end();
-		/*
-		gui::start(ds::vec2(0, 755));
-		if (_debugPanel.active) {
-			gui::begin("Debug", &_debugPanel.state);
-			gui::Input("Menu TTL", &_settings.menuTTL);
-			gui::Value("FPS", ds::getFramesPerSecond());
-			gui::Input("Wiggle Scale", &_settings.wiggleScale);
-			gui::Input("Wiggle TTL", &_settings.wiggleTTL);
-			gui::Input("Number Scale", &_settings.numberScaleAmplitude);
-			gui::Input("Number TTL", &_settings.numberScaleTTL);	
-			gui::Input("HS TTL", &_settings.highscorePagingTTL);
-			gui::Input("Mode", &_selectedMode);
-			if (gui::Button("Start Game")) {
-				_hud->reset();
-				_board->activate(_selectedMode);
-			}
-			if (gui::Button("Show bombs")) {
-				_board->toggleShowBombs();
-			}
-			if (gui::Button("Stop game")) {
-				_menuTimer = 0.0f;
-				_mode = GM_GAMEOVER;
-			}
-			gui::Input("Score", &_debugScore);
-			if (gui::Button("Reset timer")) {
-				_menuTimer = 0.0f;
-			}
-			if (gui::Button("Game over")) {
-				_menuTimer = 0.0f;
-				_score.success = true;
-				_score.seconds = _debugScore.y;
-				_score.minutes = _debugScore.x;
-				_score.rank = handleScore();
-				_score.bombsLeft = 42;
-				_mode = GM_GAMEOVER;
-			}
-			if (gui::Button("Highscores")) {
-				_menuTimer = 0.0f;
-				_mode = GM_HIGHSCORES;
-			}
-			if (gui::Button("Input Name")) {
-				_inputActive = true;
-				_inputDialog.reset(_playerName);
-			}
-		}
-		gui::end();
-		*/
 	}
 }
 // ---------------------------------------------------------------

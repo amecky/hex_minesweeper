@@ -65,5 +65,6 @@ private:
 
 	int _dummy; // FIXME: remove after debugging
 	p2i _dialogPos; // FIXME: remove after debugging
+	ds::Color _dummyColor; // FIXME: RAD
 };
 
