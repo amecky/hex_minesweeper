@@ -1,10 +1,81 @@
 #include "Game.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
 #include "..\resource.h"
 #include "tweening.h"
 #include <Windows.h>
+
+char* message = "Hello World";
+const char* ITEMS[] = { "First","Second","Third","Fourth" };
+// ---------------------------------------------------------------
+// show game over menu
+// ---------------------------------------------------------------
+int showDialog(TestSettings* settings, p2i* pos) {
+	int ret = 0;
+	gui::start();
+	/*
+	gui::beginMenu();
+	//gui::MenuBar(ITEMS, 4, &settings->menu);
+	if (gui::MenuBar("First")) {
+	settings->menu = 1;
+	}
+	if (gui::MenuBar("Second")) {
+	settings->menu = 2;
+	}
+	if (gui::MenuBar("Third")) {
+	settings->menu = 3;
+	}
+	if (gui::MenuBar("Fourth")) {
+	settings->menu = 4;
+	}
+	*/
+	gui::begin("Basic elements", &settings->state,pos,400);
+	if (settings->state == 1) {
+		ds::vec2 mp = ds::getMousePosition();
+		gui::Value("Mouse Position", mp);
+		gui::Value("Menu", settings->menu);
+		gui::Text("Simple text example");
+		gui::Label("Pos", "100.0 200.0");
+		gui::Label("Message", "Hello");
+		gui::Input("Value", &settings->iv);
+		gui::Input("Float Value", &settings->fv);
+		gui::Checkbox("Check me", &settings->bv);
+		gui::Separator();
+		gui::StepInput("Step input", &settings->stepValue, 0, 100, 5);
+		gui::Input("Vec2 value", &settings->v2);
+		gui::Input("Vec3 value", &settings->v3);
+		gui::Input("Color value", &settings->color);
+		gui::ListBox("Listbox", ITEMS, 4, &settings->listIndex, &settings->listOffset, 3);
+		gui::Slider("Slider", &settings->iv, 0, 200, 100.0f);
+		gui::SliderAngle("Angle Slider", &settings->angle);
+		gui::DropDownBox("Dropdown", ITEMS, 4, &settings->dropState, &settings->dopIndex, &settings->dropOffset, 3, true);
+	}
+	gui::begin("Value example", &settings->valueState, 400);
+	if (settings->valueState == 1) {
+		gui::Value("Int", 200);
+		gui::Value("Float", 123.0f);
+		gui::Value("Vec2", ds::vec2(100.0f, 200.0f));
+		gui::Value("Vec3", ds::vec3(12.0f, 34.0f, 56.0f));
+		gui::Value("Vec4", ds::vec4(10, 20, 50, 60));
+		gui::Value("Color", ds::Color(192, 32, 64, 128));
+	}
+	gui::begin("Diagrams", &settings->diagramState, 400);
+	if (settings->diagramState == 1) {
+		gui::Histogram(settings->hTable, 16, 0.0f, 20.0f, 5.0f, 300.0f, 200.0f);
+		gui::Diagram(settings->sinTable, 36, -1.0f, 1.0f, 0.5f);
+		gui::beginGroup();
+		if (gui::Button("OK")) {
+			ret = 1;
+		}
+		if (gui::Button("Cancel")) {
+			ret = 2;
+		}
+		gui::endGroup();
+	}
+	gui::debug();
+	gui::end();
+	return ret;
+}
 // ---------------------------------------------------------------
 // load image from the resources
 // ---------------------------------------------------------------
@@ -67,6 +138,7 @@ Game::Game() {
 	_running = true;
 
 	_debugPanel = { 'D', false, false, 1 };
+	_demoPanel = { 'T', true, false, 1 };
 
 	_menuTimer = 0.0f;
 
@@ -91,6 +163,31 @@ Game::Game() {
 	_dummy = 0;
 	_dummyColor = ds::Color(128, 64, 255, 255);
 	_dialogPos = p2i(20, 720);
+
+	
+	settings.bv = true;
+	settings.stepValue = 20;
+	settings.iv = 120;
+	settings.fv = 4.0f;
+	settings.v2 = ds::vec2(100, 200);
+	settings.v3 = ds::vec3(100, 200, 300);
+	settings.color = ds::Color(192, 32, 64, 255);
+	settings.state = 1;
+	for (int i = 0; i < 36; ++i) {
+		settings.sinTable[i] = sin(static_cast<float>(i) / 36.0f * ds::PI * 2.0f);
+	}
+	for (int i = 0; i < 16; ++i) {
+		settings.hTable[i] = ds::random(5.0f, 15.0f);
+	}
+	settings.menu = -1;
+	settings.diagramState = 0;
+	settings.listIndex = -1;
+	settings.listOffset = 0;
+	settings.valueState = 0;
+	settings.dropState = 0;
+	settings.dopIndex = -1;
+	settings.dropOffset = 0;
+	settings.angle = ds::PI;
 }
 
 Game::~Game() {
@@ -151,6 +248,7 @@ int Game::handleScore() {
 // ---------------------------------------------------------------
 void Game::tick(float dt) {
 	handleDebugInput(&_debugPanel);
+	handleDebugInput(&_demoPanel);
 	if (_mode == GM_RUNNING) {
 		int max = GAME_MODES[_selectedMode].maxBombs;
 		if (_board->select()) {
@@ -341,6 +439,10 @@ void Game::render() {
 	_spriteBuffer->flush();
 	
 	renderDebugPanel();
+
+	if (_demoPanel.active) {
+		showDialog(&settings, &_dialogPos);
+	}
 	
 	ds::end();
 }

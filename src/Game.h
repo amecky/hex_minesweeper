@@ -27,7 +27,28 @@ struct DebugPanel {
 	int state;
 };
 
-
+// FIXME: RAD
+struct TestSettings {
+	int iv;
+	float fv;
+	bool bv;
+	int stepValue;
+	ds::vec2 v2;
+	ds::vec3 v3;
+	int state;
+	ds::Color color;
+	float sinTable[36];
+	float hTable[16];
+	int menu;
+	int diagramState;
+	int listIndex;
+	int listOffset;
+	int valueState;
+	int dropState;
+	int dopIndex;
+	int dropOffset;
+	float angle;
+};
 // ---------------------------------------------------------------
 // Game
 // ---------------------------------------------------------------
@@ -54,6 +75,7 @@ private:
 	GameState _mode;
 	int _selectedMode;
 	DebugPanel _debugPanel;
+	DebugPanel _demoPanel;
 	float _menuTimer;
 	Highscore _highscores[30];
 	ds::vec2 _debugScore;
@@ -66,5 +88,6 @@ private:
 	int _dummy; // FIXME: remove after debugging
 	p2i _dialogPos; // FIXME: remove after debugging
 	ds::Color _dummyColor; // FIXME: RAD
+	TestSettings settings; // FIXME: RAD
 };
 
