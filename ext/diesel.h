@@ -631,6 +631,99 @@ namespace ds {
 
 	// **********************************************************************
 	//
+	// The Event subsystem
+	//
+	// **********************************************************************
+
+	enum SpecialKeys {
+		DSKEY_Tab,
+		DSKEY_LeftArrow,
+		DSKEY_RightArrow,
+		DSKEY_UpArrow,
+		DSKEY_DownArrow,
+		DSKEY_PageUp,
+		DSKEY_PageDown,
+		DSKEY_Home,
+		DSKEY_End,
+		DSKEY_Delete,
+		DSKEY_Backspace,
+		DSKEY_Enter,
+		DSKEY_F1,
+		DSKEY_F2,
+		DSKEY_F3,
+		DSKEY_F4,
+		DSKEY_F5,
+		DSKEY_F6,
+		DSKEY_F7,
+		DSKEY_F8,
+		DSKEY_F9,
+		DSKEY_F10,
+		DSKEY_F11,
+		DSKEY_F12,
+		DSKEY_ESC,
+		DSKEY_UNKNOWN
+	};
+
+	enum InputKeyType {
+		IKT_SYSTEM,
+		IKT_ASCII
+	};
+
+	struct InputKey {
+		InputKeyType type;
+		char value;
+	};
+
+	enum EventType {
+		ET_MOUSEBUTTON_DOWN,
+		ET_MOUSEBUTTON_UP,
+		ET_MOUSEBUTTON_PRESSED,
+		ET_KEY_DOWN,
+		ET_KEY_UP,
+		ET_KEY_PRESSED,
+		ET_USER,
+		ET_NONE
+	};
+
+	enum ButtonState {
+		PRESSED,
+		RELEASED
+	};
+
+	struct MouseEvent {
+		int button;
+		ButtonState state;
+	};
+
+	struct KeyEvent {
+		InputKeyType keyType;
+		uint8_t key;
+		SpecialKeys specialKey;
+	};
+
+	struct UserEvent {
+		EventType type;
+		int id;
+		void* firstData;
+		void* secondData;
+	};
+
+	struct Event {
+		EventType type;
+		union {
+			MouseEvent mouse;
+			KeyEvent key;
+			UserEvent user;
+		};
+	};
+
+	bool get_event(Event* e);
+
+	bool has_events();
+
+	void push_event(const Event& e);
+	// **********************************************************************
+	//
 	// The rendering API
 	//
 	// **********************************************************************
@@ -1236,50 +1329,9 @@ namespace ds {
 
 	float random(float min, float max);
 
-	const char* getLastError();
-
-	enum SpecialKeys {
-		DSKEY_Tab,
-		DSKEY_LeftArrow,
-		DSKEY_RightArrow,
-		DSKEY_UpArrow,
-		DSKEY_DownArrow,
-		DSKEY_PageUp,
-		DSKEY_PageDown,
-		DSKEY_Home,
-		DSKEY_End,
-		DSKEY_Delete,
-		DSKEY_Backspace,
-		DSKEY_Enter,
-		DSKEY_F1,
-		DSKEY_F2,
-		DSKEY_F3,
-		DSKEY_F4,
-		DSKEY_F5,
-		DSKEY_F6,
-		DSKEY_F7,
-		DSKEY_F8,
-		DSKEY_F9,
-		DSKEY_F10,
-		DSKEY_F11,
-		DSKEY_F12,
-		DSKEY_ESC,
-		DSKEY_UNKNOWN
-	};
-
-	enum InputKeyType {
-		IKT_SYSTEM,
-		IKT_ASCII
-	};
-
-	struct InputKey {
-		InputKeyType type;
-		char value;
-	};
-
 	void addInputCharacter(char c);
 
-	void addVirtualKey(uint32_t keyCode);
+	bool addVirtualKey(uint32_t keyCode);
 
 	int getNumInputKeys();
 
@@ -2298,6 +2350,10 @@ namespace ds {
 
 		CharBuffer* charBuffer;
 
+		Event events[32];
+		uint8_t eventWriteIndex;
+		uint8_t eventReadIndex;
+
 	} InternalContext;
 
 	static InternalContext* _ctx;
@@ -2721,6 +2777,7 @@ namespace ds {
 
 				}
 			}
+			/*
 			if (raw->header.dwType == RIM_TYPEMOUSE) {
 				if (raw->data.mouse.ulButtons == 1) {
 					_ctx->mouseButtonState[0] = 1;
@@ -2735,6 +2792,7 @@ namespace ds {
 					_ctx->mouseButtonState[1] = 0;
 				}
 			}
+			*/
 		}
 		return true;
 	}
@@ -2768,7 +2826,7 @@ namespace ds {
 	// is mouse button pressed
 	// ------------------------------------------------------
 	bool isMouseButtonPressed(int button) {
-		return _ctx->mouseButtonState[button] == 80;
+		return _ctx->mouseButtonState[button] == 1;
 	}
 
 	// ------------------------------------------------------
@@ -2787,30 +2845,77 @@ namespace ds {
 			case WM_CHAR: {
 				char ascii = wParam;
 				ds::addInputCharacter(ascii);
+				Event keyPressedEvent;
+				keyPressedEvent.type = ET_KEY_PRESSED;
+				keyPressedEvent.key = { IKT_ASCII, (uint8_t)ascii, DSKEY_UNKNOWN };
+				push_event(keyPressedEvent);
 				return 0;
 			}
 			case WM_KEYDOWN: {
 				char ascii = wParam;
-				ds::addVirtualKey(wParam);
-				_ctx->keyState[ascii] = 80;
+				if (!ds::addVirtualKey(wParam)) {
+					if (_ctx->keyState[ascii] != 80) {
+						Event keyDownEvent;
+						keyDownEvent.type = ET_KEY_DOWN;
+						keyDownEvent.key = { IKT_ASCII, (uint8_t)ascii, DSKEY_UNKNOWN };
+						push_event(keyDownEvent);
+					}
+					_ctx->keyState[ascii] = 80;
+				}
 				return 0;
 			}
 			case WM_KEYUP: {
 				UINT ascii = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
+				Event keyUpEvent;
+				keyUpEvent.type = ET_KEY_UP;
+				keyUpEvent.key = { IKT_ASCII, (uint8_t)ascii, DSKEY_UNKNOWN };
+				push_event(keyUpEvent);
 				_ctx->keyState[ascii] = 0;
 				return 0;
 			}
 			case WM_LBUTTONDOWN:
-				_ctx->mouseButtonState[0] = 80;
+				if (_ctx->mouseButtonState[0] != 1) {
+					Event lmButtonDownEvent;
+					lmButtonDownEvent.type = ET_MOUSEBUTTON_DOWN;
+					lmButtonDownEvent.mouse = { 0, ButtonState::PRESSED };
+					push_event(lmButtonDownEvent);
+				}
+				_ctx->mouseButtonState[0] = 1;
 				return 0;
-			case WM_LBUTTONUP:
+			case WM_LBUTTONUP:				
+				if (_ctx->mouseButtonState[0] != 0) {
+					Event lmButtonUpEvent;
+					lmButtonUpEvent.type = ET_MOUSEBUTTON_UP;
+					lmButtonUpEvent.mouse = { 0, ButtonState::RELEASED };
+					push_event(lmButtonUpEvent);
+					Event ne;
+					ne.type = ET_MOUSEBUTTON_PRESSED;
+					ne.mouse = { 0, ButtonState::RELEASED };
+					push_event(ne);
+				}
 				_ctx->mouseButtonState[0] = 0;
 				_ctx->mouseButtonClicked[0] = true;
 				return 0;
 			case WM_RBUTTONDOWN:
-				_ctx->mouseButtonState[1] = 80;
+				if (_ctx->mouseButtonState[1] != 1) {
+					Event rmButtonUpEvent;
+					rmButtonUpEvent.type = ET_MOUSEBUTTON_DOWN;
+					rmButtonUpEvent.mouse = { 1, ButtonState::PRESSED };
+					push_event(rmButtonUpEvent);					
+				}
+				_ctx->mouseButtonState[1] = 1;
 				return 0;
 			case WM_RBUTTONUP:
+				if (_ctx->mouseButtonState[1] != 0) {
+					Event rmButtonUpEvent;
+					rmButtonUpEvent.type = ET_MOUSEBUTTON_UP;
+					rmButtonUpEvent.mouse = { 1, ButtonState::RELEASED };
+					push_event(rmButtonUpEvent);
+					Event ne;
+					ne.type = ET_MOUSEBUTTON_PRESSED;
+					ne.mouse = { 1, ButtonState::RELEASED };
+					push_event(ne);
+				}
 				_ctx->mouseButtonState[1] = 0;
 				_ctx->mouseButtonClicked[1] = true;
 				return 0;
@@ -2915,6 +3020,8 @@ namespace ds {
 		//for (int i = 0; i < 256; ++i) {
 			//_ctx->errorBuffer[i] = '\0';
 		//}
+		_ctx->eventReadIndex = 0;
+		_ctx->eventWriteIndex = 0;
 		return initializeDevice(settings);
 	}
 
@@ -5040,8 +5147,8 @@ namespace ds {
 		}
 	}
 
-	void addVirtualKey(uint32_t keyCode) {
-		int value = SpecialKeys::DSKEY_UNKNOWN;
+	bool addVirtualKey(uint32_t keyCode) {
+		SpecialKeys value = SpecialKeys::DSKEY_UNKNOWN;
 		switch (keyCode) {
 			case VK_TAB: value = SpecialKeys::DSKEY_Tab; break;
 			case VK_BACK: value = SpecialKeys::DSKEY_Backspace; break;					
@@ -5071,10 +5178,14 @@ namespace ds {
 			InputKey& k = _ctx->inputKeys[_ctx->numInputKeys++];
 			k.type = IKT_SYSTEM;
 			k.value = value;
+
+			Event keyDownEvent;
+			keyDownEvent.type = ET_KEY_DOWN;
+			keyDownEvent.key = { IKT_SYSTEM, 0, value};
+			push_event(keyDownEvent);
+			return true;
 		}
-		//else {
-			//printf("unknown: %d\n", keyCode);
-		//}
+		return false;		
 	}
 
 	int getNumInputKeys() {
@@ -5345,7 +5456,36 @@ namespace ds {
 	}
 
 	// -----------------------------------------------------
+	//
+	// Events
+	//
+	// -----------------------------------------------------
+	bool get_event(Event* e) {
+		if (_ctx->eventReadIndex != _ctx->eventWriteIndex) {
+			*e = _ctx->events[_ctx->eventReadIndex++];
+			if (_ctx->eventReadIndex >= 32) {
+				_ctx->eventReadIndex = 0;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool has_events() {
+		return _ctx->eventReadIndex != _ctx->eventWriteIndex;
+	}
+
+	void push_event(const Event& e) {		
+		_ctx->events[_ctx->eventWriteIndex++] = e;
+		if (_ctx->eventWriteIndex >= 32) {
+			_ctx->eventWriteIndex = 0;
+		}
+	}
+
+	// -----------------------------------------------------
+	//
 	// CharBuffer
+	//
 	// -----------------------------------------------------
 	CharBuffer::CharBuffer() : data(nullptr), size(0), capacity(0), num(0) {}
 	

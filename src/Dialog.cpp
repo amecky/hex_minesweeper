@@ -42,7 +42,7 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 	}	
 	//
 	int dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 180), ds::vec4(0, 300, 300, 50), "MAIN MENU")) {
+	if (dialog::Button(ds::vec2(dx, 180), ds::vec4(0, 300, 304, 50), "MAIN MENU")) {
 		ret = 1;
 	}
 	return ret;
@@ -81,11 +81,11 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	}
 	
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 368, 300, 50), "REPLAY")) {
+	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 368, 304, 50), "REPLAY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 150), ds::vec4(0, 300, 300, 50), "MAIN MENU")) {
+	if (dialog::Button(ds::vec2(dx, 150), ds::vec4(0, 300, 304, 50), "MAIN MENU")) {
 		ret = 2;
 	}
 	return ret;
@@ -129,31 +129,64 @@ const float FONT_PADDING = 0.0f;
 
 namespace font {
 
-	ds::vec4 getFontRect(char c) {
-		int idx = (int)c - 32;
-		int y = idx / 28;
-		int x = idx - y * 28;
-		if (idx >= 0 && idx < 127) {
-			return ds::vec4(450 + x * 18, 700 + y * 25, 18, 25);
+	// Font starts at 200, 230
+	// x-offset / width
+	static const ds::vec2 FONT_DEF[] = {
+		ds::vec2(1,34),   // A
+		ds::vec2(35,29),  // B
+		ds::vec2(66,27),  // C
+		ds::vec2(94,30),  // D
+		ds::vec2(125,27), // E
+		ds::vec2(152,28), // F
+		ds::vec2(180,29), // G
+		ds::vec2(210,29), // H
+		ds::vec2(240,12), // I
+		ds::vec2(252,17), // J
+		ds::vec2(269,28), // K
+		ds::vec2(297,28), // L
+		ds::vec2(325,39), // M
+		ds::vec2(365,31), // N
+		ds::vec2(396,29), // O
+		ds::vec2(426,30), // P
+		ds::vec2(456,29), // Q
+		ds::vec2(485,30), // R
+		ds::vec2(515,27), // S 
+		ds::vec2(541,26), // T
+		ds::vec2(567,29), // U
+		ds::vec2(596,33), // V
+		ds::vec2(629,41), // W
+		ds::vec2(670,31), // X
+		ds::vec2(701,32), // Y
+		ds::vec2(733,27)  // Z
+	};
+
+
+	ds::vec4 get_rect(char c) {
+		if (c == ' ') {
+			return ds::vec4(0, 100, 20, 25);
 		}
-		return ds::vec4(420, 670, 18, 25); // space as default
+		// numbers are stored at different location
+		if (c >= 48 && c <= 57) {
+			int idx = (int)c - 48;
+			return ds::vec4(1 + idx * 30, 940, 30, 25);
+		}
+		// convert to lower case to upper case
+		if (c > 92) {
+			c -= 32;
+		}
+		if (c >= 65 && c <= 90) {
+			ds::vec2 fd = FONT_DEF[(int)c - 65];
+			return ds::vec4(0.0f + fd.x, 910.0f, fd.y, 25.0f);
+		}
+		return ds::vec4(0, 100, 20, 25);
+
 	}
 
-	void renderText(const ds::vec2& pos, const char* txt, SpriteBatchBuffer* buffer) {
-		int l = strlen(txt);
-		ds::vec2 p = pos;
-		for (int i = 0; i < l; ++i) {
-			ds::vec4 r = getFontRect(txt[i]);
-			buffer->add(p, r);
-			p.x += r.z + FONT_PADDING;
-		}
-	}
-
-	ds::vec2 textSize(const char* txt) {
+	ds::vec2 text_size(const char* txt) {
 		int l = strlen(txt);
 		ds::vec2 p(0.0f);
 		for (int i = 0; i < l; ++i) {
-			ds::vec4 r = getFontRect(txt[i]);
+			ds::vec4 r = get_rect(txt[i]);
 			p.x += r.z + FONT_PADDING;
 			if (r.w > p.y) {
 				p.y = r.w;
@@ -254,15 +287,15 @@ namespace dialog {
 		ds::vec2 dim = ds::vec2(rect.z, rect.w);
 		int l = strlen(text);
 		ds::vec2 p = pos;
-		ds::vec2 size = font::textSize(text);
+		ds::vec2 size = font::text_size(text);
 		p.x = pos.x - size.x * 0.5f;
+		float lw = 0.0f;
 		for (int i = 0; i < l; ++i) {
-			ds::vec4 r = font::getFontRect(text[i]);
-			DrawCall call;
-			call.pos = p;
-			call.rect = r;
+			ds::vec4 r = font::get_rect(text[i]);
+			p.x += lw * 0.5f + r.z * 0.5f;
+			DrawCall call = { p,r };
 			_guiCtx->calls.push_back(call);
-			p.x += r.z + 0.0f;			
+			lw = r.z;
 		}
 		return isClicked(pos, dim);
 	}
@@ -277,15 +310,15 @@ namespace dialog {
 	void Text(const ds::vec2& pos, const char* text) {
 		int l = strlen(text);
 		ds::vec2 p = pos;
-		ds::vec2 size = font::textSize(text);
+		ds::vec2 size = font::text_size(text);
 		p.x = (1024.0f - size.x) * 0.5f;
+		float lw = 0.0f;
 		for (int i = 0; i < l; ++i) {
-			ds::vec4 r = font::getFontRect(text[i]);
-			DrawCall call;
-			call.pos = p;
-			call.rect = r;
+			ds::vec4 r = font::get_rect(text[i]);
+			p.x += lw * 0.5f + r.z * 0.5f;
+			DrawCall call = { p,r };
 			_guiCtx->calls.push_back(call);
-			p.x += r.z + 0.0f;
+			lw = r.z;
 		}
 	}
 
@@ -294,7 +327,7 @@ namespace dialog {
 		va_list args;
 		va_start(args, fmt);
 		vsprintf(buffer, fmt, args);
-		ds::vec2 size = font::textSize(buffer);
+		ds::vec2 size = font::text_size(buffer);
 		ds::vec2 p = pos;
 		p.x = (1024.0f - size.x) * 0.5f;
 		Text(p, buffer);

@@ -13,9 +13,11 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 
 namespace font {
 
-	void renderText(const ds::vec2& pos, const char* txt, SpriteBatchBuffer* buffer);
+	ds::vec4 get_rect(char c);
 
-	ds::vec2 textSize(const char* txt);
+	//void renderText(const ds::vec2& pos, const char* txt, SpriteBatchBuffer* buffer);
+
+	ds::vec2 text_size(const char* txt);
 }
 
 

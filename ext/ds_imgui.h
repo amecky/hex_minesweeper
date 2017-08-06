@@ -56,9 +56,9 @@ namespace gui {
 
 	void start();
 
-	void begin(const char* header, int* state, int width = 200);
+	bool begin(const char* header, int* state, int width = 200);
 
-	void begin(const char* header, int* state, p2i* position, int width = 200);
+	bool begin(const char* header, int* state, p2i* position, int width = 200);
 
 	void beginGroup();
 
@@ -522,11 +522,11 @@ namespace gui {
 			p2i sz = size;
 			if (size.x > WHITE_RECT.width) {
 				sz.x = WHITE_RECT.width;
-				scale.x = size.x / WHITE_RECT.width;
+				scale.x = static_cast<float>(size.x) / static_cast<float>(WHITE_RECT.width);
 			}
 			if (size.y > WHITE_RECT.height) {
 				sz.y = WHITE_RECT.height;
-				scale.y = size.y / WHITE_RECT.height;
+				scale.y = static_cast<float>(size.y) / static_cast<float>(WHITE_RECT.height);
 			}
 			add_to_buffer(ctx, pos, recti(256, 0, sz.x, sz.y), scale, color, resize);
 			if (size.x > ctx->size.x) {
@@ -1045,7 +1045,7 @@ namespace gui {
 	// --------------------------------------------------------
 	// begin
 	// --------------------------------------------------------
-	void begin(const char* header, int* state, int width) {
+	bool begin(const char* header, int* state, int width) {
 		pushID(header);
 		p2i pos = _guiCtx->currentPos;
 		// header
@@ -1077,11 +1077,12 @@ namespace gui {
 		int advance = 20 + _guiCtx->settings.lineSpacing;
 		moveForward(p2i(10, advance));
 		popID();
+		return *state == 1;
 	}
 	// --------------------------------------------------------
 	// begin with header
 	// --------------------------------------------------------
-	void begin(const char* header, int* state, p2i* position, int width) {
+	bool begin(const char* header, int* state, p2i* position, int width) {
 		pushID(header);
 		_guiCtx->currentPos = *position;
 		_guiCtx->startPos = _guiCtx->currentPos;
@@ -1130,6 +1131,7 @@ namespace gui {
 		int advance = 20 + _guiCtx->settings.lineSpacing;
 		moveForward(p2i(10, advance));
 		popID();
+		return *state == 1;
 	}
 
 	// --------------------------------------------------------
@@ -1154,6 +1156,7 @@ namespace gui {
 		pushID(text);
 		p2i p = _guiCtx->currentPos;
 		checkItem(p, p2i(120, 20));
+		bool clicked = isClicked();
 		renderer::add_box(_guiCtx->uiContext, p, 120, 20, _guiCtx->settings.buttonColor);
 		p2i dim = p2i(120, 20);
 		p2i textDim = textSize(text);
@@ -1165,7 +1168,7 @@ namespace gui {
 		m.y += _guiCtx->settings.lineSpacing;
 		moveForward(m);
 		popID();
-		return isClicked();
+		return clicked;
 	}
 
 	// --------------------------------------------------------
@@ -1505,7 +1508,7 @@ namespace gui {
 		renderer::add_box(_guiCtx->uiContext, p, p2i(20, 20), *v);
 		p.x = _guiCtx->currentPos.x + 350;
 		p2i ts = renderer::add_text(_guiCtx->uiContext, p, label);
-		moveForward(p2i(150 + ts.x + 10, 22));
+		moveForward(p2i(150 + ts.x + 10, 26));
 	}
 
 	// -------------------------------------------------------
@@ -1602,7 +1605,7 @@ namespace gui {
 		p = _guiCtx->currentPos;
 		p.x += width + 10;
 		p2i ts = renderer::add_text(_guiCtx->uiContext, p, label);
-		moveForward(p2i(width + ts.x + 20, 26));
+		moveForward(p2i(width + ts.x + 20, 28));
 		popID();
 	}
 
@@ -1646,7 +1649,7 @@ namespace gui {
 		p = _guiCtx->currentPos;
 		p.x += width + 10;
 		p2i ts = renderer::add_text(_guiCtx->uiContext, p, label);
-		moveForward(p2i(width + ts.x + 20, 30));
+		moveForward(p2i(width + ts.x + 20, 28));
 		popID();
 	}
 

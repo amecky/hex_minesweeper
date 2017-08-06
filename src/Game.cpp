@@ -108,7 +108,7 @@ Game::Game() {
 	RID textureID = loadImage("content\\TextureArray.png");
 
 	// create the sprite batch buffer
-	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::POINT };
+	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::LINEAR };
 	_spriteBuffer = new SpriteBatchBuffer(sbbInfo);
 
 	_settings.wiggleScale = 0.2f;
@@ -138,7 +138,7 @@ Game::Game() {
 	_running = true;
 
 	_debugPanel = { 'D', false, false, 1 };
-	_demoPanel = { 'T', true, false, 1 };
+	_demoPanel = { 'T', false, false, 1 };
 
 	_menuTimer = 0.0f;
 
@@ -337,7 +337,7 @@ void Game::renderDebugPanel() {
 			_inputActive = true;
 			_inputDialog.reset(_playerName);
 		}
-		gui::debug();
+		//gui::debug();
 		gui::end();
 	}
 }
