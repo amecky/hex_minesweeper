@@ -6,6 +6,11 @@ namespace tweening {
 
 	typedef float (*TweeningType)(float,float,float,float);
 
+	struct TweeningDescriptor {
+		TweeningType type;
+		const char* name;
+	};
+
 	float linear(float t,float start,float end,float duration);
 
 	float easeInQuad(float t, float start, float end, float duration);
@@ -54,7 +59,25 @@ namespace tweening {
 
 	ds::Color interpolate(TweeningType type, const ds::Color& start, const ds::Color& end, float t, float duration);
 
-	//void draw(TweeningType type, const ds::Texture& texture,float step = 0.1f, float delta = 1.0f);
-
+	const static TweeningDescriptor DESCRIPTORS[] = {
+		{ linear,     "Linear" },
+		{ easeInQuad, "easeInQuad" },
+		{ easeSinus, "easeSinus" },
+		{ easeOutQuad, "easeOutQuad" },
+		{ easeInOutQuad, "easeInOutQuad" },
+		//{ easeInQuart, "easeInQuad" },
+		{ easeInBack, "easeInBack" },
+		{ easeOutBack, "easeOutBack" },
+		{ easeInOutBack, "easeInOutBack" },
+		{ easeInCubic, "easeInCubic" },
+		{ easeOutCubic, "easeOutCubic" },
+		{ easeInOutCubic, "easeInOutCubic" },
+		{ easeInElastic, "easeInElastic" },
+		{ easeOutElastic, "easeOutElastic" },
+		{ easeInOutElastic, "easeInOutElastic" },
+		//{ easeInBounce, "easeInQuad" },
+		//{ easeOutBounce, "easeInQuad" },
+		//{ easeInOutBounce, "easeInQuad" }
+	};
 }
 

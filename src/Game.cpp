@@ -158,7 +158,7 @@ Game::Game() {
 
 	sprintf(_playerName, "%s", "Name");
 
-	_inputActive = false;
+	_inputActive = true;
 
 	_dummy = 0;
 	_dummyColor = ds::Color(128, 64, 255, 255);

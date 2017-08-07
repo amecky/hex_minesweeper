@@ -12,10 +12,10 @@ enum FloatInDirection {
 int floatButton(float time, float ttl, FloatInDirection dir) {
 	if (time <= ttl) {
 		if (dir == FloatInDirection::FID_LEFT) {
-			return tweening::interpolate(tweening::easeOutElastic, -200, 512, time, ttl);
+			return tweening::interpolate(tweening::easeOutBack, -200, 512, time, ttl);
 		}
 		else {
-			return tweening::interpolate(tweening::easeOutElastic, 1020, 512, time, ttl);
+			return tweening::interpolate(tweening::easeOutBack, 1020, 512, time, ttl);
 		}
 	}
 	return 512;
@@ -28,7 +28,7 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 	int ret = 0;
 	int dy = 600;
 	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
+		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
 	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 690, 420, 85));
 	ds::vec2 p = ds::vec2(512, 500);
@@ -55,7 +55,7 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	int ret = 0;
 	int dy = 600;
 	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
+		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
 	if (score.success) {
 		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 420, 325, 70));
@@ -98,9 +98,9 @@ int showMainMenu(float time, float ttl) {
 	int ret = 0;
 	int dy = 600;
 	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutElastic, 900, 600, time, ttl);
+		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 645, 82));
+	dialog::Image(ds::vec2(512, dy), ds::vec4(40, 845, 870, 55));
 
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
 	if (dialog::Button(ds::vec2(dx, 490), ds::vec4(0, 368, 304, 50), "EASY")) {
@@ -122,6 +122,7 @@ int showMainMenu(float time, float ttl) {
 	if (dialog::Button(ds::vec2(dx, 170), ds::vec4(0, 300, 304, 50), "EXIT")) {
 		ret = 4;
 	}
+	dialog::Image(ds::vec2(512, 30), ds::vec4(0, 800, 600, 14));
 	return ret;
 }
 
@@ -132,43 +133,43 @@ namespace font {
 	// Font starts at 200, 230
 	// x-offset / width
 	static const ds::vec2 FONT_DEF[] = {
-		ds::vec2(1,34),   // A
-		ds::vec2(35,29),  // B
-		ds::vec2(66,27),  // C
-		ds::vec2(94,30),  // D
-		ds::vec2(125,27), // E
-		ds::vec2(152,28), // F
-		ds::vec2(180,29), // G
-		ds::vec2(210,29), // H
-		ds::vec2(240,12), // I
-		ds::vec2(252,17), // J
-		ds::vec2(269,28), // K
-		ds::vec2(297,28), // L
-		ds::vec2(325,39), // M
-		ds::vec2(365,31), // N
-		ds::vec2(396,29), // O
-		ds::vec2(426,30), // P
-		ds::vec2(456,29), // Q
-		ds::vec2(485,30), // R
-		ds::vec2(515,27), // S 
-		ds::vec2(541,26), // T
-		ds::vec2(567,29), // U
-		ds::vec2(596,33), // V
-		ds::vec2(629,41), // W
-		ds::vec2(670,31), // X
-		ds::vec2(701,32), // Y
-		ds::vec2(733,27)  // Z
+		ds::vec2(1,24),   // A
+		ds::vec2(24,21),  // B
+		ds::vec2(45,20),  // C
+		ds::vec2(66,22),  // D
+		ds::vec2(88,19),  // E
+		ds::vec2(108,19), // F
+		ds::vec2(127,21), // G
+		ds::vec2(149,21), // H
+		ds::vec2(170, 9), // I
+		ds::vec2(179,13), // J
+		ds::vec2(192,21), // K
+		ds::vec2(213,19), // L
+		ds::vec2(232,29), // M
+		ds::vec2(261,21), // N
+		ds::vec2(282,23), // O
+		ds::vec2(305,21), // P
+		ds::vec2(327,21), // Q
+		ds::vec2(348,21), // R
+		ds::vec2(369,19), // S 
+		ds::vec2(388,19), // T
+		ds::vec2(407,21), // U
+		ds::vec2(428,24), // V
+		ds::vec2(452,30), // W
+		ds::vec2(482,23), // X
+		ds::vec2(505,22), // Y
+		ds::vec2(527,19)  // Z
 	};
 
 
 	ds::vec4 get_rect(char c) {
 		if (c == ' ') {
-			return ds::vec4(0, 100, 20, 25);
+			return ds::vec4(0, 100, 20, 19);
 		}
 		// numbers are stored at different location
 		if (c >= 48 && c <= 57) {
 			int idx = (int)c - 48;
-			return ds::vec4(1 + idx * 30, 940, 30, 25);
+			return ds::vec4(548 + idx * 22, 780, 22, 19);
 		}
 		// convert to lower case to upper case
 		if (c > 92) {
@@ -176,9 +177,9 @@ namespace font {
 		}
 		if (c >= 65 && c <= 90) {
 			ds::vec2 fd = FONT_DEF[(int)c - 65];
-			return ds::vec4(0.0f + fd.x, 910.0f, fd.y, 25.0f);
+			return ds::vec4(0.0f + fd.x, 780.0f, fd.y, 19.0f);
 		}
-		return ds::vec4(0, 100, 20, 25);
+		return ds::vec4(0, 100, 20, 19);
 
 	}
 
@@ -428,11 +429,11 @@ int InputDialog::render() {
 	// FIXME: blinking cursor
 
 	int dx = 400;
-	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(610, 430, 102, 32))) {
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(610, 430, 148, 32))) {
 		ret = 1;
 	}
 	dx = 600;
-	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(720, 430, 102, 32))) {
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(770, 430, 148, 32))) {
 		ret = 2;
 	}
 	return ret;
