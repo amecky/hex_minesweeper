@@ -9,7 +9,11 @@
 // ---------------------------------------------------------------
 void initialize() {
 	ds::RenderSettings rs;
+#ifdef DEBUG
+	rs.width = 1500;
+#elif
 	rs.width = 1024;
+#endif
 	rs.height = 768;
 	rs.title = "Colors - match 3 game";
 	rs.clearColor = ds::Color(0,225,121,255);

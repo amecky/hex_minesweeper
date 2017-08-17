@@ -94,32 +94,45 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 // ---------------------------------------------------------------
 // show main menu
 // ---------------------------------------------------------------
-int showMainMenu(float time, float ttl) {
+int showMainMenu(float time, float ttl, const KeyFrameAnimation& buttonAnimation) {
 	int ret = 0;
 	int dy = 600;
+	ds::vec2 buttonPos(512, 100);
+	ds::vec2 scale(1.0f);
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
 	dialog::Image(ds::vec2(512, dy), ds::vec4(40, 845, 870, 55));
 
-	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 490), ds::vec4(0, 368, 304, 50), "EASY")) {
+	buttonPos.y = 490.0f;
+	if (time <= ttl) {
+		buttonAnimation.get(time / ttl, &scale, 0, &buttonPos);
+	}
+	if (dialog::Button(buttonPos, ds::vec4(0, 368, 304, 50), "EASY" , scale)) {
 		ret = 1;
 	}
-	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
+	int dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
 	if (dialog::Button(ds::vec2(dx, 410), ds::vec4(0, 368, 304, 50), "MEDIUM")) {
 		ret = 2;
 	}
-	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 330), ds::vec4(0, 368, 304, 50), "HARD")) {
+	scale = ds::vec2(1.0f);
+	buttonPos.y = 330.0f;
+	if (time <= ttl) {
+		buttonAnimation.get(time / ttl, &scale, 0, &buttonPos);
+	}
+	if (dialog::Button(buttonPos, ds::vec4(0, 368, 304, 50), "HARD", scale)) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
 	if (dialog::Button(ds::vec2(dx, 250), ds::vec4(0, 230, 304, 50), "HIGHSCORES")) {
 		ret = 5;
 	}
-	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 170), ds::vec4(0, 300, 304, 50), "EXIT")) {
+	scale = ds::vec2(1.0f);
+	buttonPos.y = 170.0f;
+	if (time <= ttl) {
+		buttonAnimation.get(time / ttl, &scale, 0, &buttonPos);
+	}
+	if (dialog::Button(buttonPos, ds::vec4(0, 300, 304, 50), "EXIT", scale)) {
 		ret = 4;
 	}
 	dialog::Image(ds::vec2(512, 30), ds::vec4(0, 800, 600, 14));
@@ -203,6 +216,7 @@ namespace dialog {
 	struct DrawCall {
 		ds::vec2 pos;
 		ds::vec4 rect;
+		ds::vec2 scale;
 	};
 
 	struct GUIContext {
@@ -271,19 +285,21 @@ namespace dialog {
 		}
 	}
 
-	bool Button(const ds::vec2& pos, const ds::vec4& rect) {
+	bool ImageButton(const ds::vec2& pos, const ds::vec4& rect, const ds::vec2& scale) {
 		DrawCall call;
 		call.pos = pos;
 		call.rect = rect;
+		call.scale = scale;
 		_guiCtx->calls.push_back(call);
 		ds::vec2 dim = ds::vec2(rect.z, rect.w);
 		return isClicked(pos, dim);
 	}
 
-	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text) {
+	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text, const ds::vec2& scale) {
 		DrawCall call;
 		call.pos = pos;
 		call.rect = rect;
+		call.scale = scale;
 		_guiCtx->calls.push_back(call);
 		ds::vec2 dim = ds::vec2(rect.z, rect.w);
 		int l = strlen(text);
@@ -294,7 +310,7 @@ namespace dialog {
 		for (int i = 0; i < l; ++i) {
 			ds::vec4 r = font::get_rect(text[i]);
 			p.x += lw * 0.5f + r.z * 0.5f;
-			DrawCall call = { p,r };
+			DrawCall call = { p,r, ds::vec2(1.0f) };
 			_guiCtx->calls.push_back(call);
 			lw = r.z;
 		}
@@ -305,6 +321,7 @@ namespace dialog {
 		DrawCall call;
 		call.pos = pos;
 		call.rect = rect;
+		call.scale = ds::vec2(1.0f);
 		_guiCtx->calls.push_back(call);
 	}
 
@@ -317,7 +334,7 @@ namespace dialog {
 		for (int i = 0; i < l; ++i) {
 			ds::vec4 r = font::get_rect(text[i]);
 			p.x += lw * 0.5f + r.z * 0.5f;
-			DrawCall call = { p,r };
+			DrawCall call = { p, r, ds::vec2(1.0f) };
 			_guiCtx->calls.push_back(call);
 			lw = r.z;
 		}
@@ -339,7 +356,7 @@ namespace dialog {
 	void end() {
 		for (size_t i = 0; i < _guiCtx->calls.size(); ++i) {
 			const DrawCall& call = _guiCtx->calls[i];
-			_guiCtx->buffer->add(call.pos, call.rect);
+			_guiCtx->buffer->add(call.pos, call.rect, call.scale);
 		}
 	}
 
@@ -429,11 +446,11 @@ int InputDialog::render() {
 	// FIXME: blinking cursor
 
 	int dx = 400;
-	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(610, 430, 148, 32))) {
+	if (dialog::ImageButton(ds::vec2(dx, 320), ds::vec4(610, 430, 148, 32))) {
 		ret = 1;
 	}
 	dx = 600;
-	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(770, 430, 148, 32))) {
+	if (dialog::ImageButton(ds::vec2(dx, 320), ds::vec4(770, 430, 148, 32))) {
 		ret = 2;
 	}
 	return ret;

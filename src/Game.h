@@ -7,6 +7,8 @@
 #include "hud.h"
 #include "GameContext.h"
 #include "Dialog.h"
+#include "Animation.h"
+
 // ---------------------------------------------------------------
 // Game modes
 // ---------------------------------------------------------------
@@ -75,7 +77,6 @@ private:
 	GameState _mode;
 	int _selectedMode;
 	DebugPanel _debugPanel;
-	DebugPanel _demoPanel;
 	float _menuTimer;
 	Highscore _highscores[30];
 	ds::vec2 _debugScore;
@@ -84,10 +85,8 @@ private:
 	InputDialog _inputDialog;
 	bool _inputActive;
 	char _playerName[10];
-
-	int _dummy; // FIXME: remove after debugging
-	p2i _dialogPos; // FIXME: remove after debugging
-	ds::Color _dummyColor; // FIXME: RAD
-	TestSettings settings; // FIXME: RAD
+	p2i _dialogPos;
+	KeyFrameAnimation _buttonAnimation;
+	
 };
 

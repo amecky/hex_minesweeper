@@ -82,11 +82,20 @@ namespace gui {
 		int _offset;
 	};
 
+	enum PanelAlignment {
+		PA_LEFT,
+		PA_RIGHT,
+		PA_TOP,
+		PA_BOTTOM
+	};
+
 	void init(IMGUISettings* settings = 0);
 
 	void start();
 
 	bool begin(const char* header, int* state, int width = 200);
+
+	bool begin(const char* header, int* state, PanelAlignment alignment, int width = 200);
 
 	bool begin(const char* header, int* state, p2i* position, int width = 200);
 
@@ -1111,6 +1120,59 @@ namespace gui {
 		popID();
 		return *state == 1;
 	}
+
+	// --------------------------------------------------------
+	// begin with header
+	// --------------------------------------------------------
+	bool begin(const char* header, int* state, PanelAlignment alignment, int width) {
+		pushID(header);
+		p2i dp(0);
+		if (alignment == PA_RIGHT) {
+			dp.x = ds::getScreenWidth() - width;
+			dp.y = ds::getScreenHeight() - 10;
+		}
+		_guiCtx->currentPos = dp;
+		_guiCtx->startPos = _guiCtx->currentPos;
+		_guiCtx->uiContext->startPos = _guiCtx->currentPos;
+		_guiCtx->currentPos = _guiCtx->currentPos;
+		pushID("Box");
+		checkItem(dp, p2i(20, 20));
+		if (isClicked()) {
+			if (*state == 0) {
+				*state = 1;
+			}
+			else {
+				*state = 0;
+			}
+		}
+		popID();
+		p2i np = dp;
+		np.x += 20;
+		checkItem(np, p2i(width - 20, 20));
+		p2i pos = _guiCtx->currentPos;
+		pos.x -= 5;
+		renderer::add_box(_guiCtx->uiContext, pos, width, 256, _guiCtx->settings.backgroundColor, renderer::ResizeType::RT_Y);
+		// header
+		pos.x += 5;
+		renderer::add_box(_guiCtx->uiContext, pos, width, 20, _guiCtx->settings.headerBoxColor);
+		pos.x += 30;
+		renderer::add_text(_guiCtx->uiContext, pos, header);
+		// open/close
+		pos = _guiCtx->currentPos;
+		pos.x -= 10;
+		renderer::add_box(_guiCtx->uiContext, pos, 20, 20, _guiCtx->settings.buttonColor);
+		if (*state == 0) {
+			renderer::add_text(_guiCtx->uiContext, pos, "+");
+		}
+		else {
+			renderer::add_text(_guiCtx->uiContext, pos, "-");
+		}
+		int advance = 20 + _guiCtx->settings.lineSpacing;
+		moveForward(p2i(10, advance));
+		popID();
+		return *state == 1;
+	}
+
 	// --------------------------------------------------------
 	// begin with header
 	// --------------------------------------------------------
