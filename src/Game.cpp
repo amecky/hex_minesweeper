@@ -97,6 +97,10 @@ Game::Game() {
 	_buttonAnimation.addScaling(0.6f, ds::vec2(-0.4f, 0.0f));
 	_buttonAnimation.addScaling(0.8f, ds::vec2(0.4f, 0.0f));
 	_buttonAnimation.addScaling(1.0f, ds::vec2(0.0f, 0.0f));
+
+	animation::load_text("animations\\test.txt", &_buttonAnimation);
+	animation::save_text("animations\\pure.txt", &_buttonAnimation);
+
 	_dialogPos = p2i(10, 750);
 }
 

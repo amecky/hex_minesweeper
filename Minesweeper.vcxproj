@@ -248,6 +248,7 @@
     <ResourceCompile Include="Minesweeper.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\Dialog.cpp" />
     <ClCompile Include="src\Game.cpp" />
