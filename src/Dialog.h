@@ -1,7 +1,6 @@
 #pragma once
 #include <diesel.h>
 #include <SpriteBatchBuffer.h>
-#include "Animation.h"
 
 struct Score;
 struct Highscore;
@@ -11,14 +10,9 @@ enum MenuAnimation {
 	MA_BUTTON_SLIDE_RIGHT,
 };
 
-struct MenuContext {
-	
-	KeyFrameAnimation animations[12];
-};
-
 int showGameOverMenu(const Score& score, float time, float ttl);
 
-int showMainMenu(float time, float ttl, const KeyFrameAnimation& buttonAnimation);
+int showMainMenu(float time, float ttl);
 
 int showHighscores(float time, float ttl, int mode, Highscore* highscores, int page);
 

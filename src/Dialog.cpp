@@ -94,45 +94,32 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 // ---------------------------------------------------------------
 // show main menu
 // ---------------------------------------------------------------
-int showMainMenu(float time, float ttl, const KeyFrameAnimation& buttonAnimation) {
+int showMainMenu(float time, float ttl) {
 	int ret = 0;
 	int dy = 600;
-	ds::vec2 buttonPos(512, 100);
-	ds::vec2 scale(1.0f);
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
 	dialog::Image(ds::vec2(512, dy), ds::vec4(40, 845, 870, 55));
 
-	buttonPos.y = 490.0f;
-	if (time <= ttl) {
-		buttonAnimation.get(time / ttl, &scale, 0, &buttonPos);
-	}
-	if (dialog::Button(buttonPos, ds::vec4(0, 368, 304, 50), "EASY" , scale)) {
+	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
+	if (dialog::Button(ds::vec2(dx, 490), ds::vec4(0, 368, 304, 50), "EASY")) {
 		ret = 1;
 	}
-	int dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
+	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
 	if (dialog::Button(ds::vec2(dx, 410), ds::vec4(0, 368, 304, 50), "MEDIUM")) {
 		ret = 2;
 	}
-	scale = ds::vec2(1.0f);
-	buttonPos.y = 330.0f;
-	if (time <= ttl) {
-		buttonAnimation.get(time / ttl, &scale, 0, &buttonPos);
-	}
-	if (dialog::Button(buttonPos, ds::vec4(0, 368, 304, 50), "HARD", scale)) {
+	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
+	if (dialog::Button(ds::vec2(dx, 330), ds::vec4(0, 368, 304, 50), "HARD")) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
 	if (dialog::Button(ds::vec2(dx, 250), ds::vec4(0, 230, 304, 50), "HIGHSCORES")) {
 		ret = 5;
 	}
-	scale = ds::vec2(1.0f);
-	buttonPos.y = 170.0f;
-	if (time <= ttl) {
-		buttonAnimation.get(time / ttl, &scale, 0, &buttonPos);
-	}
-	if (dialog::Button(buttonPos, ds::vec4(0, 300, 304, 50), "EXIT", scale)) {
+	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
+	if (dialog::Button(ds::vec2(dx, 170), ds::vec4(0, 300, 304, 50), "EXIT")) {
 		ret = 4;
 	}
 	dialog::Image(ds::vec2(512, 30), ds::vec4(0, 800, 600, 14));

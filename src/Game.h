@@ -7,7 +7,6 @@
 #include "hud.h"
 #include "GameContext.h"
 #include "Dialog.h"
-#include "Animation.h"
 
 // ---------------------------------------------------------------
 // Game modes
@@ -86,7 +85,6 @@ private:
 	bool _inputActive;
 	char _playerName[10];
 	p2i _dialogPos;
-	KeyFrameAnimation _buttonAnimation;
 	
 };
 

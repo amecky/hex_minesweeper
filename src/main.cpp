@@ -25,9 +25,8 @@ void initialize() {
 // main method
 // ---------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow) {
-	
-	initialize();
-
+	initialize();	
+	LOG_DEBUG("Game initialized");
 	Game game;
 
 	while (ds::isRunning() && game.isRunning()) {

@@ -27,7 +27,6 @@
     <ClInclude Include="src\tweening.h" />
     <ClInclude Include="src\Dialog.h" />
     <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\Animation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />
@@ -46,7 +45,6 @@
     <ClCompile Include="src\tweening.cpp" />
     <ClCompile Include="src\Dialog.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Animation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="content\TextureArray.png" />

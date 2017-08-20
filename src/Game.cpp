@@ -35,6 +35,7 @@ Game::Game() {
 
 	// load image using stb_image
 	RID textureID = loadImage("content\\TextureArray.png");
+	LOG_DEBUG("Texture loaded: %d", textureID);
 
 	// create the sprite batch buffer
 	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::LINEAR };
@@ -44,7 +45,7 @@ Game::Game() {
 	_settings.wiggleTTL = 0.2f;
 	_settings.numberScaleAmplitude = 1.5f;
 	_settings.numberScaleTTL = 0.4f;
-	_settings.menuTTL = 0.4f;
+	_settings.menuTTL = 0.8f;
 	_settings.highscorePagingTTL = 2.0f;
 
 	_board = new Board(_spriteBuffer, &_settings);
@@ -87,19 +88,6 @@ Game::Game() {
 	sprintf(_playerName, "%s", "Name");
 
 	_inputActive = false;
-
-	_buttonAnimation.addTranslation(0.0f, ds::vec2(-1000, 0));
-	_buttonAnimation.addTranslation(0.4f, ds::vec2(50, 0));
-	_buttonAnimation.addTranslation(0.6f, ds::vec2(-50, 0));
-	_buttonAnimation.addTranslation(0.8f, ds::vec2(0, 0));
-	_buttonAnimation.addTranslation(1.0f, ds::vec2(0, 0));
-	_buttonAnimation.addScaling(0.0f, ds::vec2(0.0f, 0.0f));
-	_buttonAnimation.addScaling(0.6f, ds::vec2(-0.4f, 0.0f));
-	_buttonAnimation.addScaling(0.8f, ds::vec2(0.4f, 0.0f));
-	_buttonAnimation.addScaling(1.0f, ds::vec2(0.0f, 0.0f));
-
-	animation::load_text("animations\\test.txt", &_buttonAnimation);
-	animation::save_text("animations\\pure.txt", &_buttonAnimation);
 
 	_dialogPos = p2i(10, 750);
 }
@@ -277,7 +265,7 @@ void Game::render() {
 		//
 		// render main menu immediate mode
 		//
-		int ret = showMainMenu(_menuTimer, _settings.menuTTL, _buttonAnimation);
+		int ret = showMainMenu(_menuTimer, _settings.menuTTL);
 		if (!_inputActive) {
 			if (ret > 0 && ret < 4) {
 				_selectedMode = ret - 1;
