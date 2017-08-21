@@ -89,13 +89,18 @@ namespace gui {
 		PA_BOTTOM
 	};
 
+
 	void init(IMGUISettings* settings = 0);
 
 	void start();
 
-	bool begin(const char* header, int* state, int width = 200);
+	void begin(const char* header, int width = 200);
+
+	void begin(const p2i& pos);
 
 	bool begin(const char* header, int* state, PanelAlignment alignment, int width = 200);
+
+	bool begin(const char* header, int* state, int width = 200);
 
 	bool begin(const char* header, int* state, p2i* position, int width = 200);
 
@@ -139,9 +144,9 @@ namespace gui {
 
 	void Input(const char* label, float* v);
 
-	void Input(const char* label, ds::vec2* v);
+	bool Input(const char* label, ds::vec2* v);
 
-	void Input(const char* label, ds::vec3* v);
+	bool Input(const char* label, ds::vec3* v);
 
 	void Input(const char* label, ds::vec4* v);
 
@@ -151,11 +156,13 @@ namespace gui {
 
 	void Checkbox(const char* label, bool* state);
 
-	void ListBox(const char* label, const char** entries, int num, int* selected, int *offset, int max);
+	void RadioButtons(const char** items, int num, int* selected);
 
-	void ListBox(const char* label, ListBoxModel& model);
+	bool ListBox(const char* label, const char** entries, int num, int* selected, int *offset, int max);
 
-	void DropDownBox(const char* label, const char** entries, int num, int* state, int* selected, int *offset, int max, bool closeOnSelection = false);
+	bool ListBox(const char* label, ListBoxModel& model, int num);
+
+	bool DropDownBox(const char* label, const char** entries, int num, int* state, int* selected, int *offset, int max, bool closeOnSelection = false);
 
 	void Slider(const char* label, int* v, int minValue, int maxValue, int width = 200);
 
@@ -598,7 +605,7 @@ namespace gui {
 		ds::Color(38,38,38,255), // box background color
 		ds::Color(167,77,75,255), // box selection color
 		ds::Color(96,96,96,255), // slider color
-		ds::Color(255,0,255,255), // scroll slider color
+		ds::Color(64,64,64,255), // scroll slider color
 		5.0f // line spacing
 	};
 
@@ -1083,47 +1090,6 @@ namespace gui {
 		_guiCtx->grouping = false;
 	}
 
-	// --------------------------------------------------------
-	// begin
-	// --------------------------------------------------------
-	bool begin(const char* header, int* state, int width) {
-		pushID(header);
-		p2i pos = _guiCtx->currentPos;
-		// header
-		renderer::add_box(_guiCtx->uiContext, pos, width, 20, _guiCtx->settings.headerBoxColor);
-		pos.x += 30;
-		renderer::add_text(_guiCtx->uiContext, pos, header);
-		// open/close
-		pos = _guiCtx->currentPos;
-		pos.x -= 10;
-		renderer::add_box(_guiCtx->uiContext, pos, 20, 20, _guiCtx->settings.buttonColor);
-		pushID("Box");
-		checkItem(pos, p2i(20, 20));
-		if (*state == 0) {
-			renderer::add_text(_guiCtx->uiContext, pos, "+");
-		}
-		else {
-			renderer::add_text(_guiCtx->uiContext, pos, "-");
-		}
-
-		if (isClicked()) {
-			if (*state == 0) {
-				*state = 1;
-			}
-			else {
-				*state = 0;
-			}
-		}
-		popID();
-		int advance = 20 + _guiCtx->settings.lineSpacing;
-		moveForward(p2i(10, advance));
-		popID();
-		return *state == 1;
-	}
-
-	// --------------------------------------------------------
-	// begin with header
-	// --------------------------------------------------------
 	bool begin(const char* header, int* state, PanelAlignment alignment, int width) {
 		pushID(header);
 		p2i dp(0);
@@ -1171,8 +1137,31 @@ namespace gui {
 		moveForward(p2i(10, advance));
 		popID();
 		return *state == 1;
+
 	}
 
+	// --------------------------------------------------------
+	// begin
+	// --------------------------------------------------------
+	void begin(const p2i& pos) {
+		end();
+		_guiCtx->currentPos = pos;
+	}
+
+	// --------------------------------------------------------
+	// begin
+	// --------------------------------------------------------
+	void begin(const char* header, int width) {
+		pushID(header);
+		p2i pos = _guiCtx->currentPos;
+		// header
+		renderer::add_box(_guiCtx->uiContext, pos, width, 20, _guiCtx->settings.headerBoxColor);
+		pos.x += 30;
+		renderer::add_text(_guiCtx->uiContext, pos, header);
+		int advance = 20 + _guiCtx->settings.lineSpacing;
+		moveForward(p2i(10, advance));
+		popID();
+	}
 	// --------------------------------------------------------
 	// begin with header
 	// --------------------------------------------------------
@@ -1289,6 +1278,34 @@ namespace gui {
 		int advance = 16 + _guiCtx->settings.lineSpacing;
 		moveForward(p2i(40, advance));
 		popID();
+	}
+
+	void RadioButtons(const char** items, int num, int* selected) {		
+		p2i p = _guiCtx->currentPos;
+		int totalWidth = 0;
+		for (int i = 0; i < num; ++i) {
+			pushID(items[i]);
+			checkItem(p, p2i(16, 16));
+			renderer::add_box(_guiCtx->uiContext, p, p2i(16, 16), _guiCtx->settings.buttonColor);
+			p.x += 4;
+			if (*selected == i) {
+				renderer::add_box(_guiCtx->uiContext, p, 8, 8, _guiCtx->settings.enabledBoxColor);
+			}
+			else {
+				renderer::add_box(_guiCtx->uiContext, p, 8, 8, _guiCtx->settings.disabledBoxColor);
+			}
+			if (isClicked()) {
+				*selected = i;
+			}
+			p.x += 10;
+			p2i size = renderer::add_text(_guiCtx->uiContext, p, items[i]);
+			p.x += size.x + 10;
+			totalWidth += 16 + size.x + 10;
+			popID();
+		}
+		int advance = 16 + _guiCtx->settings.lineSpacing;
+		moveForward(p2i(totalWidth, advance));
+		
 	}
 
 	// --------------------------------------------------------
@@ -1488,36 +1505,38 @@ namespace gui {
 	// -------------------------------------------------------
 	// input vec2
 	// -------------------------------------------------------
-	void Input(const char* label, ds::vec2* v) {
+	bool Input(const char* label, ds::vec2* v) {
 		pushID(label, "##X");
-		InputScalar(0, &v->x, "%g", 70);
+		bool fr = InputScalar(0, &v->x, "%g", 70);
 		_guiCtx->idStack.pop();
 		pushID(label, "##Y");
-		InputScalar(1, &v->y, "%g", 70);
+		bool sr = InputScalar(1, &v->y, "%g", 70);
 		popID();
 		p2i p = _guiCtx->currentPos;
 		p.x += 160;
 		p2i ts = renderer::add_text(_guiCtx->uiContext, p, label);
 		moveForward(p2i(150 + ts.x + 10, 22));
+		return fr || sr;
 	}
 
 	// -------------------------------------------------------
 	// input vec3
 	// -------------------------------------------------------
-	void Input(const char* label, ds::vec3* v) {
+	bool Input(const char* label, ds::vec3* v) {
 		pushID(label, "##X");
-		InputScalar(0, &v->x, "%g", 70);
+		bool fr = InputScalar(0, &v->x, "%g", 70);
 		popID();
 		pushID(label, "##Y");
-		InputScalar(1, &v->y, "%g", 70);
+		bool sr = InputScalar(1, &v->y, "%g", 70);
 		popID();
 		pushID(label, "##Z");
-		InputScalar(2, &v->z, "%g", 70);
+		bool tr = InputScalar(2, &v->z, "%g", 70);
 		popID();
 		p2i p = _guiCtx->currentPos;
 		p.x += 240;
 		p2i ts = renderer::add_text(_guiCtx->uiContext, p, label);
 		moveForward(p2i(150 + ts.x + 10, 22));
+		return fr || sr || tr;
 	}
 
 	// -------------------------------------------------------
@@ -1889,7 +1908,7 @@ namespace gui {
 			p.y -= sideHeight / 2;
 			p.y -= 10;
 			int cy = p.y;
-			renderer::add_box(_guiCtx->uiContext, p, p2i(20, sideHeight), ds::Color(20, 20, 20, 255));
+			renderer::add_box(_guiCtx->uiContext, p, p2i(20, sideHeight), ds::Color(30, 30, 30, 255));
 			popID();
 			
 			// down
@@ -1903,8 +1922,9 @@ namespace gui {
 					*offset += 1;
 				}
 			}
-			float d = 1.0f - static_cast<float>(*offset) / static_cast<float>(max);
-			int dy = d * (sideHeight) - 20;
+
+			float d = 1.0f - static_cast<float>(*offset) / static_cast<float>(size - max);
+			int dy = d * (sideHeight) - 30;
 			p.y = cy + dy;
 			renderer::add_box(_guiCtx->uiContext, p, p2i(20, 6), _guiCtx->settings.scrollSliderColor);
 			popID();
@@ -1914,7 +1934,8 @@ namespace gui {
 	// -------------------------------------------------------
 	// ListBox
 	// -------------------------------------------------------	
-	void ListBox(const char* label, const char** entries, int num, int* selected, int *offset, int max) {
+	bool ListBox(const char* label, const char** entries, int num, int* selected, int *offset, int max) {
+		bool changed = false;
 		pushID(label);
 		prepareComboBox(_guiCtx->idStack.last(), offset, num, max);
 		int width = 200;
@@ -1929,6 +1950,9 @@ namespace gui {
 			pushID(i);
 			checkItem(p, p2i(width, 20));
 			if ( isClicked()) {
+				if (i != *selected) {
+					changed = true;
+				}
 				*selected = i;
 			}
 			if (*selected == i) {
@@ -1940,13 +1964,22 @@ namespace gui {
 		}
 		moveForward(p2i(width, height + 4));
 		popID();
+		return false;
 	}
 
-	void ListBox(const char* label, ListBoxModel& model,int num) {
+	// -------------------------------------------------------
+	// ListBox using ListBoxModel
+	// -------------------------------------------------------	
+	bool ListBox(const char* label, ListBoxModel& model,int max) {
+		bool changed = false;
+		bool scrolling = false;
 		pushID(label);
 		int width = 200;
 		int offset = model.getOffset();
-		int max = model.size();
+		int num = model.size();
+		if (num > max) {
+			scrolling = true;
+		}
 		prepareComboBox(_guiCtx->idStack.last(), &offset, num, max);
 		int selected = model.getSelection();
 		p2i p = _guiCtx->currentPos;
@@ -1963,22 +1996,31 @@ namespace gui {
 				selected = i;
 			}
 			if (selected == i) {
-				renderer::add_box(_guiCtx->uiContext, p, p2i(width, 20), _guiCtx->settings.boxSelectionColor);
+				int ww = width;
+				if (!scrolling) {
+					ww += 20;
+				}
+				renderer::add_box(_guiCtx->uiContext, p, p2i(ww, 20), _guiCtx->settings.boxSelectionColor);
 			}
 			renderer::add_text(_guiCtx->uiContext, p, model.name(i));
 			p.y -= 20;
 			popID();
 		}
 		model.setOffset(offset);
+		if (selected != model.getSelection()) {
+			changed = true;
+		}
 		model.setSelection(selected);
 		moveForward(p2i(width, height + 4));
 		popID();
+		return changed;
 	}
 
 	// -------------------------------------------------------
 	// DropDownBox
 	// -------------------------------------------------------	
-	void DropDownBox(const char* label, const char** entries, int num, int* state, int* selected, int *offset, int max, bool closeOnSelection) {
+	bool DropDownBox(const char* label, const char** entries, int num, int* state, int* selected, int *offset, int max, bool closeOnSelection) {
+		bool changed = false;
 		pushID(label);
 		p2i p = _guiCtx->currentPos;
 		if (*state == 0) {
@@ -2040,6 +2082,9 @@ namespace gui {
 				pushID(i);
 				checkItem(p, p2i(width, 20));
 				if ( isClicked()) {
+					if (*selected != i) {
+						changed = true;
+					}
 					*selected = i;
 					if (closeOnSelection) {
 						*state = 0;
@@ -2058,6 +2103,7 @@ namespace gui {
 			moveForward(p2i(300, 4));
 		}
 		popID();
+		return changed;
 	}
 
 	// --------------------------------------------------------

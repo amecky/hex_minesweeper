@@ -3,7 +3,8 @@
 #define DS_IMGUI_IMPLEMENTATION
 #include <ds_imgui.h>
 #include "Game.h"
-
+#define DS_LOG_PANEL
+#include <ds_logpanel.h>
 // ---------------------------------------------------------------
 // initialize rendering system
 // ---------------------------------------------------------------
@@ -21,10 +22,18 @@ void initialize() {
 	ds::init(rs);
 }
 
+void myLogging(const logging::LogLevel&, const char* message) {
+	OutputDebugString(message);
+	OutputDebugString("\n");
+	logpanel::add_line(message);
+}
 // ---------------------------------------------------------------
 // main method
 // ---------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow) {
+	logging::logHandler = myLogging;
+	//logging::currentLevel = logging::LL_INFO;
+	logpanel::init(32);
 	initialize();	
 	LOG_DEBUG("Game initialized");
 	Game game;

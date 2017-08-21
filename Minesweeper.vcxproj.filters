@@ -27,6 +27,12 @@
     <ClInclude Include="src\tweening.h" />
     <ClInclude Include="src\Dialog.h" />
     <ClInclude Include="src\Game.h" />
+    <ClInclude Include="..\ds_gamestate\StateMachine.h">
+      <Filter>ext</Filter>
+    </ClInclude>
+    <ClInclude Include="ext\ds_logpanel.h">
+      <Filter>ext</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />

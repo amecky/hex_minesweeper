@@ -4,7 +4,7 @@
 #include "..\resource.h"
 #include "tweening.h"
 #include <Windows.h>
-
+#include <ds_logpanel.h>
 // ---------------------------------------------------------------
 // load image from the resources
 // ---------------------------------------------------------------
@@ -234,6 +234,7 @@ void Game::renderDebugPanel() {
 			_inputDialog.reset(_playerName);
 		}
 		//gui::debug();
+		logpanel::draw_gui(10);
 		gui::end();
 	}
 }

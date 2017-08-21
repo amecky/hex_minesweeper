@@ -224,8 +224,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\ds_gamestate\StateMachine.h" />
     <ClInclude Include="ext\diesel.h" />
     <ClInclude Include="ext\ds_imgui.h" />
+    <ClInclude Include="ext\ds_logpanel.h" />
     <ClInclude Include="ext\SpriteBatchBuffer.h" />
     <ClInclude Include="ext\stb_image.h" />
     <ClInclude Include="resource.h" />
