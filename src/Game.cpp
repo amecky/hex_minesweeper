@@ -4,7 +4,6 @@
 #include "..\resource.h"
 #include "tweening.h"
 #include <Windows.h>
-#include <ds_logpanel.h>
 // ---------------------------------------------------------------
 // load image from the resources
 // ---------------------------------------------------------------
@@ -29,13 +28,61 @@ RID loadImage(const char* name) {
 	return textureID;
 }
 
+static const ds::vec2 FONT_DEF[] = {
+	ds::vec2(1,24),   // A
+	ds::vec2(24,21),  // B
+	ds::vec2(45,20),  // C
+	ds::vec2(66,22),  // D
+	ds::vec2(88,19),  // E
+	ds::vec2(108,19), // F
+	ds::vec2(127,21), // G
+	ds::vec2(149,21), // H
+	ds::vec2(170, 9), // I
+	ds::vec2(179,13), // J
+	ds::vec2(192,21), // K
+	ds::vec2(213,19), // L
+	ds::vec2(232,29), // M
+	ds::vec2(261,21), // N
+	ds::vec2(282,23), // O
+	ds::vec2(305,21), // P
+	ds::vec2(327,21), // Q
+	ds::vec2(348,21), // R
+	ds::vec2(369,19), // S 
+	ds::vec2(388,19), // T
+	ds::vec2(407,21), // U
+	ds::vec2(428,24), // V
+	ds::vec2(452,30), // W
+	ds::vec2(482,23), // X
+	ds::vec2(505,22), // Y
+	ds::vec2(527,19)  // Z
+};
+
+void prepareFontInfo(dialog::FontInfo* info) {
+	// default for every character just empty space
+	for (int i = 0; i < 255; ++i) {
+		info->texture_rects[i] = ds::vec4(0, 100, 20, 19);
+	}
+	// numbers
+	for (int c = 48; c <= 57; ++c) {
+		int idx = (int)c - 48;
+		info->texture_rects[c] = ds::vec4(548 + idx * 22, 780, 22, 19);
+	}
+	// :
+	info->texture_rects[58] = ds::vec4(766, 780, 18, 19);
+	// characters
+	for (int c = 65; c <= 90; ++ c) {
+		ds::vec2 fd = FONT_DEF[(int)c - 65];
+		info->texture_rects[c] = ds::vec4(0.0f + fd.x, 780.0f, fd.y, 19.0f);
+	}
+}
+
 Game::Game() {
 
 	gui::init();
 
 	// load image using stb_image
 	RID textureID = loadImage("content\\TextureArray.png");
-	LOG_DEBUG("Texture loaded: %d", textureID);
+	ds::log(LogLevel::LL_DEBUG, "Texture loaded: %d", textureID);
 
 	// create the sprite batch buffer
 	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::LINEAR };
@@ -45,7 +92,7 @@ Game::Game() {
 	_settings.wiggleTTL = 0.2f;
 	_settings.numberScaleAmplitude = 1.5f;
 	_settings.numberScaleTTL = 0.4f;
-	_settings.menuTTL = 0.8f;
+	_settings.menuTTL = 1.2f;
 	_settings.highscorePagingTTL = 2.0f;
 
 	_board = new Board(_spriteBuffer, &_settings);
@@ -63,11 +110,14 @@ Game::Game() {
 	_mode = GM_MENU;
 	_selectedMode = 2;
 
-	dialog::init(_spriteBuffer);
+	dialog::FontInfo fontInfo;
+	prepareFontInfo(&fontInfo);
+	dialog::init(_spriteBuffer, fontInfo);
 
 	_running = true;
 
-	_debugPanel = { 'D', true, false, 1 };
+	_debugPanel = { 'D', true, false, 0 };
+	_logPanelState = 1;
 
 	_menuTimer = 0.0f;
 
@@ -191,50 +241,51 @@ void Game::tick(float dt) {
 // ---------------------------------------------------------------
 void Game::renderDebugPanel() {
 	if (_debugPanel.active) {
-		gui::start();		
-		gui::begin("Debug", &_debugPanel.state,gui::PanelAlignment::PA_RIGHT,440);
-		gui::Input("Menu TTL", &_settings.menuTTL);
-		gui::Value("FPS", ds::getFramesPerSecond());
-		gui::Input("Wiggle Scale", &_settings.wiggleScale);
-		gui::Input("Wiggle TTL", &_settings.wiggleTTL);
-		gui::Input("Number Scale", &_settings.numberScaleAmplitude);
-		gui::Input("Number TTL", &_settings.numberScaleTTL);	
-		gui::Input("HS TTL", &_settings.highscorePagingTTL);
-		gui::Input("Mode", &_selectedMode);
-		if (gui::Button("Start Game")) {
-			_hud->reset();
-			_board->activate(_selectedMode);
+		p2i p(10, 750);
+		int state = 1;
+		gui::start(&p,300);		
+		if (gui::begin("Debug", &_debugPanel.state)) {
+			gui::Input("Menu TTL", &_settings.menuTTL);
+			gui::Value("FPS", ds::getFramesPerSecond());
+			gui::Input("Wiggle Scale", &_settings.wiggleScale);
+			gui::Input("Wiggle TTL", &_settings.wiggleTTL);
+			gui::Input("Number Scale", &_settings.numberScaleAmplitude);
+			gui::Input("Number TTL", &_settings.numberScaleTTL);
+			gui::Input("HS TTL", &_settings.highscorePagingTTL);
+			gui::Input("Mode", &_selectedMode);
+			if (gui::Button("Start Game")) {
+				_hud->reset();
+				_board->activate(_selectedMode);
+			}
+			if (gui::Button("Show bombs")) {
+				_board->toggleShowBombs();
+			}
+			if (gui::Button("Stop game")) {
+				_menuTimer = 0.0f;
+				_mode = GM_GAMEOVER;
+			}
+			gui::Input("Score", &_debugScore);
+			if (gui::Button("Reset timer")) {
+				_menuTimer = 0.0f;
+			}
+			if (gui::Button("Game over")) {
+				_menuTimer = 0.0f;
+				_score.success = true;
+				_score.seconds = _debugScore.y;
+				_score.minutes = _debugScore.x;
+				_score.rank = handleScore();
+				_score.bombsLeft = 42;
+				_mode = GM_GAMEOVER;
+			}
+			if (gui::Button("Highscores")) {
+				_menuTimer = 0.0f;
+				_mode = GM_HIGHSCORES;
+			}
+			if (gui::Button("Input Name")) {
+				_inputActive = true;
+				_inputDialog.reset(_playerName);
+			}
 		}
-		if (gui::Button("Show bombs")) {
-			_board->toggleShowBombs();
-		}
-		if (gui::Button("Stop game")) {
-			_menuTimer = 0.0f;
-			_mode = GM_GAMEOVER;
-		}
-		gui::Input("Score", &_debugScore);
-		if (gui::Button("Reset timer")) {
-			_menuTimer = 0.0f;
-		}
-		if (gui::Button("Game over")) {
-			_menuTimer = 0.0f;
-			_score.success = true;
-			_score.seconds = _debugScore.y;
-			_score.minutes = _debugScore.x;
-			_score.rank = handleScore();
-			_score.bombsLeft = 42;
-			_mode = GM_GAMEOVER;
-		}
-		if (gui::Button("Highscores")) {
-			_menuTimer = 0.0f;
-			_mode = GM_HIGHSCORES;
-		}
-		if (gui::Button("Input Name")) {
-			_inputActive = true;
-			_inputDialog.reset(_playerName);
-		}
-		//gui::debug();
-		logpanel::draw_gui(10);
 		gui::end();
 	}
 }

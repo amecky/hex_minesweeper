@@ -1,8 +1,8 @@
 #pragma once
 #include <diesel.h>
-#define SPRITE_IMPLEMENTATION
 #include <SpriteBatchBuffer.h>
 #include <ds_imgui.h>
+#include <ds_game_ui.h>
 #include "board.h"
 #include "hud.h"
 #include "GameContext.h"
@@ -85,6 +85,6 @@ private:
 	bool _inputActive;
 	char _playerName[10];
 	p2i _dialogPos;
-	
+	int _logPanelState;
 };
 

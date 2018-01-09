@@ -11,7 +11,7 @@ namespace logpanel {
 
 	const char* get_line(uint16_t index);
 
-	void draw_gui(uint16_t lines);
+	void draw_gui(uint16_t lines, int* state);
 
 	void shutdown();
 }
@@ -89,70 +89,70 @@ namespace logpanel {
 	// -------------------------------------------------------
 	// draw gui panel
 	// -------------------------------------------------------
-	void draw_gui(uint16_t lines) {
+	void draw_gui(uint16_t lines, int* state) {
 		uint16_t ml = lines;
 		if (ml > _panelCtx->capacity) {
 			ml = _panelCtx->capacity;
 		}
 		p2i sp(0, lines * 20 - 10);
-		gui::begin(sp);
-		p2i p = gui::getCurrentPosition();
-		p2i dp = p;
-		dp.y -= (lines * 20) / 2 - 10;
-		int height = lines * 20;
-		gui::draw_box(dp, p2i(900, lines * 20), ds::Color(32, 32, 32, 192));
+		if (gui::begin("LogPanel", state)) {
+			p2i p = gui::getCurrentPosition();
+			p2i dp = p;
+			dp.y -= (lines * 20) / 2 - 10;
+			int height = lines * 20;
+			gui::draw_box(dp, p2i(900, lines * 20), ds::Color(32, 32, 32, 192));
 
-		if (lines < get_num_lines()) {
-			int current = get_num_lines();
-			p2i ep = p;
-			ep.x += 880.0f;
-			gui::pushID("up");
-			gui::checkItem(ep, p2i(20, 20));
-			gui::draw_box(ep, p2i(20, 20), gui::getSettings().buttonColor);
-			gui::draw_text(ep, "-");
-			if (gui::isClicked()) {
-				++_panelCtx->offset;
-				if (_panelCtx->offset + lines >= current) {
-					_panelCtx->offset = current - lines;
+			if (lines < get_num_lines()) {
+				int current = get_num_lines();
+				p2i ep = p;
+				ep.x += 880.0f;
+				gui::pushID("up");
+				gui::checkItem(ep, p2i(20, 20));
+				gui::draw_box(ep, p2i(20, 20), gui::getSettings().buttonColor);
+				gui::draw_text(ep, "-");
+				if (gui::isClicked()) {
+					++_panelCtx->offset;
+					if (_panelCtx->offset + lines >= current) {
+						_panelCtx->offset = current - lines;
+					}
 				}
-			}
-			gui::popID();
+				gui::popID();
 
-			ep = p;
-			ep.x += 880.0f;
-			ep.y -= (lines - 1) * 20;
-			gui::pushID("down");
-			gui::checkItem(ep, p2i(20, 20));
-			gui::draw_box(ep, p2i(20, 20), gui::getSettings().buttonColor);
-			gui::draw_text(ep, "+");
-			if (gui::isClicked()) {
-				if (_panelCtx->offset > 0) {
-					--_panelCtx->offset;
+				ep = p;
+				ep.x += 880.0f;
+				ep.y -= (lines - 1) * 20;
+				gui::pushID("down");
+				gui::checkItem(ep, p2i(20, 20));
+				gui::draw_box(ep, p2i(20, 20), gui::getSettings().buttonColor);
+				gui::draw_text(ep, "+");
+				if (gui::isClicked()) {
+					if (_panelCtx->offset > 0) {
+						--_panelCtx->offset;
+					}
 				}
+				gui::popID();
+				ep.y = p.y - height / 2 + 10;
+				gui::draw_box(ep, p2i(20, height - 40), gui::getSettings().sliderColor);
+
+				float d = 1.0f - static_cast<float>(_panelCtx->offset) / static_cast<float>(current - lines);
+				int dy = d * (height - 60);
+				ep.y = p.y - dy - 20;
+				gui::draw_box(ep, p2i(20, 20), gui::getSettings().scrollSliderColor);
+
 			}
-			gui::popID();
-			ep.y = p.y - height / 2 + 10;
-			gui::draw_box(ep, p2i(20, height - 40), gui::getSettings().sliderColor);
-
-			float d = 1.0f - static_cast<float>(_panelCtx->offset) / static_cast<float>(current - lines);
-			int dy = d * (height - 60);
-			ep.y = p.y - dy - 20;
-			gui::draw_box(ep, p2i(20, 20), gui::getSettings().scrollSliderColor);
-
+			int end = logpanel::get_num_lines();
+			int start = end - ml;
+			if (start < 0) {
+				start = 0;
+			}
+			start -= _panelCtx->offset;
+			end -= _panelCtx->offset;
+			for (uint16_t i = start; i < end; ++i) {
+				gui::draw_text(p, logpanel::get_line(i));
+				p.y -= 20.0f;
+			}
+			gui::moveForward(p2i(900, lines * 20));
 		}
-		int end = logpanel::get_num_lines();
-		int start = end - ml;
-		if (start < 0) {
-			start = 0;
-		}
-		start -= _panelCtx->offset;
-		end -= _panelCtx->offset;
-		for (uint16_t i = start; i < end; ++i) {
-			gui::draw_text(p, logpanel::get_line(i));
-			p.y -= 20.0f;
-		}
-		gui::moveForward(p2i(900, lines * 20));
-		gui::end();
 	}
 
 	// -------------------------------------------------------

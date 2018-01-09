@@ -4,6 +4,12 @@
 #include "tweening.h"
 #include "HUD.h"
 
+const ds::vec4 BUTTONS[] = {
+	ds::vec4(0, 226, 304, 60), // green button
+	ds::vec4(0, 362, 304, 60), // grey button
+	ds::vec4(0, 294, 304, 60)  // red button
+};
+
 enum FloatInDirection {
 	FID_LEFT,
 	FID_RIGHT
@@ -12,10 +18,10 @@ enum FloatInDirection {
 int floatButton(float time, float ttl, FloatInDirection dir) {
 	if (time <= ttl) {
 		if (dir == FloatInDirection::FID_LEFT) {
-			return tweening::interpolate(tweening::easeOutBack, -200, 512, time, ttl);
+			return tweening::interpolate(tweening::easeOutBounce, -200, 512, time, ttl);
 		}
 		else {
-			return tweening::interpolate(tweening::easeOutBack, 1020, 512, time, ttl);
+			return tweening::interpolate(tweening::easeOutBounce, 1020, 512, time, ttl);
 		}
 	}
 	return 512;
@@ -30,19 +36,19 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 690, 420, 85));
+	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 820, 570, 64));
 	ds::vec2 p = ds::vec2(512, 500);
 	int start = page * 5;
 	int end = start + 5;
 	for (int i = start; i < end; ++i) {
 		dialog::Image(p, ds::vec4(610, 160, 400, 50));
 		const Highscore& hs = highscores[mode * 10 + i];
-		dialog::FormattedText(p, "%d Name %02d:%02d", (i+1),hs.minutes,hs.seconds);
+		dialog::FormattedText(p, true, ds::vec2(1.0f), "%d Name %02d:%02d", (i+1),hs.minutes,hs.seconds);
 		p.y -= 60.0f;
 	}	
 	//
 	int dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 180), ds::vec4(0, 300, 304, 50), "MAIN MENU")) {
+	if (dialog::Button(ds::vec2(dx, 180), BUTTONS[2], "MAIN MENU")) {
 		ret = 1;
 	}
 	return ret;
@@ -58,38 +64,39 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
 	if (score.success) {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 420, 325, 70));
+		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 670, 410, 64));
 	}
 	else {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 490, 310, 70));
+		dialog::Image(ds::vec2(512, dy), ds::vec4(420, 670, 394, 64));
 	}
 	dialog::Image(ds::vec2(512, 470), ds::vec4(610, 160, 540, 50));
 	dialog::Image(ds::vec2(512, 390), ds::vec4(610, 160, 540, 50));
 	dialog::Image(ds::vec2(512, 310), ds::vec4(610, 160, 540, 50));
-	dialog::FormattedText(ds::vec2(400, 470), "Bombs left: %d", score.bombsLeft);
-	dialog::FormattedText(ds::vec2(400, 390), "Time: %02d:%02d", score.minutes, score.seconds);
+	dialog::FormattedText(ds::vec2(400, 470), true, ds::vec2(1.0f), "Bombs left: %d", score.bombsLeft);
+	dialog::FormattedText(ds::vec2(400, 390), true, ds::vec2(1.0f), "Time: %02d:%02d", score.minutes, score.seconds);
 	if (score.success) {
 		if (score.rank != -1) {
-			dialog::FormattedText(ds::vec2(400, 310), "New Highscore - Rank %d", (score.rank + 1));
+			dialog::FormattedText(ds::vec2(400, 310), true, ds::vec2(1.0f), "New Highscore - Rank %d", (score.rank + 1));
 		}
 		else {
-			dialog::FormattedText(ds::vec2(400, 310), "%s", "No new highscore");
+			dialog::FormattedText(ds::vec2(400, 310), true, ds::vec2(1.0f), "%s", "No new highscore");
 		}
 	}
 	else {
-		dialog::FormattedText(ds::vec2(400, 310), "%s","No new highscore");
+		dialog::FormattedText(ds::vec2(400, 310), true, ds::vec2(1.0f), "%s","No new highscore");
 	}
 	
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 230), ds::vec4(0, 368, 304, 50), "REPLAY")) {
+	if (dialog::Button(ds::vec2(dx, 230), BUTTONS[0], "REPLAY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 150), ds::vec4(0, 300, 304, 50), "MAIN MENU")) {
+	if (dialog::Button(ds::vec2(dx, 150), BUTTONS[2], "MAIN MENU")) {
 		ret = 2;
 	}
 	return ret;
 }
+
 
 // ---------------------------------------------------------------
 // show main menu
@@ -100,259 +107,30 @@ int showMainMenu(float time, float ttl) {
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(40, 845, 870, 55));
+	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 880, 64));
 
 	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 490), ds::vec4(0, 368, 304, 50), "EASY")) {
+	if (dialog::Button(ds::vec2(dx, 490), BUTTONS[1], "EASY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 410), ds::vec4(0, 368, 304, 50), "MEDIUM")) {
+	if (dialog::Button(ds::vec2(dx, 410), BUTTONS[1], "MEDIUM")) {
 		ret = 2;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 330), ds::vec4(0, 368, 304, 50), "HARD")) {
+	if (dialog::Button(ds::vec2(dx, 330), BUTTONS[1], "HARD")) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 250), ds::vec4(0, 230, 304, 50), "HIGHSCORES")) {
+	if (dialog::Button(ds::vec2(dx, 250), BUTTONS[0], "HIGHSCORES")) {
 		ret = 5;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 170), ds::vec4(0, 300, 304, 50), "EXIT")) {
+	if (dialog::Button(ds::vec2(dx, 170), BUTTONS[2], "EXIT")) {
 		ret = 4;
 	}
 	dialog::Image(ds::vec2(512, 30), ds::vec4(0, 800, 600, 14));
 	return ret;
-}
-
-const float FONT_PADDING = 0.0f;
-
-namespace font {
-
-	// Font starts at 200, 230
-	// x-offset / width
-	static const ds::vec2 FONT_DEF[] = {
-		ds::vec2(1,24),   // A
-		ds::vec2(24,21),  // B
-		ds::vec2(45,20),  // C
-		ds::vec2(66,22),  // D
-		ds::vec2(88,19),  // E
-		ds::vec2(108,19), // F
-		ds::vec2(127,21), // G
-		ds::vec2(149,21), // H
-		ds::vec2(170, 9), // I
-		ds::vec2(179,13), // J
-		ds::vec2(192,21), // K
-		ds::vec2(213,19), // L
-		ds::vec2(232,29), // M
-		ds::vec2(261,21), // N
-		ds::vec2(282,23), // O
-		ds::vec2(305,21), // P
-		ds::vec2(327,21), // Q
-		ds::vec2(348,21), // R
-		ds::vec2(369,19), // S 
-		ds::vec2(388,19), // T
-		ds::vec2(407,21), // U
-		ds::vec2(428,24), // V
-		ds::vec2(452,30), // W
-		ds::vec2(482,23), // X
-		ds::vec2(505,22), // Y
-		ds::vec2(527,19)  // Z
-	};
-
-
-	ds::vec4 get_rect(char c) {
-		if (c == ' ') {
-			return ds::vec4(0, 100, 20, 19);
-		}
-		// numbers are stored at different location
-		if (c >= 48 && c <= 57) {
-			int idx = (int)c - 48;
-			return ds::vec4(548 + idx * 22, 780, 22, 19);
-		}
-		// convert to lower case to upper case
-		if (c > 92) {
-			c -= 32;
-		}
-		if (c >= 65 && c <= 90) {
-			ds::vec2 fd = FONT_DEF[(int)c - 65];
-			return ds::vec4(0.0f + fd.x, 780.0f, fd.y, 19.0f);
-		}
-		return ds::vec4(0, 100, 20, 19);
-
-	}
-
-	ds::vec2 text_size(const char* txt) {
-		int l = strlen(txt);
-		ds::vec2 p(0.0f);
-		for (int i = 0; i < l; ++i) {
-			ds::vec4 r = get_rect(txt[i]);
-			p.x += r.z + FONT_PADDING;
-			if (r.w > p.y) {
-				p.y = r.w;
-			}
-		}
-		return p;
-	}
-}
-
-
-namespace dialog {
-
-	struct DrawCall {
-		ds::vec2 pos;
-		ds::vec4 rect;
-		ds::vec2 scale;
-	};
-
-	struct GUIContext {
-		SpriteBatchBuffer* buffer;
-		std::vector<DrawCall> calls;
-		bool clicked;
-		bool buttonPressed;
-	};
-
-	static GUIContext* _guiCtx = 0;
-
-	// -------------------------------------------------------
-	// check if mouse cursor is inside box
-	// -------------------------------------------------------
-	static bool isCursorInside(const ds::vec2& p, const ds::vec2& dim) {
-		ds::vec2 mp = ds::getMousePosition();
-		if (mp.x < (p.x - dim.x * 0.5f)) {
-			return false;
-		}
-		if (mp.x >(p.x + dim.x * 0.5f)) {
-			return false;
-		}
-		if (mp.y < (p.y - dim.y * 0.5f)) {
-			return false;
-		}
-		if (mp.y >(p.y + dim.y * 0.5f)) {
-			return false;
-		}
-		return true;
-	}
-
-	// -------------------------------------------------------
-	// handle mouse interaction
-	// -------------------------------------------------------
-	static bool isClicked(const ds::vec2& pos, const ds::vec2& size) {
-		if (_guiCtx->clicked) {
-			ds::vec2 p = pos;
-			//p.x += size.x * 0.5f;
-			if (_guiCtx->clicked && isCursorInside(p, size)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	void init(SpriteBatchBuffer* buffer) {
-		_guiCtx = new GUIContext;
-		_guiCtx->buffer = buffer;
-		_guiCtx->clicked = false;
-		_guiCtx->buttonPressed = ds::isMouseButtonPressed(0);
-	}
-
-	void begin() {
-		_guiCtx->calls.clear();
-		if (_guiCtx->clicked) {
-			_guiCtx->clicked = false;
-		}
-		if (ds::isMouseButtonPressed(0)) {
-			_guiCtx->buttonPressed = true;
-		}
-		else {
-			if (_guiCtx->buttonPressed) {
-				_guiCtx->clicked = true;
-			}
-			_guiCtx->buttonPressed = false;
-		}
-	}
-
-	bool ImageButton(const ds::vec2& pos, const ds::vec4& rect, const ds::vec2& scale) {
-		DrawCall call;
-		call.pos = pos;
-		call.rect = rect;
-		call.scale = scale;
-		_guiCtx->calls.push_back(call);
-		ds::vec2 dim = ds::vec2(rect.z, rect.w);
-		return isClicked(pos, dim);
-	}
-
-	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text, const ds::vec2& scale) {
-		DrawCall call;
-		call.pos = pos;
-		call.rect = rect;
-		call.scale = scale;
-		_guiCtx->calls.push_back(call);
-		ds::vec2 dim = ds::vec2(rect.z, rect.w);
-		int l = strlen(text);
-		ds::vec2 p = pos;
-		ds::vec2 size = font::text_size(text);
-		p.x = pos.x - size.x * 0.5f;
-		float lw = 0.0f;
-		for (int i = 0; i < l; ++i) {
-			ds::vec4 r = font::get_rect(text[i]);
-			p.x += lw * 0.5f + r.z * 0.5f;
-			DrawCall call = { p,r, ds::vec2(1.0f) };
-			_guiCtx->calls.push_back(call);
-			lw = r.z;
-		}
-		return isClicked(pos, dim);
-	}
-
-	void Image(const ds::vec2& pos, const ds::vec4& rect) {
-		DrawCall call;
-		call.pos = pos;
-		call.rect = rect;
-		call.scale = ds::vec2(1.0f);
-		_guiCtx->calls.push_back(call);
-	}
-
-	void Text(const ds::vec2& pos, const char* text) {
-		int l = strlen(text);
-		ds::vec2 p = pos;
-		ds::vec2 size = font::text_size(text);
-		p.x = (1024.0f - size.x) * 0.5f;
-		float lw = 0.0f;
-		for (int i = 0; i < l; ++i) {
-			ds::vec4 r = font::get_rect(text[i]);
-			p.x += lw * 0.5f + r.z * 0.5f;
-			DrawCall call = { p, r, ds::vec2(1.0f) };
-			_guiCtx->calls.push_back(call);
-			lw = r.z;
-		}
-	}
-
-	void FormattedText(const ds::vec2& pos, const char* fmt, ...) {
-		char buffer[1024];
-		va_list args;
-		va_start(args, fmt);
-		vsprintf(buffer, fmt, args);
-		ds::vec2 size = font::text_size(buffer);
-		ds::vec2 p = pos;
-		p.x = (1024.0f - size.x) * 0.5f;
-		Text(p, buffer);
-		va_end(args);
-		
-	}
-
-	void end() {
-		for (size_t i = 0; i < _guiCtx->calls.size(); ++i) {
-			const DrawCall& call = _guiCtx->calls[i];
-			_guiCtx->buffer->add(call.pos, call.rect, call.scale);
-		}
-	}
-
-	void shutdown() {
-		if (_guiCtx != 0) {
-			delete _guiCtx;
-		}
-	}
-
 }
 
 // -------------------------------------------------------
@@ -433,11 +211,11 @@ int InputDialog::render() {
 	// FIXME: blinking cursor
 
 	int dx = 400;
-	if (dialog::ImageButton(ds::vec2(dx, 320), ds::vec4(610, 430, 148, 32))) {
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(610, 430, 148, 32))) {
 		ret = 1;
 	}
 	dx = 600;
-	if (dialog::ImageButton(ds::vec2(dx, 320), ds::vec4(770, 430, 148, 32))) {
+	if (dialog::Button(ds::vec2(dx, 320), ds::vec4(770, 430, 148, 32))) {
 		ret = 2;
 	}
 	return ret;

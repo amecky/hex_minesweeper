@@ -33,6 +33,9 @@
     <ClInclude Include="ext\ds_logpanel.h">
       <Filter>ext</Filter>
     </ClInclude>
+    <ClInclude Include="ext\ds_game_ui.h">
+      <Filter>ext</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />

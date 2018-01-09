@@ -95,7 +95,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\D11</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;DEBUG;PROFILE;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;DEBUG;PROFILE;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>
       </BasicRuntimeChecks>
@@ -226,6 +226,7 @@
   <ItemGroup>
     <ClInclude Include="..\ds_gamestate\StateMachine.h" />
     <ClInclude Include="ext\diesel.h" />
+    <ClInclude Include="ext\ds_game_ui.h" />
     <ClInclude Include="ext\ds_imgui.h" />
     <ClInclude Include="ext\ds_logpanel.h" />
     <ClInclude Include="ext\SpriteBatchBuffer.h" />
