@@ -256,7 +256,7 @@ namespace dialog {
 	// ---------------------------------------------------------------
 	// input
 	// ---------------------------------------------------------------
-	void Input(const ds::vec2& pos, char* text, int maxLength) {
+	void Input(const ds::vec2& pos, char* text, size_t maxLength) {
 		size_t len = strlen(text);
 		for (int i = 0; i < ds::getNumInputKeys(); ++i) {
 			const ds::InputKey& key = ds::getInputKey(i);

@@ -111,7 +111,7 @@ int HexGrid::select(int x, int y) {
 	if (!isValid(h)) {
 		return -1;
 	}
-	for (size_t i = 0; i < size(); ++i) {
+	for (int i = 0; i < size(); ++i) {
 		if (_items[i].hex == h) {
 			selected = i;
 

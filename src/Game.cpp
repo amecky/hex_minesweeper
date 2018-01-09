@@ -271,8 +271,8 @@ void Game::renderDebugPanel() {
 			if (gui::Button("Game over")) {
 				_menuTimer = 0.0f;
 				_score.success = true;
-				_score.seconds = _debugScore.y;
-				_score.minutes = _debugScore.x;
+				_score.seconds = (int)_debugScore.y;
+				_score.minutes = (int)_debugScore.x;
 				_score.rank = handleScore();
 				_score.bombsLeft = 42;
 				_mode = GM_GAMEOVER;

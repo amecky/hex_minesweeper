@@ -18,7 +18,7 @@ namespace hex_math {
 
 	ds::vec2 to_pixel(const Hex& hex, float size) {
 		float x = size * 3.0f / 2.0f * hex.q;
-		float y = size * sqrt(3.0f) * (hex.r + hex.q / 2.0f);
+		float y = size * sqrtf(3.0f) * (hex.r + hex.q / 2.0f);
 		return ds::vec2(x, y);
 	}
 

@@ -86,7 +86,7 @@ void Board::tick(float dt) {
 					}
 					else {
 						float n = 1.0f - current.timer / _settings->wiggleTTL;
-						float s = 1.0f + sin(n * ds::PI) * _settings->wiggleScale;
+						float s = 1.0f + sinf(n * ds::PI) * _settings->wiggleScale;
 						current.scale = ds::vec2(s, s);
 					}
 				}
@@ -121,7 +121,7 @@ bool Board::select() {
 						_numOpen = 0;
 						openEmptyTiles(h);
 						Hex n[6];
-						for (uint32_t i = 0; i < _numOpen; ++i) {
+						for (int i = 0; i < _numOpen; ++i) {
 							const Hex& h = _openTiles[i];
 							int cnt = _grid.neighbors(h, n);
 							for (int j = 0; j < cnt; ++j) {
@@ -183,7 +183,7 @@ void Board::fillBombs() {
 		}
 	}
 	for (int i = 0; i < total; ++i) {
-		int idx = ds::random(0, total - 1);
+		int idx = (int)ds::random(0, total - 1);
 		Hex t = temp[i];
 		temp[i] = temp[idx];
 		temp[idx] = t;

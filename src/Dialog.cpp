@@ -15,7 +15,7 @@ enum FloatInDirection {
 	FID_RIGHT
 };
 
-int floatButton(float time, float ttl, FloatInDirection dir) {
+float floatButton(float time, float ttl, FloatInDirection dir) {
 	if (time <= ttl) {
 		if (dir == FloatInDirection::FID_LEFT) {
 			return tweening::interpolate(tweening::easeOutBounce, -200, 512, time, ttl);
@@ -24,7 +24,7 @@ int floatButton(float time, float ttl, FloatInDirection dir) {
 			return tweening::interpolate(tweening::easeOutBounce, 1020, 512, time, ttl);
 		}
 	}
-	return 512;
+	return 512.0f;
 }
 
 // ---------------------------------------------------------------
@@ -32,11 +32,11 @@ int floatButton(float time, float ttl, FloatInDirection dir) {
 // ---------------------------------------------------------------
 int showHighscores(float time, float ttl, int mode, Highscore* highscores, int page) {
 	int ret = 0;
-	int dy = 600;
+	float dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 820, 570, 64));
+	dialog::Image(ds::vec2(512.0f, dy), ds::vec4(0, 820, 570, 64));
 	ds::vec2 p = ds::vec2(512, 500);
 	int start = page * 5;
 	int end = start + 5;
@@ -47,8 +47,8 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 		p.y -= 60.0f;
 	}	
 	//
-	int dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 180), BUTTONS[2], "MAIN MENU")) {
+	float dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
+	if (dialog::Button(ds::vec2(dx, 180.0f), BUTTONS[2], "MAIN MENU")) {
 		ret = 1;
 	}
 	return ret;
@@ -59,15 +59,15 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 // ---------------------------------------------------------------
 int showGameOverMenu(const Score& score, float time, float ttl) {
 	int ret = 0;
-	int dy = 600;
+	float dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
 	if (score.success) {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(0, 670, 410, 64));
+		dialog::Image(ds::vec2(512.0f, dy), ds::vec4(0, 670, 410, 64));
 	}
 	else {
-		dialog::Image(ds::vec2(512, dy), ds::vec4(420, 670, 394, 64));
+		dialog::Image(ds::vec2(512.0f, dy), ds::vec4(420, 670, 394, 64));
 	}
 	dialog::Image(ds::vec2(512, 470), ds::vec4(610, 160, 540, 50));
 	dialog::Image(ds::vec2(512, 390), ds::vec4(610, 160, 540, 50));
@@ -86,12 +86,12 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 		dialog::FormattedText(ds::vec2(400, 310), true, ds::vec2(1.0f), "%s","No new highscore");
 	}
 	
-	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 230), BUTTONS[0], "REPLAY")) {
+	float dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
+	if (dialog::Button(ds::vec2(dx, 230.0f), BUTTONS[0], "REPLAY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 150), BUTTONS[2], "MAIN MENU")) {
+	if (dialog::Button(ds::vec2(dx, 150.0f), BUTTONS[2], "MAIN MENU")) {
 		ret = 2;
 	}
 	return ret;
@@ -103,30 +103,30 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 // ---------------------------------------------------------------
 int showMainMenu(float time, float ttl) {
 	int ret = 0;
-	int dy = 600;
+	float dy = 600;
 	if (time <= ttl) {
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
-	dialog::Image(ds::vec2(512, dy), ds::vec4(0, 600, 880, 64));
+	dialog::Image(ds::vec2(512.0f, dy), ds::vec4(0, 600, 880, 64));
 
-	int dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 490), BUTTONS[1], "EASY")) {
+	float dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
+	if (dialog::Button(ds::vec2(dx, 490.0f), BUTTONS[1], "EASY")) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 410), BUTTONS[1], "MEDIUM")) {
+	if (dialog::Button(ds::vec2(dx, 410.0f), BUTTONS[1], "MEDIUM")) {
 		ret = 2;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 330), BUTTONS[1], "HARD")) {
+	if (dialog::Button(ds::vec2(dx, 330.0f), BUTTONS[1], "HARD")) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 250), BUTTONS[0], "HIGHSCORES")) {
+	if (dialog::Button(ds::vec2(dx, 250.0f), BUTTONS[0], "HIGHSCORES")) {
 		ret = 5;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 170), BUTTONS[2], "EXIT")) {
+	if (dialog::Button(ds::vec2(dx, 170.0f), BUTTONS[2], "EXIT")) {
 		ret = 4;
 	}
 	dialog::Image(ds::vec2(512, 30), ds::vec4(0, 800, 600, 14));

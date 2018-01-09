@@ -37,8 +37,8 @@ struct Orientation {
 		start_angle(start_angle_) {}
 };
 
-const Orientation layout_pointy = Orientation(sqrt(3.0), sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
-const Orientation layout_flat = Orientation(3.0 / 2.0, 0.0, sqrt(3.0) / 2.0, sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, sqrt(3.0) / 3.0, 0.0);
+const Orientation layout_pointy = Orientation(sqrtf(3.0f), sqrtf(3.0f) / 2.0f, 0.0f, 3.0f / 2.0f, sqrtf(3.0f) / 3.0f, -1.0f / 3.0f, 0.0f, 2.0f / 3.0f, 0.5f);
+const Orientation layout_flat = Orientation(3.0f / 2.0f, 0.0f, sqrtf(3.0f) / 2.0f, sqrtf(3.0f), 2.0f / 3.0f, 0.0f, -1.0f / 3.0f, sqrtf(3.0f) / 3.0f, 0.0f);
 
 struct Layout {
 	Orientation orientation;
