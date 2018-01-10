@@ -28,10 +28,12 @@ void Particles::emittStars(const ds::vec2& pos) {
 			float radius = ds::random(_settings->radius - _settings->radiusVariance, _settings->radius + _settings->radiusVariance);
 			float angle = static_cast<float>(i) / static_cast<float>(_settings->num) * (ds::TWO_PI + ds::random(0.0f, rnd_max));
 			float vel = ds::random(_settings->velocity - _settings->velocityVariance, _settings->velocity + _settings->velocityVariance);
-			particle.pos.x += cos(angle) * radius;
-			particle.pos.y += sin(angle) * radius;
-			particle.vel.x = cos(angle) * vel;
-			particle.vel.y = sin(angle) * vel;
+			float ca = cosf(angle);
+			float sa = sinf(angle);
+			particle.pos.x += ca * radius;
+			particle.pos.y += sa * radius;
+			particle.vel.x = ca * vel;
+			particle.vel.y = sa * vel;
 			particle.timer = 0.0f;
 			particle.color = ds::Color(255, 255, 255, 255);
 			particle.dying = false;
