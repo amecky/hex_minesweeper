@@ -98,7 +98,8 @@ void Board::tick(float dt) {
 // -------------------------------------------------------
 // select
 // -------------------------------------------------------
-bool Board::select() {
+bool Board::select(ds::vec2* opened, int max, int* num) {
+	int current = 0;
 	Hex h = _grid.convertFromMousePos();
 	if (_grid.isValid(h)) {
 		if (ds::isMouseButtonPressed(0) && !_buttonState[0].pressed) {
@@ -117,6 +118,7 @@ bool Board::select() {
 				}
 				else {
 					item.state = GIS_OPEN;
+					opened[current++] = item.position;
 					if (item.adjacentBombs == 0) {
 						_numOpen = 0;
 						openEmptyTiles(h);
@@ -126,12 +128,16 @@ bool Board::select() {
 							int cnt = _grid.neighbors(h, n);
 							for (int j = 0; j < cnt; ++j) {
 								GridItem& gi = _grid.get(n[j]);
+								if (cnt < max) {
+									opened[current++] = gi.position;
+								}
 								if (!gi.bomb) {
 									gi.state = GIS_OPEN;
 								}
 							}
 						}
 					}
+					*num = current;
 				}
 			}
 		}

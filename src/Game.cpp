@@ -28,6 +28,9 @@ RID loadImage(const char* name) {
 	return textureID;
 }
 
+// ---------------------------------------------------------------
+// bitmap font definitions
+// ---------------------------------------------------------------
 static const ds::vec2 FONT_DEF[] = {
 	ds::vec2(1,24),   // A
 	ds::vec2(24,21),  // B
@@ -57,6 +60,9 @@ static const ds::vec2 FONT_DEF[] = {
 	ds::vec2(527,19)  // Z
 };
 
+// ---------------------------------------------------------------
+// build the font info needed by the game ui
+// ---------------------------------------------------------------
 void prepareFontInfo(dialog::FontInfo* info) {
 	// default for every character just empty space
 	for (int i = 0; i < 255; ++i) {
@@ -76,6 +82,9 @@ void prepareFontInfo(dialog::FontInfo* info) {
 	}
 }
 
+// ---------------------------------------------------------------
+// Game
+// ---------------------------------------------------------------
 Game::Game() {
 
 	gui::init();
@@ -87,6 +96,16 @@ Game::Game() {
 	// create the sprite batch buffer
 	SpriteBatchBufferInfo sbbInfo = { 2048, textureID, ds::TextureFilters::LINEAR };
 	_spriteBuffer = new SpriteBatchBuffer(sbbInfo);
+
+	// star particles
+	_starSettings.velocity = 80.0f;
+	_starSettings.velocityVariance = 60.0f;
+	_starSettings.acceleration = 500.0f;
+	_starSettings.ttl = 0.3f;
+	_starSettings.radius = 8.0f;
+	_starSettings.radiusVariance = 4.0f;
+	_starSettings.num = 8;
+	_particles = new Particles(&_starSettings);
 
 	_settings.wiggleScale = 0.2f;
 	_settings.wiggleTTL = 0.2f;
@@ -134,12 +153,15 @@ Game::Game() {
 
 	_page = 0;
 	_pageTimer = 0.0f;
+	_pageMode = 0;
 
 	sprintf(_playerName, "%s", "Name");
 
 	_inputActive = false;
 
 	_dialogPos = p2i(10, 750);
+
+	
 }
 
 Game::~Game() {
@@ -154,6 +176,7 @@ Game::~Game() {
 	delete _hud;
 	delete _board;
 	delete _spriteBuffer;
+	delete _particles;
 }
 
 // ---------------------------------------------------------------
@@ -200,14 +223,19 @@ int Game::handleScore() {
 // ---------------------------------------------------------------
 void Game::tick(float dt) {
 	handleDebugInput(&_debugPanel);
+	ds::vec2 opened[1024];
+	int num = 0;
 	if (_mode == GM_RUNNING) {
 		int max = GAME_MODES[_selectedMode].maxBombs;
-		if (_board->select()) {
+		if (_board->select(opened,1024,&num)) {
 			int marked = _board->getNumMarked();
 			int diff = max - _board->getNumMarked();
 			if (diff != _score.bombsLeft) {
 				_score.bombsLeft = diff;
 				_hud->setBombs(diff);
+			}
+			for (int i = 0; i < num; ++i) {
+				_particles->emittStars(opened[i]);
 			}
 		}
 		else {
@@ -233,7 +261,12 @@ void Game::tick(float dt) {
 		}
 		_board->tick(dt);
 		_hud->tick(dt);
+
+		
 	}
+
+	// FIXME: move inside above
+	_particles->tick(dt);
 }
 
 // ---------------------------------------------------------------
@@ -285,6 +318,16 @@ void Game::renderDebugPanel() {
 				_inputActive = true;
 				_inputDialog.reset(_playerName);
 			}
+			gui::Input("Stars Vel", &_starSettings.velocity);
+			gui::Input("Stars Vel-Var", &_starSettings.velocityVariance);
+			gui::Input("Stars Acc", &_starSettings.acceleration);
+			gui::Input("Stars TTL", &_starSettings.ttl);
+			gui::Input("Stars R", &_starSettings.radius);
+			gui::Input("Stars R-Var", &_starSettings.radiusVariance);
+			gui::Input("Stars Num", &_starSettings.num);
+			if (gui::Button("Stars")) {
+				_particles->emittStars(ds::vec2(521, 384));
+			}
 		}
 		gui::end();
 	}
@@ -311,6 +354,7 @@ void Game::render() {
 		//
 		_board->render();
 		_hud->render();
+		//_particles.render(_spriteBuffer);
 	}
 	else if (_mode == GM_MENU) {
 		_menuTimer += static_cast<float>(ds::getElapsedSeconds());
@@ -323,11 +367,13 @@ void Game::render() {
 				_selectedMode = ret - 1;
 				_hud->reset();
 				_board->activate(_selectedMode);
+				_particles->clear();
 				_mode = GM_RUNNING;
 			}
 			if (ret == 5) {
 				_menuTimer = 0.0f;
 				_pageTimer = 0.0f;
+				_pageMode = 0;
 				_mode = GM_HIGHSCORES;
 			}
 			else  if (ret == 4) {
@@ -345,6 +391,7 @@ void Game::render() {
 		if (ret == 1) {
 			_board->activate(_selectedMode);
 			_hud->reset();
+			_particles->clear();
 			_mode = GM_RUNNING;
 		}
 		else if (ret == 2) {
@@ -358,11 +405,17 @@ void Game::render() {
 		if (_pageTimer >= _settings.highscorePagingTTL) {
 			_pageTimer -= _settings.highscorePagingTTL;
 			_page = (_page + 1) & 1;
+			if (_page == 0) {
+				++_pageMode;
+				if (_pageMode >= 3) {
+					_pageMode = 0;
+				}
+			}
 		}
 		//
 		// render game over menu immediate mode and board
 		//
-		int ret = showHighscores(_menuTimer, _settings.menuTTL, _selectedMode,_highscores, _page);
+		int ret = showHighscores(_menuTimer, _settings.menuTTL, _pageMode,_highscores, _page);
 		if (ret == 1) {
 			_menuTimer = 0.0f;
 			_mode = GM_MENU;
@@ -384,9 +437,15 @@ void Game::render() {
 		}
 	}
 	dialog::end();
+
+	// FIXME: move inside GM_RUNNING
+	_particles->render(_spriteBuffer);
+
 	_spriteBuffer->flush();
 	
 	renderDebugPanel();
+
+	ds::dbgPrint(0, 37, "FPS: %d", ds::getFramesPerSecond());
 
 	ds::end();
 }

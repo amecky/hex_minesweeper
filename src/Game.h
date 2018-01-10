@@ -7,6 +7,7 @@
 #include "hud.h"
 #include "GameContext.h"
 #include "Dialog.h"
+#include "particles.h"
 
 // ---------------------------------------------------------------
 // Game modes
@@ -28,28 +29,6 @@ struct DebugPanel {
 	int state;
 };
 
-// FIXME: RAD
-struct TestSettings {
-	int iv;
-	float fv;
-	bool bv;
-	int stepValue;
-	ds::vec2 v2;
-	ds::vec3 v3;
-	int state;
-	ds::Color color;
-	float sinTable[36];
-	float hTable[16];
-	int menu;
-	int diagramState;
-	int listIndex;
-	int listOffset;
-	int valueState;
-	int dropState;
-	int dopIndex;
-	int dropOffset;
-	float angle;
-};
 // ---------------------------------------------------------------
 // Game
 // ---------------------------------------------------------------
@@ -81,10 +60,13 @@ private:
 	ds::vec2 _debugScore;
 	int _page;
 	float _pageTimer;
+	int _pageMode;
 	InputDialog _inputDialog;
 	bool _inputActive;
 	char _playerName[10];
 	p2i _dialogPos;
 	int _logPanelState;
+	StarParticleSettings _starSettings;
+	Particles* _particles;
 };
 

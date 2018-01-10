@@ -1,7 +1,9 @@
 # TODO
 - [ ] add some star animations when new highscores
 - [ ] add some looser animation to game over
-- [ ] show text message when new highscore
+- [x] show text message when new highscore
+- [ ] animate bombs in game over screen
+- [ ] drop particles to the ground when cells are openend
 
 ## 13.09.2016
 - [x] WONTFIX: better bomb explosion effect

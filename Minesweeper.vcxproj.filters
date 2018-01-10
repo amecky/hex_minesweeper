@@ -36,6 +36,7 @@
     <ClInclude Include="ext\ds_game_ui.h">
       <Filter>ext</Filter>
     </ClInclude>
+    <ClInclude Include="src\particles.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />
@@ -54,6 +55,7 @@
     <ClCompile Include="src\tweening.cpp" />
     <ClCompile Include="src\Dialog.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\particles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="content\TextureArray.png" />

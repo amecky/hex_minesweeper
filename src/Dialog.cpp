@@ -37,18 +37,29 @@ int showHighscores(float time, float ttl, int mode, Highscore* highscores, int p
 		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
 	}
 	dialog::Image(ds::vec2(512.0f, dy), ds::vec4(0, 820, 570, 64));
-	ds::vec2 p = ds::vec2(512, 500);
+
+	dialog::Image(ds::vec2(512,530), ds::vec4(610, 160, 440, 50));
+	if (mode == 0) {
+		dialog::Text(ds::vec2(512, 530), "Easy");
+	}
+	else if (mode == 1) {
+		dialog::Text(ds::vec2(512, 530), "Medium");
+	}
+	if (mode == 2) {
+		dialog::Text(ds::vec2(512, 530), "Hard");
+	}
+	ds::vec2 p = ds::vec2(512, 470);
 	int start = page * 5;
 	int end = start + 5;
 	for (int i = start; i < end; ++i) {
-		dialog::Image(p, ds::vec4(610, 160, 400, 50));
+		dialog::Image(p, ds::vec4(610, 160, 440, 50));
 		const Highscore& hs = highscores[mode * 10 + i];
-		dialog::FormattedText(p, true, ds::vec2(1.0f), "%d Name %02d:%02d", (i+1),hs.minutes,hs.seconds);
+		dialog::FormattedText(p, true, ds::vec2(1.0f), "%-2d. %-10s %02d:%02d", (i+1),hs.name,hs.minutes,hs.seconds);
 		p.y -= 60.0f;
 	}	
 	//
 	float dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 180.0f), BUTTONS[2], "MAIN MENU")) {
+	if (dialog::Button(ds::vec2(dx, 160.0f), BUTTONS[2], "MAIN MENU")) {
 		ret = 1;
 	}
 	return ret;
@@ -143,9 +154,16 @@ InputDialog::InputDialog() {
 
 void InputDialog::reset(const char* name) {
 	sprintf(_name, "%s", name);
+	_showCursor = true;
+	_timer = 0.0f;
 }
 
 void InputDialog::tick(float dt) {
+	_timer += dt;
+	if (_timer >= 0.4f) {
+		_timer -= 0.4f;
+		_showCursor = !_showCursor;
+	}
 }
 
 bool InputDialog::handleTextInput() {
@@ -164,9 +182,9 @@ bool InputDialog::handleTextInput() {
 
 				}
 			}
-		}
-		else if (key.value == ds::SpecialKeys::DSKEY_Enter) {
-			return false;
+			if (key.value == ds::SpecialKeys::DSKEY_Enter) {
+				return false;
+			}
 		}
 		else {
 			if (len < 10) {
@@ -202,7 +220,12 @@ int InputDialog::render() {
 	dialog::Text(ds::vec2(400, 440), "Please enter your name");
 
 	dialog::Image(ds::vec2(512, 380), ds::vec4(610,160,400,40));
-
+	if (_showCursor) {
+		ds::vec2 size = dialog::text_size(_name);
+		ds::vec2 p(512, 375);
+		p.x = (1024.0f - size.x) * 0.5f + size.x + 15.0f;
+		dialog::Image(p, ds::vec4(200, 0, 20, 2));
+	}
 	if (!handleTextInput()) {
 		return 1;
 	}

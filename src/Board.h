@@ -22,7 +22,7 @@ public:
 	void toggleShowBombs() {
 		_showBombs = !_showBombs;
 	}
-	bool select();
+	bool select(ds::vec2* opened, int max, int* num);
 	int getNumMarked() const {
 		return _marked;
 	}

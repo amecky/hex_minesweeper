@@ -8,3 +8,7 @@ Debug/
 Minesweeper.opensdf
 Minesweeper.sdf
 scores.scr
+Release/
+.vs/Minesweeper/v14/.suo
+Minesweeper.v12.suo
+content/obj/cube.obj

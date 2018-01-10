@@ -32,5 +32,7 @@ private:
 	int _caretPos;
 	char _name[20];
 	int _index;
+	bool _showCursor;
+	float _timer;
 };
 

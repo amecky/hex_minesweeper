@@ -19,6 +19,7 @@ void initialize() {
 	rs.title = "Colors - match 3 game";
 	rs.clearColor = ds::Color(0.125f, 0.125f, 0.125f, 1.0f);
 	rs.multisampling = 4;
+	rs.supportDebug = true;
 	ds::init(rs);
 }
 
