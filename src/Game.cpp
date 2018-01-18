@@ -166,6 +166,7 @@ Game::Game() {
 
 Game::~Game() {
 	// save highscores
+	gui::shutdown();
 	FILE* fp = fopen("scores.scr", "wb");
 	if (fp) {
 		for (int i = 0; i < 30; ++i) {
