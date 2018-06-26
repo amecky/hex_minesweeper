@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include "tweening.h"
 #include "HUD.h"
+#include "animation.h"
 
 const ds::vec4 BUTTONS[] = {
 	ds::vec4(0, 226, 304, 60), // green button
@@ -108,6 +109,26 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 	return ret;
 }
 
+static Animation animations[32];
+
+void createAnimations() {
+
+}
+
+Animation ANIMATIONS[] = {
+	{ 1.2f, 900.0f, 600.0f, tweening::easeOutBounce },
+	{ 1.2f, -200.0f, 512.0f, tweening::easeOutBounce },
+	{ 1.2f, 1020.0f, 512.0f, tweening::easeOutBounce },
+	{ 1.5f, 0.2f, 1.0f, tweening::easeOutBounce }
+};
+
+float animate(float time, int index) {
+	const Animation& anim = ANIMATIONS[index];
+	if (time <= anim.ttl) {
+		return tweening::interpolate(anim.type, anim.start, anim.end, time, anim.ttl);
+	}
+	return anim.end;
+}
 
 // ---------------------------------------------------------------
 // show main menu
@@ -116,28 +137,31 @@ int showMainMenu(float time, float ttl) {
 	int ret = 0;
 	float dy = 600;
 	if (time <= ttl) {
-		dy = tweening::interpolate(tweening::easeOutBounce, 900, 600, time, ttl);
+		dy = animate(time, 0);
 	}
 	dialog::Image(ds::vec2(512.0f, dy), ds::vec4(0, 600, 880, 64));
 
+	float scale = animate(time, 3);
+	ds::vec2 vc(scale);
+
 	float dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 490.0f), BUTTONS[1], "EASY")) {
+	if (dialog::Button(ds::vec2(dx, 490.0f), BUTTONS[1], "EASY", vc)) {
 		ret = 1;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 410.0f), BUTTONS[1], "MEDIUM")) {
+	if (dialog::Button(ds::vec2(dx, 410.0f), BUTTONS[1], "MEDIUM", vc)) {
 		ret = 2;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 330.0f), BUTTONS[1], "HARD")) {
+	if (dialog::Button(ds::vec2(dx, 330.0f), BUTTONS[1], "HARD", vc)) {
 		ret = 3;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_RIGHT);
-	if (dialog::Button(ds::vec2(dx, 250.0f), BUTTONS[0], "HIGHSCORES")) {
+	if (dialog::Button(ds::vec2(dx, 250.0f), BUTTONS[0], "HIGHSCORES", vc)) {
 		ret = 5;
 	}
 	dx = floatButton(time, ttl, FloatInDirection::FID_LEFT);
-	if (dialog::Button(ds::vec2(dx, 170.0f), BUTTONS[2], "EXIT")) {
+	if (dialog::Button(ds::vec2(dx, 170.0f), BUTTONS[2], "EXIT", vc)) {
 		ret = 4;
 	}
 	dialog::Image(ds::vec2(512, 30), ds::vec4(0, 800, 600, 14));

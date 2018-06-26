@@ -4,6 +4,7 @@
 #include "..\resource.h"
 #include "tweening.h"
 #include <Windows.h>
+#include "animation.h"
 // ---------------------------------------------------------------
 // load image from the resources
 // ---------------------------------------------------------------

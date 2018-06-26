@@ -24,7 +24,7 @@ namespace dialog {
 
 	bool Button(const ds::vec2& pos, const ds::vec4& rect);
 
-	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text);
+	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text, const ds::vec2& scale = ds::vec2(1.0f));
 
 	bool isCursorInside(const ds::vec2& p, const ds::vec2& dim);
 
@@ -170,11 +170,11 @@ namespace dialog {
 	// ---------------------------------------------------------------
 	// button with text
 	// ---------------------------------------------------------------
-	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text) {
+	bool Button(const ds::vec2& pos, const ds::vec4& rect, const char* text, const ds::vec2& scale) {
 		DrawCall& call = _guiCtx.calls[_guiCtx.num_calls++];
 		call.pos = pos;
 		call.rect = rect;
-		call.scale = ds::vec2(1.0f);
+		call.scale = scale;
 		ds::vec2 dim = ds::vec2(rect.z, rect.w);
 		int l = strlen(text);
 		ds::vec2 p = pos;
@@ -187,7 +187,7 @@ namespace dialog {
 			DrawCall& text_call = _guiCtx.calls[_guiCtx.num_calls++];
 			text_call.pos = p;
 			text_call.rect = r;
-			text_call.scale = ds::vec2(1.0f);
+			text_call.scale = scale;
 			lw = r.z;
 		}
 		return isClicked(pos, dim);
