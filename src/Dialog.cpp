@@ -4,6 +4,7 @@
 #include "tweening.h"
 #include "HUD.h"
 #include "animation.h"
+#include <ds_imgui.h>
 
 const ds::vec4 BUTTONS[] = {
 	ds::vec4(0, 226, 304, 60), // green button
@@ -112,22 +113,38 @@ int showGameOverMenu(const Score& score, float time, float ttl) {
 static Animation animations[32];
 
 void createAnimations() {
-
+	anim::build_simple_animation(&animations[0],900.0f, 600.0f, 1.2f);
+	animations[0].tweening = tweening::easeOutBounce;
+	anim::build_simple_animation(&animations[1], -200.0f, 512.0f, 1.2f);
+	animations[1].tweening = tweening::easeOutBounce;
+	anim::build_simple_animation(&animations[2], 1020.0f, 512.0f, 1.2f);
+	animations[2].tweening = tweening::easeOutBounce;
+	anim::add_step(&animations[3], 0.0f, 0.6f);
+	anim::add_step(&animations[3], 1.0f, 1.0f);
+	anim::add_step(&animations[3], 1.1f, 1.2f);
+	anim::add_step(&animations[3], 1.2f, 0.8f);
+	anim::add_step(&animations[3], 1.3f, 1.1f);
+	anim::add_step(&animations[3], 1.4f, 0.9f);
+	anim::add_step(&animations[3], 1.5f, 1.0f);
 }
 
-Animation ANIMATIONS[] = {
-	{ 1.2f, 900.0f, 600.0f, tweening::easeOutBounce },
-	{ 1.2f, -200.0f, 512.0f, tweening::easeOutBounce },
-	{ 1.2f, 1020.0f, 512.0f, tweening::easeOutBounce },
-	{ 1.5f, 0.2f, 1.0f, tweening::easeOutBounce }
-};
-
 float animate(float time, int index) {
-	const Animation& anim = ANIMATIONS[index];
-	if (time <= anim.ttl) {
-		return tweening::interpolate(anim.type, anim.start, anim.end, time, anim.ttl);
+	return anim::interpolate(&animations[index], time);
+}
+
+void editAnimation(int index) {
+	if (index != -1) {
+		Animation& anim = animations[index];
+		for (int i = 0; i < anim.count; ++i) {
+			ds::vec2 tmp(anim.steps[i], anim.values[i]);
+			gui::pushID(i);
+			if (gui::Input("Step", &tmp)) {
+				anim.steps[i] = tmp.x;
+				anim.values[i] = tmp.y;
+			}
+			gui::popID();
+		}
 	}
-	return anim.end;
 }
 
 // ---------------------------------------------------------------
@@ -135,11 +152,7 @@ float animate(float time, int index) {
 // ---------------------------------------------------------------
 int showMainMenu(float time, float ttl) {
 	int ret = 0;
-	float dy = 600;
-	if (time <= ttl) {
-		dy = animate(time, 0);
-	}
-	dialog::Image(ds::vec2(512.0f, dy), ds::vec4(0, 600, 880, 64));
+	dialog::Image(ds::vec2(512.0f, animate(time, 0)), ds::vec4(0, 600, 880, 64));
 
 	float scale = animate(time, 3);
 	ds::vec2 vc(scale);

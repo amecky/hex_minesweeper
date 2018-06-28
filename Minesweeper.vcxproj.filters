@@ -37,6 +37,10 @@
       <Filter>ext</Filter>
     </ClInclude>
     <ClInclude Include="src\particles.h" />
+    <ClInclude Include="src\animation.h" />
+    <ClInclude Include="ext\ds_tv.h">
+      <Filter>ext</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Minesweeper.manifest" />

@@ -11,11 +11,17 @@ enum MenuAnimation {
 	MA_BUTTON_SLIDE_RIGHT,
 };
 
+void createAnimations();
+
+float animate(float time, int index);
+
 int showGameOverMenu(const Score& score, float time, float ttl);
 
 int showMainMenu(float time, float ttl);
 
 int showHighscores(float time, float ttl, int mode, Highscore* highscores, int page);
+
+void editAnimation(int index);
 
 class InputDialog {
 

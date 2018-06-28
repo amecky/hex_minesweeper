@@ -6,6 +6,8 @@
 #include <SpriteBatchBuffer.h>
 #define DS_GAME_UI_IMPLEMENTATION
 #include <ds_game_ui.h>
+#define DS_ANIMATION_IMPLEMENTATION
+#include "animation.h"
 #include "Game.h"
 
 

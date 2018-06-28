@@ -134,6 +134,8 @@ Game::Game() {
 	prepareFontInfo(&fontInfo);
 	dialog::init(_spriteBuffer, fontInfo);
 
+	createAnimations();
+
 	_running = true;
 
 	_debugPanel = { 'D', true, false, 0 };
@@ -162,7 +164,9 @@ Game::Game() {
 
 	_dialogPos = p2i(10, 750);
 
-	
+	_dbgAnimIndex = 0;
+	_dbgShowStarsPanel = 0;
+	_dbgShowAnimationPanel = 0;
 }
 
 Game::~Game() {
@@ -300,9 +304,7 @@ void Game::renderDebugPanel() {
 				_mode = GM_GAMEOVER;
 			}
 			gui::Input("Score", &_debugScore);
-			if (gui::Button("Reset timer")) {
-				_menuTimer = 0.0f;
-			}
+
 			if (gui::Button("Game over")) {
 				_menuTimer = 0.0f;
 				_score.success = true;
@@ -320,6 +322,8 @@ void Game::renderDebugPanel() {
 				_inputActive = true;
 				_inputDialog.reset(_playerName);
 			}
+		}
+		if (gui::begin("Stars", &_dbgShowStarsPanel)) {
 			gui::Input("Stars Vel", &_starSettings.velocity);
 			gui::Input("Stars Vel-Var", &_starSettings.velocityVariance);
 			gui::Input("Stars Acc", &_starSettings.acceleration);
@@ -329,6 +333,13 @@ void Game::renderDebugPanel() {
 			gui::Input("Stars Num", &_starSettings.num);
 			if (gui::Button("Stars")) {
 				_particles->emittStars(ds::vec2(521, 384));
+			}
+		}
+		if (gui::begin("Animations", &_dbgShowAnimationPanel)) {
+			gui::Input("Animation", &_dbgAnimIndex);
+			editAnimation(_dbgAnimIndex);
+			if (gui::Button("Reset timer")) {
+				_menuTimer = 0.0f;
 			}
 		}
 		gui::end();

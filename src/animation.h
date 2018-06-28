@@ -1,83 +1,79 @@
 #pragma once
 #include "tweening.h"
 
-struct PathItem {
-	float time;
-	float value;
+struct Animation {
+
+	float steps[32];
+	float values[32];
+	int count;
+	float lastTime;
+	tweening::TweeningType tweening;
+
+	Animation() : count(0), lastTime(0.0f), tweening(tweening::linear) {}
+
 };
 
-class Animation {
+namespace anim {
 
-public:
-	Animation() : _count(0), _tweening(tweening::linear), _lastTime(1.0f) {}
-	~Animation() {}
+	void build_simple_animation(Animation* anim, float start, float end, float ttl);
 
-	void create(float start, float end, float ttl) {
-		add(0.0f, start);
-		add(ttl, end);
+	void add_step(Animation* anim, float time, float value);
+
+	float interpolate(Animation* anim, float time);
+}
+
+#ifdef DS_ANIMATION_IMPLEMENTATION
+
+namespace anim {
+
+	void build_simple_animation(Animation* anim, float start, float end, float ttl) {
+		anim->count = 0;
+		add_step(anim, 0.0f, start);
+		add_step(anim, ttl, end);
 	}
 
-	void add(float timeStep, float value) {
-		if (_count < 32) {
-			PathItem& item = _array[_count++];
-			item.time = timeStep;
-			item.value = value;
-			if (timeStep > _lastTime) {
-				_lastTime = timeStep;
+	void add_step(Animation* anim, float time, float value) {
+		if ((anim->count + 1) < 32) {
+			anim->steps[anim->count] = time;
+			anim->values[anim->count] = value;
+			++anim->count;
+			if (time > anim->lastTime) {
+				anim->lastTime = time;
 			}
 		}
 	}
 
-	float normalize(float time) const {
-		float normTime = time / _lastTime;
+	static float anim__normalize(Animation* anim, float time) {
+		float normTime = time / anim->lastTime;
 		if (normTime > 1.0f) {
 			normTime = 1.0f;
 		}
 		return normTime;
 	}
 
-	float get(float time) const {
-		if (_count > 0) {
-			if (_count == 1) {
-				return _array[0].value;
+	float interpolate(Animation* anim, float time) {
+		if (anim->count > 0) {
+			if (anim->count == 1) {
+				return anim->values[0];
+			}
+			else if (anim->count == 2) {
+				float normTime = anim__normalize(anim, time);
+				return tweening::interpolate(anim->tweening, anim->values[0], anim->values[1], normTime, 1.0f);
 			}
 			else {
-				float normTime = normalize(time);
-				for (int i = 0; i < _count - 1; ++i) {
-					const PathItem& current = _array[i];
-					const PathItem& next = _array[i + 1];
-					if (normTime >= current.time && normTime <= next.time) {
-						float t = (normTime - current.time) / (next.time - current.time);
-						return tweening::interpolate(_tweening, current.value, next.value, t, 1.0f);
+				for (int i = 0; i < anim->count - 1; ++i) {
+					float currentTime = anim->steps[i];
+					float nextTime = anim->steps[i + 1];
+					if (time >= currentTime && time <= nextTime) {
+						float t = (time - currentTime) / (nextTime - currentTime);
+						return tweening::interpolate(anim->tweening, anim->values[i], anim->values[i + 1], t, anim->lastTime);
 					}
 				}
+				return anim->values[anim->count -1];
 			}
 		}
 		return 0.0f;
 	}
 
-	void reset() {
-		_count = 0;
-	}
-
-	const int size() const {
-		return _count;
-	}
-
-	const float key(int index) const {
-		return _array[index].time;
-	}
-
-	float value(int index) const {
-		return _array[index].value;
-	}
-
-	void setInterpolationMode(const tweening::TweeningType& tweening) {
-		_tweening = tweening;
-	}
-private:
-	PathItem _array[32];
-	int _count;
-	float _lastTime;
-	tweening::TweeningType _tweening;
-};
+}
+#endif

@@ -68,5 +68,9 @@ private:
 	int _logPanelState;
 	StarParticleSettings _starSettings;
 	Particles* _particles;
+
+	int _dbgAnimIndex;
+	int _dbgShowStarsPanel;
+	int _dbgShowAnimationPanel;
 };
 

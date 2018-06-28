@@ -104,6 +104,8 @@ namespace gui {
 
 	void end_overlay();
 
+	void Header(const char* header);
+
 	bool Button(const char* text);
 
 	void Text(const char* text);
@@ -1398,6 +1400,22 @@ namespace gui {
 	// --------------------------------------------------------
 	void end_overlay() {
 		_guiCtx->uiContext->use_overlay = false;
+	}
+
+	// --------------------------------------------------------
+	// begin with header
+	// --------------------------------------------------------
+	void Header(const char* header) {
+		pushID(header);
+		p2i pos = _guiCtx->currentPos;
+		pos.x -= 10;
+		renderer::add_box(_guiCtx->uiContext, pos, _guiCtx->width + 20, 20, _guiCtx->settings.headerBoxColor);
+		pos.x += 30;
+		renderer::add_text(_guiCtx->uiContext, pos, header);
+		pos = _guiCtx->currentPos;
+		int advance = 20 + _guiCtx->settings.lineSpacing;
+		moveForward(p2i(10, advance));
+		popID();
 	}
 	// --------------------------------------------------------
 	// Button
